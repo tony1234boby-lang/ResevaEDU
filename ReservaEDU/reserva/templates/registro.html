@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro - ReservaEDU | La Dolorosa</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo_dolorosa.png' %}" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#7e192f', 'primary-dark': '#5c0f1e', accent: '#D97706' },
+                    fontFamily: { display: ['Manrope','sans-serif'], body: ['Inter','sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        html { zoom: 80%; }
+        body { font-family: 'Inter', sans-serif; }
+        @-moz-document url-prefix() {
+            body {
+                transform: scale(0.8);
+                transform-origin: top center;
+                width: 125%;
+                height: 125%;
+            }
+        }
+        h1,h2,h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
+        .glass-card { background: rgba(26, 5, 10, 0.65); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        @keyframes fadeUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
+        .fade-up { animation: fadeUp 0.4s ease forwards; }
+
+        /* Django form styling overrides to match the premium inputs of login page */
+        form p { margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.375rem; }
+        form label { font-size: 0.7rem; font-weight: 700; color: rgba(241,245,249,0.8); text-transform: uppercase; letter-spacing: 0.1em; }
+        form input[type="text"], form input[type="password"], form input[type="email"] {
+            width: 100%; padding: 0.875rem 1rem;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 0.75rem; color: white; font-size: 0.875rem; outline: none; transition: all 0.3s;
+        }
+        form input:focus { background: rgba(255,255,255,0.1); border-color: #D97706; box-shadow: 0 0 0 3px rgba(217,119,6,0.15); }
+        form input::placeholder { color: rgba(255,255,255,0.3); }
+        .helptext { font-size: 0.7rem; color: rgba(226,232,240,0.6); margin-top: 0.25rem; line-height: 1.4; }
+        ul.errorlist { color: #fca5a5; font-size: 0.7rem; font-weight: 700; list-style: none; padding: 0; margin: 0.25rem 0; }
+    </style>
+</head>
+<body class="min-h-screen relative flex items-center justify-center p-6 overflow-x-hidden">
+    <!-- Full-screen Background with image and overlay -->
+    <div class="absolute inset-0 z-0 bg-cover bg-center" style="background-image: url('{% static 'images/image_d2d181.jpg' %}');"></div>
+    <div class="absolute inset-0 z-0 bg-black/60 backdrop-blur-[6px]"></div>
+
+    <!-- Centered Card -->
+    <div class="relative z-10 w-full max-w-md glass-card rounded-[2.5rem] p-10 shadow-2xl fade-up my-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-20 w-auto object-contain mx-auto mb-4 drop-shadow-[0_2px_5px_rgba(0,0,0,0.3)]">
+            <h1 class="text-3xl font-black text-white" style="font-family:'Manrope',sans-serif;">Crear Cuenta</h1>
+            <p class="text-slate-300 text-xs mt-1">Únete a la plataforma de La Dolorosa</p>
+        </div>
+ 
+        <form method="post" action="{% url 'registro' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="w-full bg-accent hover:bg-yellow-400 text-primary font-black py-4 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/30 text-sm uppercase tracking-widest mt-6" style="font-family:'Manrope',sans-serif;">
+                Registrarse
+            </button>
+        </form>
+ 
+        <div class="mt-8 text-center border-t border-white/10 pt-6">
+            <p class="text-slate-300 text-sm">¿Ya tienes cuenta? <a href="{% url 'login' %}" class="text-accent font-bold hover:underline">Inicia sesión</a></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nueva Reserva - The Academic Atelier</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#565e74",
+                        "on-surface": "#191c1e",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#90a8ff",
+                        "primary-fixed": "#dce1ff",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#264191",
+                        "on-tertiary-fixed-variant": "#574500",
+                        "primary": "#00236f",
+                        "background": "#f7f9fb",
+                        "on-secondary-fixed": "#131b2e",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed-dim": "#eec200",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-tint": "#4059aa",
+                        "surface-container-highest": "#e0e3e5",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "on-background": "#191c1e",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-bright": "#f7f9fb",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#cea700",
+                        "secondary-container": "#dae2fd",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-container": "#5c647a",
+                        "outline": "#757682",
+                        "on-surface-variant": "#444651",
+                        "secondary-fixed": "#dae2fd",
+                        "on-primary-fixed": "#00164e",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "inverse-primary": "#b6c4ff",
+                        "primary-container": "#1e3a8a",
+                        "outline-variant": "#c5c5d3",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "on-error": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "on-tertiary-container": "#4e3e00",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary-fixed": "#231b00",
+                        "tertiary": "#735c00",
+                        "tertiary-fixed": "#ffe083"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .form-django p {
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-django label {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #444651;
+        }
+        .form-django input, .form-django select, .form-django textarea {
+            background-color: #e6e8ea;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            font-family: 'Inter', sans-serif;
+            color: #191c1e;
+        }
+        .form-django input:focus {
+            background-color: #ffffff;
+            ring: 1px;
+            ring-color: #00236f;
+            outline: 1px solid #00236f;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body min-h-screen">
+<aside class="flex flex-col p-4 gap-2 h-screen border-r border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 docked left-0 h-full w-64 fixed hidden md:flex">
+<div class="mb-8 px-4 py-2">
+<h1 class="text-lg font-black text-blue-900 dark:text-white uppercase tracking-widest">The Atelier</h1>
+<p class="text-[10px] font-medium text-slate-500 uppercase tracking-[0.1em]">Digital Concierge</p>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-900 text-blue-900 dark:text-blue-400 rounded-xl shadow-sm scale-98 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_view_day">calendar_view_day</span>
+<span class="font-medium">Spaces</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+<span class="font-medium">My Bookings</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-2 pt-4 border-t border-slate-200/50">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-medium">Sign Out</span>
+</a>
+</div>
+</aside>
+<main class="md:ml-64 min-h-screen">
+<header class="flex justify-between items-center px-8 h-16 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl docked full-width top-0 sticky z-40">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 text-primary">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h2 class="text-xl font-bold tracking-tight text-blue-900 dark:text-blue-50 font-headline">Nueva Reserva</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center bg-surface-container-high rounded-full px-4 py-1.5 gap-2">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="search">search</span>
+<input class="bg-transparent border-none text-sm focus:ring-0 w-48" placeholder="Search archive..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-slate-500">
+<span class="material-symbols-outlined hover:text-blue-700 cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined hover:text-blue-700 cursor-pointer" data-icon="help_outline">help_outline</span>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="User profile avatar" data-alt="professional headshot of a person in business attire with a warm friendly expression and neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9q__FMc9CJbkRXeBv2PH8vYJu7gnRdZs5Hbg52Ry9UKcXdGaruoA3Rj_4ni0oI2WsRHL64skyQIhbITeZ4ZoVUMKECzswb29X6jcA_5b7EQWx5C5ZzZkCsl1j-lXEOHRQl5nE0B3nT3RO1-sLkqtuyaNScngzcdTgl5f6uwKaCwiawkwkxN3dU04rjbqd91N2nG2fDMvmL7a1hKcvWYqP1JRGK9TQhn_XE2ZkGzSXM1Q79A-trkGS57kbCWYQ-OlpWwGugKDYUMTS"/>
+</div>
+</div>
+</div>
+</header>
+<section class="max-w-6xl mx-auto p-8 flex flex-col gap-12">
+<div class="relative w-full h-[300px] rounded-3xl overflow-hidden shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="grand library interior with high ceilings large windows and dark wood furniture in soft natural morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuRKflEnQrLSY721Fup7-Cj_OwPva6jUvXaPmmCvRUkq379KF9ZdUy7SEnql77Z9w42D9WbLs6twS4pJDP2tsiUL7Y0isxr3ZqAx7q8ii-sGJpvWtBt243Ast5VjiOppL_6NsqD0qQbQhzkIKHz6iOwBkWueQQ7hABRXqZo20riCD00f2jMocc8A8rJpX5A37cPFmYTIwMfaMjjGJb8dC3XBiTrL5gXoJiY0fzbbHSEqFElnfOPRsjP-lsgNbsPtiky0ubV9QiIeVP"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-end items-end p-10">
+<div class="text-white">
+<span class="inline-block px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-bold uppercase tracking-widest rounded-full mb-4">Space Selected</span>
+<h3 class="text-4xl font-extrabold font-headline leading-tight">The Clarendon Reading Suite</h3>
+<p class="text-on-primary-container text-lg mt-2 max-w-xl">West Wing, Level 4. A sanctuary of silence and scholarly focus featuring ergonomic seating and private reference access.</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<div class="lg:col-span-7 bg-surface-container-lowest p-10 rounded-3xl shadow-sm border border-outline-variant/15">
+<div class="mb-10">
+<h4 class="text-2xl font-bold font-headline text-primary mb-2">Reserva Details</h4>
+<div class="h-1 w-12 bg-tertiary-container rounded-full"></div>
+</div>
+<form class="form-django">
+<p>
+<label for="id_date">Date</label>
+<input id="id_date" name="date" required="" type="date"/>
+</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<p>
+<label for="id_start_time">Start Time</label>
+<input id="id_start_time" name="start_time" required="" type="time"/>
+</p>
+<p>
+<label for="id_end_time">End Time</label>
+<input id="id_end_time" name="end_time" required="" type="time"/>
+</p>
+</div>
+<div class="mt-8 bg-surface-container-low p-6 rounded-2xl flex items-start gap-4">
+<span class="material-symbols-outlined text-tertiary" data-icon="info">info</span>
+<div>
+<h5 class="text-sm font-bold text-on-surface mb-1 uppercase tracking-wider">Validation Notice</h5>
+<p class="text-sm text-on-surface-variant leading-relaxed">Please note that our digital concierge performs real-time validation. Time slots must be at least 60 minutes in duration and cannot overlap with existing curated sessions or maintenance windows. Final availability is confirmed upon submission.</p>
+</div>
+</div>
+<div class="mt-10 flex justify-end">
+<button class="bg-[#FACC15] hover:brightness-105 transition-all text-primary font-bold px-10 py-4 rounded-3xl shadow-lg flex items-center gap-3 scale-100 hover:scale-[1.02] active:scale-95" type="submit">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+                                Confirmar Reserva
+                            </button>
+</div>
+</form>
+</div>
+<div class="lg:col-span-5 flex flex-col gap-6">
+<div class="bg-primary text-white p-8 rounded-3xl shadow-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-8xl" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<h4 class="text-xl font-bold font-headline mb-4">Institution Amenities</h4>
+<ul class="flex flex-col gap-4">
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed" data-icon="wifi">wifi</span>
+<span class="text-sm font-medium">Gigabit Fiber Connection</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed" data-icon="local_cafe">local_cafe</span>
+<span class="text-sm font-medium">Complimentary Artisan Refreshments</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed" data-icon="print">print</span>
+<span class="text-sm font-medium">Archival Quality Printing Services</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed" data-icon="ac_unit">ac_unit</span>
+<span class="text-sm font-medium">Climate-Controlled Environment</span>
+</li>
+</ul>
+</div>
+<div class="bg-surface-container-high p-8 rounded-3xl">
+<h4 class="text-lg font-bold text-primary mb-6">Current Availability</h4>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-tighter">09:00 - 11:00</span>
+<span class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-bold rounded uppercase">Reserved</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-tighter">11:00 - 14:00</span>
+<span class="px-2 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded uppercase">Available</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-tighter">14:00 - 15:30</span>
+<span class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-bold rounded uppercase">Reserved</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md px-6 py-4 flex justify-around items-center z-50 border-t-0 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.1)]">
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] font-bold uppercase">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-blue-900" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_view_day">calendar_view_day</span>
+<span class="text-[10px] font-bold uppercase">Spaces</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+<span class="text-[10px] font-bold uppercase">Bookings</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-[10px] font-bold uppercase">Profile</span>
+</a>
+</nav>
+</body></html>

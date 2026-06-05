@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mis Reservas - The Academic Atelier</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .display-font { font-family: 'Manrope', sans-serif; }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#565e74",
+                    "on-surface": "#191c1e",
+                    "surface-dim": "#d8dadc",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-container": "#90a8ff",
+                    "primary-fixed": "#dce1ff",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#264191",
+                    "on-tertiary-fixed-variant": "#574500",
+                    "primary": "#00236f",
+                    "background": "#f7f9fb",
+                    "on-secondary-fixed": "#131b2e",
+                    "surface-container-low": "#f2f4f6",
+                    "tertiary-fixed-dim": "#eec200",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#f7f9fb",
+                    "surface-container-high": "#e6e8ea",
+                    "surface-tint": "#4059aa",
+                    "surface-container-highest": "#e0e3e5",
+                    "secondary-fixed-dim": "#bec6e0",
+                    "on-background": "#191c1e",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface-bright": "#f7f9fb",
+                    "on-error-container": "#93000a",
+                    "tertiary-container": "#cea700",
+                    "secondary-container": "#dae2fd",
+                    "error-container": "#ffdad6",
+                    "inverse-surface": "#2d3133",
+                    "on-secondary-container": "#5c647a",
+                    "outline": "#757682",
+                    "on-surface-variant": "#444651",
+                    "secondary-fixed": "#dae2fd",
+                    "on-primary-fixed": "#00164e",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "inverse-primary": "#b6c4ff",
+                    "primary-container": "#1e3a8a",
+                    "outline-variant": "#c5c5d3",
+                    "on-secondary-fixed-variant": "#3f465c",
+                    "on-error": "#ffffff",
+                    "surface-container": "#eceef0",
+                    "on-tertiary-container": "#4e3e00",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#e0e3e5",
+                    "on-tertiary-fixed": "#231b00",
+                    "tertiary": "#735c00",
+                    "tertiary-fixed": "#ffe083"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl flex justify-between items-center px-8 h-16 w-full docked full-width top-0 sticky z-40">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold tracking-tight text-blue-900 dark:text-blue-50">The Academic Atelier</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<nav class="flex items-center gap-6">
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200" href="#">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200" href="#">Spaces</a>
+<a class="text-blue-900 dark:text-blue-400 font-bold border-b-2 border-yellow-500" href="#">My Bookings</a>
+</nav>
+<div class="flex items-center gap-4 pl-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">help_outline</span>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high">
+<img alt="User profile avatar" data-alt="Close-up portrait of a professional man in a business suit with a friendly and composed expression, high-end studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATuRSpZglA8ryvOyaJSprqsLU-NUHPArqN0es3-ej18DX2IDYDHUgsNpE--m_my-y4WRD8p3fWlMYTYo6s5AlRRNAMP92SqHRdfIN2C_RZy5kwa3lzoe8sR2XxX9W85TERFao3iKw0r1bEIvhxU-3G3IpTGazM4FLzVM8-R6aLm8YMYfnxepf6o_nH6Cmp7yYTzVi2xVDZnOVIQNh6ODsueJH-A50C4od7id5TxsBZV-ZOCUnDZXeC4udbOOp53FP_fmltmmaAu6kj"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex min-h-[calc(100vh-64px)]">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col p-4 gap-2 h-full w-64 border-r border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+<div class="px-4 py-6 mb-4">
+<div class="text-lg font-black text-blue-900 dark:text-white uppercase tracking-widest">The Atelier</div>
+<div class="text-[10px] text-on-surface-variant uppercase tracking-[0.1em] font-medium">Digital Concierge</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_view_day">calendar_view_day</span>
+<span class="font-medium">Spaces</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-900 text-blue-900 dark:text-blue-400 rounded-xl shadow-sm scale-98 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+<span class="font-bold">My Bookings</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-2 pt-8">
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary py-3 px-6 rounded-xl font-bold mb-4 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                    New Reservation
+                </button>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-sm">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-sm font-medium">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 p-8 lg:p-12 bg-surface">
+<header class="mb-12">
+<div class="flex flex-col gap-1">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-[0.1em] font-label">Atelier Dashboard</span>
+<h1 class="text-4xl md:text-5xl font-extrabold text-primary display-font tracking-tight">Mis Reservas</h1>
+</div>
+</header>
+<!-- Bookings List Container -->
+<div class="relative">
+<!-- Bento Grid Layout for reservations -->
+<div class="grid grid-cols-1 gap-6">
+<!-- Django Loop Placeholder -->
+                    {% for reserva in mis_reservas %}
+                    <div class="group bg-surface-container-lowest rounded-xl p-6 transition-all duration-300 hover:shadow-[0_32px_64px_-12px_rgba(25,28,30,0.06)] flex flex-col md:flex-row md:items-center justify-between gap-6 border-l-4 border-tertiary">
+<!-- Space Identification -->
+<div class="flex items-center gap-5">
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0">
+<img alt="Space view" data-alt="Modern minimalist study space with large windows, dark wood desk, and high-end ergonomic chair in a soft daylight setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmD4gHHsTHLjZ-UXsGTUUcIPzHXA6k3RGcrh6UAwUItAk45BTYPZ4Iu-gF_sT6zyQoN57PDi4AMkkfJObo6KLa2ugYEXJ1xQ1EAvdDPLzvfUcT3CnawpFs_11HqrqetgUHP6BnT7lRcw7wFk5CDYimT1zVKw6W5qLL7Q3NcJ9wR-CCvdZT6ffIUbhkvl72CuRdvZGrhOr0onUF-kwgb5feQxjg-UqAoa6L7b8ofGLT_-YbUDtklQPt0u5l-Ysb0ez3w6XdSZ6YNKpp"/>
+</div>
+<div>
+<h3 class="text-xl font-bold text-primary mb-1">{{ reserva.espacio_nombre }}</h3>
+<div class="flex items-center gap-3 text-on-surface-variant text-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                                        Wing A, Level 2
+                                    </span>
+</div>
+</div>
+</div>
+<!-- Time and Date -->
+<div class="grid grid-cols-2 md:flex items-center gap-8 md:gap-12">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Fecha</span>
+<span class="font-semibold text-on-surface">{{ reserva.fecha }}</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Horario</span>
+<span class="font-semibold text-on-surface">{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</span>
+</div>
+</div>
+<!-- Status Badge and Actions -->
+<div class="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-4 md:pt-0 border-surface-container-high">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold text-right hidden md:block">Estado</span>
+<div class="px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5 {% if reserva.status == 'Confirmed' %} bg-secondary-container text-on-primary-fixed-variant {% elif reserva.status == 'Pending' %} bg-tertiary-fixed text-on-tertiary-fixed-variant {% else %} bg-surface-container-high text-on-surface-variant {% endif %}">
+<span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                                    {{ reserva.status }}
+                                </div>
+</div>
+<button class="px-6 py-2.5 rounded-xl text-sm font-bold bg-surface-container-high text-on-secondary-fixed-variant hover:bg-error hover:text-on-error transition-all duration-200 active:scale-95">
+                                Cancelar Reserva
+                            </button>
+</div>
+</div>
+                    {% endfor %}
+
+                    <!-- Mock Entry 1 (For visual reference) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 border-l-4 border-tertiary">
+<div class="flex items-center gap-5">
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0">
+<img alt="Library Space" data-alt="Contemporary private study cubicle in a high-end academic library with warm pendant lighting and acoustic wall panels" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1suzbuOU7O90QeQaHA_0VT0yd4iRy_HeGcAaWGWonwOmgLQbfHbV4FWO36d8pdHYiFmyI5kjHemMWj9lpdgbPrTrPKoKOpvfrX6uTFLYxN5bgoul22JB_VHb4fJ9HFyRB-ohZZk3laX8yOtmZJs7QZGtCG7XplClEkxN2vf9yCZta3VceKvH3yJtqfdBLLnGnW0elofyGw60iuyxRipX4sjVSFZkMu8QkIV0szqGepqUBZlnI6aLEtiHBm70Np7EvfjnaWwolQ0el"/>
+</div>
+<div>
+<h3 class="text-xl font-bold text-primary mb-1">Biblioteca Central - Cubículo 04</h3>
+<div class="flex items-center gap-3 text-on-surface-variant text-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                                        Planta Principal
+                                    </span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 md:flex items-center gap-8 md:gap-12">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Fecha</span>
+<span class="font-semibold text-on-surface">24 Oct 2023</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Horario</span>
+<span class="font-semibold text-on-surface">09:00 - 11:30</span>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-4 md:pt-0 border-surface-container-high">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold text-right hidden md:block">Estado</span>
+<div class="px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5 bg-secondary-container text-on-primary-fixed-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                                    Confirmed
+                                </div>
+</div>
+<button class="px-6 py-2.5 rounded-xl text-sm font-bold bg-surface-container-high text-on-secondary-fixed-variant hover:bg-error hover:text-on-error transition-all duration-200 active:scale-95">
+                                Cancelar Reserva
+                            </button>
+</div>
+</div>
+<!-- Mock Entry 2 (For visual reference) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 border-l-4 border-tertiary-fixed-dim">
+<div class="flex items-center gap-5">
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0">
+<img alt="Conference Room" data-alt="Luxurious small meeting room with a round oak table, leather chairs, and a glass wall with frosted privacy film" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoeqnYyv7zBLPAoCmvINDllqZXEChYDYhuWy6sGLXvumfr2AaEbkVPrQJkWqdsPdUtZd4Eb0HT5DwjWFsoOySDVW2ms_TN03IX55pR2Ye2NFyhkZ4tff_Iw-l9ecp83lVlFFr7oT_5r6clpnH7xZwkeeIvALBaaqnm7FuiYmm24eJR7UKYAFbKqUivfXIrv_SIF3Gid7mXeYYKs8qjkut__JM1wjfLMSWb4_ErD6kC6qq-_O1nnBQafFhye7wmojGa9RrhZTrh2gf6"/>
+</div>
+<div>
+<h3 class="text-xl font-bold text-primary mb-1">Sala de Innovación B</h3>
+<div class="flex items-center gap-3 text-on-surface-variant text-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                                        Tech Hub - Nivel 3
+                                    </span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 md:flex items-center gap-8 md:gap-12">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Fecha</span>
+<span class="font-semibold text-on-surface">26 Oct 2023</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Horario</span>
+<span class="font-semibold text-on-surface">14:00 - 16:00</span>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-4 md:pt-0 border-surface-container-high">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold text-right hidden md:block">Estado</span>
+<div class="px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5 bg-tertiary-fixed text-on-tertiary-fixed-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                                    Pending
+                                </div>
+</div>
+<button class="px-6 py-2.5 rounded-xl text-sm font-bold bg-surface-container-high text-on-secondary-fixed-variant hover:bg-error hover:text-on-error transition-all duration-200 active:scale-95">
+                                Cancelar Reserva
+                            </button>
+</div>
+</div>
+</div>
+<!-- Pagination/Tonal Background Decoration -->
+<div class="mt-12 flex items-center justify-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant/30"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant/30"></div>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Navigation Bar -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/90 backdrop-blur-lg border-t border-slate-100 flex items-center justify-around z-50">
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-medium uppercase">Dash</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">calendar_view_day</span>
+<span class="text-[10px] font-medium uppercase">Spaces</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-blue-900" href="#">
+<span class="material-symbols-outlined font-bold">event_available</span>
+<span class="text-[10px] font-bold uppercase">Bookings</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium uppercase">Profile</span>
+</a>
+</nav>
+</body></html>

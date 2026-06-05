@@ -1,0 +1,782 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ReservaEDU - Sistema de Gestión de Espacios | La Dolorosa</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo_dolorosa.png' %}" />
+    <meta name="description" content="Plataforma institucional de la Unidad Educativa Fiscomisional La Dolorosa para la gestión y reserva de espacios académicos y culturales.">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7e192f", // Vino
+                        secondary: "#5A626A", // Gris
+                        surface: "#F8FAFC",
+                        "on-surface": "#1E293B",
+                        "surface-container-low": "#F1F5F9",
+                        "on-surface-variant": "#475569",
+                        "outline-variant": "#CBD5E1",
+                        tertiary: "#94A3B8",
+                        "on-tertiary": "#1E293B",
+                        accent: "#D97706"
+                    },
+                    borderRadius: { lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+                    fontFamily: { headline: ["Manrope"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        html {
+            zoom: 90%;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            transition: background-color 0.5s ease; 
+        }
+        @-moz-document url-prefix() {
+            body {
+                transform: scale(0.8);
+                transform-origin: top center;
+                width: 125%;
+                height: 125%;
+            }
+        }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        
+        /* Gemini Premium Styles (La Dolorosa Palette) */
+        .gemini-dark { background: #1a1516 !important; color: #e3e3e3 !important; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gemini-gradient { background: linear-gradient(135deg, #7e192f, #a22b46, #5A626A); }
+        .gemini-glow { box-shadow: 0 0 30px rgba(126, 25, 47, 0.2); }
+        .gemini-star { color: #a22b46; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-5px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
+        
+        .ai-bubble { background: rgba(43, 31, 33, 0.7); border-radius: 1.5rem; border-top-left-radius: 0.2rem; }
+        .user-bubble { background: #2f2b2c; border-radius: 1.5rem; border-top-right-radius: 0.2rem; }
+        
+        .space-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .thinking-glow { position: relative; overflow: hidden; height: 2px; }
+        .thinking-glow::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, #7e192f, #5A626A, transparent); animation: sweep 2s infinite; }
+        @keyframes sweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+        
+        .chip { transition: all 0.2s; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #e3e3e3; }
+        .chip:hover { background: rgba(126, 25, 47, 0.1); border-color: #7e192f; transform: translateY(-1px); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+    {% if user.is_authenticated or user_simulated %}
+    <div class="flex">
+        <aside class="hidden md:flex flex-col p-4 gap-2 h-screen border-r border-slate-200 bg-slate-50 fixed left-0 w-64 z-50">
+            <div class="mb-6 px-4 flex flex-col items-center gap-3">
+                <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-16 w-auto object-contain mt-2 drop-shadow-sm">
+                <div class="text-center">
+                    <h2 class="text-xl font-black text-primary uppercase tracking-tighter">RESERVAEDU</h2>
+                    <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">La Dolorosa</p>
+                </div>
+            </div>
+            <nav class="flex-1 flex flex-col gap-2">
+                <a id="nav-spaces" href="{% url 'inicio' %}" class="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl shadow-lg cursor-pointer transition-all">
+                    <span class="material-symbols-outlined">grid_view</span>
+                    <span class="font-bold">Espacios</span>
+                </a>
+                <a id="nav-horarios" onclick="switchView('horarios')" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl cursor-pointer transition-all" href="#">
+                    <span class="material-symbols-outlined">description</span>
+                    <span class="font-bold">Horarios</span>
+                </a>
+                {% if user.is_authenticated or user_simulated %}
+                <a id="nav-reservations" href="{% url 'mis_reservas' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl cursor-pointer transition-all">
+                    <span class="material-symbols-outlined">event_available</span>
+                    <span class="font-bold">Mis Reservas</span>
+                </a>
+                {% endif %}
+                {% if es_secretaria %}
+                <a id="nav-secretaria" href="{% url 'dashboard_secretaria' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="font-bold">Panel Secretaría</span>
+                </a>
+                {% endif %}
+            </nav>
+            <div class="mt-auto pt-4 flex flex-col gap-1 border-t border-slate-200">
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all" href="#">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="font-medium">Ajustes</span>
+                </a>
+                {% if user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" class="w-full m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all text-left font-bold">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </form>
+                {% else %}
+                <a href="{% url 'login' %}" class="flex items-center gap-3 px-4 py-3 text-primary hover:bg-slate-200/50 rounded-xl transition-all font-bold">
+                    <span class="material-symbols-outlined">login</span>
+                    <span>Iniciar sesión</span>
+                </a>
+                {% endif %}
+            </div>
+        </aside>
+
+        <main class="flex-1 md:ml-64 min-h-screen">
+            <header class="flex justify-between items-center px-8 h-16 w-full bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-200">
+                <div class="flex items-center gap-3">
+                    <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-8 w-auto object-contain">
+                    <span class="text-lg font-black text-primary">RESERVAEDU</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    {% if user.is_authenticated or user_simulated %}
+                    <!-- Campana de Notificaciones -->
+                    <div class="relative group">
+                        <a href="{% url 'lista_notificaciones' %}" class="text-slate-500 hover:text-primary transition-colors flex items-center relative p-1">
+                            <span class="material-symbols-outlined">notifications</span>
+                            {% if notificaciones_count > 0 %}
+                            <span class="absolute top-0 right-0 bg-red-500 text-white rounded-full text-[9px] font-bold w-4 h-4 flex items-center justify-center">
+                                {{ notificaciones_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </div>
+                    {% endif %}
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm font-bold text-primary">¡Hola, {{ user.username }}{{ sim_username }}!</span>
+                        <img class="w-8 h-8 rounded-full border border-outline-variant/30" src="https://api.dicebear.com/7.x/initials/svg?seed={{ user.username }}{{ sim_username }}" />
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-8 max-w-7xl mx-auto">
+                <!-- VIEW: SPACES catalog -->
+                <div id="view-spaces" class="fade-in">
+                    <div class="mb-12 flex flex-wrap items-center justify-between w-full">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button onclick="filterSpaces('Espacios')" class="px-6 py-2.5 rounded-full bg-primary text-white font-semibold text-sm filter-btn" data-category="Espacios">Espacios</button>
+                            <button onclick="filterSpaces('Horarios')" class="px-6 py-2.5 rounded-full bg-slate-100 text-slate-600 font-medium text-sm filter-btn" data-category="Horarios">Horarios</button>
+                            <button onclick="toggleAIChat()" class="px-6 py-2.5 rounded-full bg-primary text-white font-bold text-sm shadow-lg flex items-center gap-2 hover:bg-primary/90 transition-all">
+                                <span class="material-symbols-outlined text-sm">auto_awesome</span> LA DOLO
+                            </button>
+                        </div>
+                        <button id="btn-delete-all" onclick="deleteAllSchedules()" class="hidden px-6 py-2.5 rounded-full bg-red-50 text-red-600 font-bold text-sm border border-red-100 hover:bg-red-100 transition-all flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm">delete_sweep</span> Eliminar todos los horarios
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {% for espacio in espacios %}
+                        {% with img=espacio.imagen_url|default:"https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800" %}
+                        <article data-category="{{ espacio.categoria }}" class="space-card group bg-white rounded-[2rem] overflow-hidden shadow-sm flex flex-col">
+                            <div class="relative h-64 overflow-hidden bg-slate-200">
+                                <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="{{ img }}" onerror="this.src='https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800'" />
+                                <div class="absolute top-4 left-4"><span class="bg-white/90 backdrop-blur-md text-primary text-[10px] font-bold uppercase px-4 py-1.5 rounded-full">{{ espacio.categoria }}</span></div>
+                            </div>
+                            <div class="p-8 flex-1 flex flex-col">
+                                <h3 class="text-2xl font-bold mb-2">{{ espacio.nombre }}</h3>
+                                <p class="text-slate-500 text-sm mb-8 flex-1">{{ espacio.descripcion }}</p>
+                                <a href="{% url 'reservar_espacio' espacio.id %}" class="w-full bg-primary text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all text-center block">Reservar Ahora</a>
+                            </div>
+                        </article>
+                        {% endwith %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- VIEW: RESERVATIONS historial -->
+                <div id="view-reservations" class="hidden fade-in">
+                    <div class="mb-8 flex items-center justify-between">
+                        <h2 class="text-4xl font-black text-primary tracking-tighter">MIS RESERVAS</h2>
+                        <button class="bg-primary text-white px-6 py-2.5 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-primary/90 transition-all"><span class="material-symbols-outlined text-sm">download</span> Descargar Certificado</button>
+                    </div>
+                    <div id="reservation-list" class="grid grid-cols-1 gap-6">
+                        <!-- Placeholder -->
+                        <div id="no-reservations" class="bg-white rounded-[2.5rem] p-20 text-center border-2 border-dashed border-slate-100">
+                            <span class="material-symbols-outlined text-6xl text-slate-200 mb-4 scale-150">event_busy</span>
+                            <p class="text-slate-400 font-bold text-xl">Aún no has realizado ninguna reserva académica.</p>
+                            <p class="text-slate-300 text-sm mt-2">Tus confirmaciones aparecerán aquí con su estado en tiempo real.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="space-modal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="glass max-w-2xl w-full rounded-[2.5rem] overflow-hidden shadow-2xl relative scale-95 opacity-0 transition-all duration-300" id="modal-content">
+            <button onclick="closeModal()" class="absolute top-6 right-6 z-10 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center"><span class="material-symbols-outlined">close</span></button>
+            <div class="flex flex-col md:flex-row">
+                <div class="w-full md:w-1/2 h-64 md:h-96 bg-primary relative"><img id="modal-image" class="w-full h-full object-cover"><div class="absolute bottom-4 left-4"><h2 id="modal-title" class="text-white text-2xl font-bold"></h2></div></div>
+                <div class="w-full md:w-1/2 p-8 bg-white flex flex-col gap-5">
+                    <div>
+                        <p id="modal-category" class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1"></p>
+                        <p id="modal-description" class="text-sm text-slate-500 leading-relaxed"></p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2"><span class="material-symbols-outlined text-xs">calendar_today</span> Seleccionar Día</label>
+                            <input id="res-date" type="date" class="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-sm focus:ring-2 focus:ring-blue-900 outline-none transition-all">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2"><span class="material-symbols-outlined text-xs">schedule</span> Seleccionar Hora</label>
+                            <input id="res-time" type="time" class="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-sm focus:ring-2 focus:ring-blue-900 outline-none transition-all">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2"><span class="material-symbols-outlined text-xs">notifications_active</span> Notificar a las autoridades</label>
+                            <select id="res-notify" class="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-sm focus:ring-2 focus:ring-blue-900 outline-none transition-all">
+                                <option value="Ninguno">No notificar</option>
+                                <option value="Rector">Rector (P. Néstor Alcívar)</option>
+                                <option value="Administración">Administración Central</option>
+                                <option value="Técnico IT">Técnico Informático</option>
+                                <option value="Soporte">Equipo de Mantenimiento</option>
+                            </select>
+                        </div>
+                        <p class="text-xs font-bold text-slate-700 flex items-center gap-2 mt-2">
+                            <span class="material-symbols-outlined text-sm">groups</span> Capacidad: <span id="modal-capacity" class="text-blue-900"></span> Personas
+                        </p>
+                    </div>
+
+                    <button onclick="confirmReservation()" class="bg-primary text-white w-full py-4 rounded-xl font-bold mt-auto uppercase tracking-widest text-[10px] shadow-lg hover:bg-blue-950 hover:scale-[1.02] active:scale-95 transition-all">
+                        Confirmar Reserva Institucional
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat (Gemini Style) -->
+    <div id="ai-chat" class="fixed bottom-8 right-8 z-[120] hidden w-96 shadow-2xl transition-all translate-y-10 opacity-0">
+        <div class="gemini-dark rounded-[2rem] overflow-hidden flex flex-col h-[550px] shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+            <div class="px-6 py-5 flex justify-between items-center border-b border-white/5">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full gemini-gradient flex items-center justify-center text-white gemini-glow"><span class="material-symbols-outlined text-sm gemini-star">auto_awesome</span></div>
+                    <div>
+                        <h4 class="text-sm font-black tracking-tight text-white">LA DOLO</h4>
+                        <p class="text-[9px] text-white/50 font-bold uppercase tracking-widest">ReservaEDU Intelligence</p>
+                    </div>
+                </div>
+                <button onclick="toggleAIChat()" class="text-white/50 hover:text-white transition-colors"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            
+            <div id="ai-messages" class="flex-1 overflow-y-auto p-6 space-y-6 bg-transparent text-sm scrollbar-thin scrollbar-thumb-white/10">
+                <!-- Welcome Message -->
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-blue-400 shrink-0"><span class="material-symbols-outlined text-sm">auto_awesome</span></div>
+                    <div class="ai-bubble p-4 shadow-sm max-w-[90%] border border-white/5">
+                        <p class="text-white/70 leading-relaxed italic text-xs mb-2">Sincronizando con La Dolorosa...</p>
+                        <p class="text-white leading-relaxed">¡Hola! Soy <b>LA DOLO</b>. ¿En qué andamos hoy? Si necesitas ayuda con la escuela o simplemente quieres platicar, estoy listo. ¿Qué hay de nuevo?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thinking Indicator -->
+            <div id="search-indicator" class="hidden px-6 py-3 bg-white/5 flex items-center gap-3">
+                <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                <span id="search-text" class="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Investigando en la red...</span>
+            </div>
+            <div id="ai-progress" class="hidden thinking-glow"></div>
+
+            <div class="p-6 bg-[#1e1f20]/50 border-t border-white/5">
+                <div class="relative flex items-center gap-3">
+                    <textarea id="ai-input" 
+                        class="flex-1 bg-[#2b2c2f] border-none rounded-2xl px-5 py-3 text-sm text-white focus:ring-1 focus:ring-blue-500 transition-all resize-none overflow-hidden max-h-32 placeholder-white/30" 
+                        placeholder="Pregunta a LA DOLO..." 
+                        rows="1"
+                        oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
+                        onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"></textarea>
+                    <button onclick="sendMessage()" class="w-10 h-10 rounded-full flex items-center justify-center text-blue-400 hover:bg-white/5 transition-all">
+                        <span class="material-symbols-outlined">send</span>
+                    </button>
+                </div>
+                <div class="mt-4 flex justify-center">
+                    <p class="text-[8px] text-white/20 uppercase font-black tracking-widest">LA DOLO puede cometer errores. Verifica la info importante.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ─── Limpiar localStorage corrupto de versiones anteriores ───────────
+        (function() {
+            try {
+                const raw = localStorage.getItem('saved_schedules');
+                if (raw) JSON.parse(raw); // si falla, limpiamos
+            } catch(e) {
+                localStorage.removeItem('saved_schedules');
+            }
+        })();
+
+        // ─── Navegación entre vistas ─────────────────────────────────────────
+        function switchView(v) {
+            const s = document.getElementById('view-spaces');
+            const r = document.getElementById('view-reservations');
+            const ns = document.getElementById('nav-spaces');
+            const nr = document.getElementById('nav-reservations');
+            const nh = document.getElementById('nav-horarios');
+
+            s.classList.add('hidden');
+            r.classList.add('hidden');
+
+            [ns, nr, nh].forEach(el => {
+                if (!el) return;
+                el.classList.remove('bg-primary', 'text-white', 'shadow-lg');
+                el.classList.add('text-slate-500');
+            });
+
+            if (v === 'spaces') {
+                s.classList.remove('hidden');
+                ns.classList.remove('text-slate-500');
+                ns.classList.add('bg-primary', 'text-white', 'shadow-lg');
+                filterSpaces('Espacios');
+            } else if (v === 'horarios') {
+                s.classList.remove('hidden');
+                nh.classList.remove('text-slate-500');
+                nh.classList.add('bg-primary', 'text-white', 'shadow-lg');
+                filterSpaces('Horarios');
+            } else {
+                r.classList.remove('hidden');
+                nr.classList.remove('text-slate-500');
+                nr.classList.add('bg-primary', 'text-white', 'shadow-lg');
+                loadReservations();
+            }
+        }
+
+        // ─── Filtrar tarjetas por categoría ─────────────────────────────────
+        function filterSpaces(cat) {
+            // Botón eliminar todos
+            const delBtn = document.getElementById('btn-delete-all');
+            if (delBtn) {
+                if (cat === 'Horarios') delBtn.classList.remove('hidden');
+                else delBtn.classList.add('hidden');
+            }
+
+            // Resaltar botón de filtro activo
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                if (b.dataset.category === cat) {
+                    b.classList.add('bg-primary', 'text-white');
+                    b.classList.remove('bg-slate-100', 'text-slate-600');
+                } else {
+                    b.classList.remove('bg-primary', 'text-white');
+                    b.classList.add('bg-slate-100', 'text-slate-600');
+                }
+            });
+
+            // Mostrar/ocultar tarjetas — usar '' para restaurar display de grid
+            document.querySelectorAll('.space-card').forEach(c => {
+                const itemCat = c.dataset.category;
+                let show = false;
+                if (cat === 'Espacios') show = itemCat !== 'Horarios';
+                else if (cat === 'Horarios') show = itemCat === 'Horarios';
+                else show = itemCat === cat;
+
+                c.style.display = show ? '' : 'none';
+            });
+
+            // Estado vacío para Horarios
+            const count = document.querySelectorAll('.space-card[data-category="Horarios"]').length;
+            let empty = document.getElementById('empty-schedules-state');
+
+            if (cat === 'Horarios' && count === 0) {
+                if (!empty) {
+                    empty = document.createElement('article');
+                    empty.id = 'empty-schedules-state';
+                    empty.className = 'col-span-1 md:col-span-2 lg:col-span-3 bg-white rounded-[2.5rem] p-16 text-center border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-6 fade-in';
+                    empty.innerHTML = `
+                        <span class="material-symbols-outlined text-slate-300" style="font-size:72px">calendar_today</span>
+                        <div class="max-w-md">
+                            <h3 class="text-2xl font-black text-primary tracking-tight mb-2">No hay Horarios Registrados</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed">Aún no has generado ningún horario institucional. Usa <b>LA DOLO</b> para crear uno al instante.</p>
+                        </div>
+                        <button onclick="toggleAIChat()" class="bg-primary text-white px-8 py-3 rounded-full font-bold text-sm shadow-lg hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                            <span class="material-symbols-outlined" style="font-size:18px">auto_awesome</span> Abrir LA DOLO y crear Horario
+                        </button>
+                    `;
+                    document.querySelector('#view-spaces .grid').appendChild(empty);
+                }
+                empty.style.display = '';
+            } else {
+                if (empty) empty.style.display = 'none';
+            }
+        }
+
+        // ─── Modal de espacio ────────────────────────────────────────────────
+        function openSpaceDetail(n, c, ca, d, img) {
+            document.getElementById('modal-title').innerText = n;
+            document.getElementById('modal-category').innerText = c;
+            document.getElementById('modal-capacity').innerText = ca;
+            document.getElementById('modal-description').innerText = d;
+            document.getElementById('modal-image').src = img;
+            document.getElementById('res-date').value = '';
+            document.getElementById('res-time').value = '';
+            const m = document.getElementById('space-modal');
+            const mc = document.getElementById('modal-content');
+            m.classList.replace('hidden', 'flex');
+            setTimeout(() => {
+                mc.classList.replace('scale-95', 'scale-100');
+                mc.classList.replace('opacity-0', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const m = document.getElementById('space-modal');
+            const mc = document.getElementById('modal-content');
+            mc.classList.replace('scale-100', 'scale-95');
+            mc.classList.replace('opacity-100', 'opacity-0');
+            setTimeout(() => { m.classList.replace('flex', 'hidden'); }, 300);
+        }
+
+        // ─── Reservas ────────────────────────────────────────────────────────
+        function confirmReservation() {
+            const d = document.getElementById('res-date').value;
+            const t = document.getElementById('res-time').value;
+            const n = document.getElementById('res-notify').value;
+            const title = document.getElementById('modal-title').innerText;
+            if (!d || !t) { showToast("Seleccione fecha y hora", "error"); return; }
+            const res = JSON.parse(localStorage.getItem('reservas') || '[]');
+            res.push({ id: Date.now(), title, d, t, n, status: 'Pendiente' });
+            localStorage.setItem('reservas', JSON.stringify(res));
+            showToast(`Reserva en '${title}' enviada`, "success");
+            if (n !== 'Ninguno') setTimeout(() => showToast(`Aviso enviado a: ${n}`, "info"), 1500);
+            closeModal();
+        }
+
+        function loadReservations() {
+            const l = document.getElementById('reservation-list');
+            const nr = document.getElementById('no-reservations');
+            const data = JSON.parse(localStorage.getItem('reservas') || '[]');
+            l.innerHTML = '';
+            if (data.length === 0) {
+                l.appendChild(nr);
+                nr.classList.remove('hidden');
+            } else {
+                nr.classList.add('hidden');
+                data.forEach(r => {
+                    l.innerHTML += `
+                        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-50 flex items-center justify-between fade-in hover:shadow-md transition-all">
+                            <div class="flex items-center gap-6">
+                                <div class="w-16 h-16 bg-primary/10 rounded-3xl flex items-center justify-center text-primary"><span class="material-symbols-outlined text-3xl">event_available</span></div>
+                                <div><h4 class="font-black text-xl text-primary uppercase tracking-tighter">${r.title}</h4><p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">${r.d} | ${r.t}</p></div>
+                            </div>
+                            <div class="text-right">
+                                <span class="bg-primary/20 text-primary text-[9px] font-black px-5 py-2 rounded-full uppercase tracking-[0.2em] shadow-sm border border-primary/30">En Revisión</span>
+                                <p class="text-[9px] font-bold text-slate-300 mt-3 uppercase tracking-widest">Notificado: ${r.n}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        // ─── Toast ───────────────────────────────────────────────────────────
+        function showToast(msg, type) {
+            const colors = { success: 'bg-green-600', error: 'bg-red-600', info: 'bg-primary' };
+            const x = document.createElement('div');
+            x.className = `${colors[type] || 'bg-primary'} text-white px-10 py-5 rounded-[2rem] shadow-2xl fixed bottom-10 left-1/2 -translate-x-1/2 z-[300] fade-in font-bold text-xs uppercase tracking-widest flex items-center gap-4`;
+            x.innerHTML = `<span class="material-symbols-outlined">notifications_active</span> ${msg}`;
+            document.body.appendChild(x);
+            setTimeout(() => { x.style.opacity = '0'; setTimeout(() => x.remove(), 500); }, 3500);
+        }
+
+        // ─── Imprimir horario ─────────────────────────────────────────────────
+        function printScheduleCard(cardId) {
+            try {
+                const card = document.getElementById(cardId);
+                if (!card) return;
+                const wrapper = card.querySelector('.institutional-schedule-wrapper') || card.querySelector('.p-4.flex-1');
+                if (!wrapper) return;
+                let html = wrapper.outerHTML.replace(/contenteditable="true"/g, 'contenteditable="false"');
+                const win = window.open('', '', 'height=750,width=1200');
+                win.document.write(`<!DOCTYPE html><html><head><title>Horario - La Dolorosa</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+                    <script src="https://cdn.tailwindcss.com"><\/script>
+                    <style>@media print{@page{size:landscape;margin:1cm}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}body{font-family:'Inter',sans-serif;padding:20px;background:white}</style>
+                </head><body>${html}<script>window.onload=function(){setTimeout(function(){window.print();window.close();},600);}<\/script></body></html>`);
+                win.document.close();
+            } catch(e) { showToast("Error al imprimir", "error"); }
+        }
+
+        // ─── Cambiar color de barra de celda ─────────────────────────────────
+        function cycleCellColor(bar) {
+            const palette = ['bg-green-500','bg-cyan-500','bg-rose-400','bg-fuchsia-600','bg-orange-500','bg-amber-700','bg-violet-500','bg-red-500','bg-yellow-400','bg-blue-500','bg-teal-500','bg-pink-500'];
+            let cur = palette.find(c => bar.classList.contains(c)) || '';
+            if (cur) bar.classList.remove(cur);
+            bar.classList.add(palette[(palette.indexOf(cur) + 1) % palette.length]);
+            const card = bar.closest('.space-card');
+            if (card) saveScheduleState(card.id);
+        }
+
+        // ─── Persistencia ─────────────────────────────────────────────────────
+        function saveScheduleState(cardId) {
+            try {
+                const card = document.getElementById(cardId);
+                if (!card) return;
+                const pill = card.querySelector('.parallel-pill');
+                const name = pill ? pill.innerText.trim() : 'General';
+                const h3 = card.querySelector('h3');
+                if (h3) h3.innerText = 'Horario: ' + name;
+                const container = card.querySelector('.p-4.flex-1');
+                if (!container) return;
+                let schedules = JSON.parse(localStorage.getItem('saved_schedules') || '[]');
+                const idx = schedules.findIndex(s => s.id === cardId);
+                if (idx !== -1) {
+                    schedules[idx].name = name;
+                    schedules[idx].html = container.innerHTML;
+                    localStorage.setItem('saved_schedules', JSON.stringify(schedules));
+                }
+            } catch(e) { console.warn('saveScheduleState error:', e); }
+        }
+
+        // ─── Guardar / Cargar / Eliminar Horarios ────────────────────────────
+        function saveSchedule(name, html, sync = true) {
+            try {
+                const grid = document.querySelector('#view-spaces .grid');
+                if (!grid) return;
+                const cardId = 'sch-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4);
+                const card = document.createElement('article');
+                card.id = cardId;
+                card.dataset.category = 'Horarios';
+                // col-span-3 para ocupar todo el ancho del grid
+                card.className = 'space-card bg-white rounded-[2rem] overflow-hidden shadow-sm flex flex-col border-2 border-primary/10 col-span-1 md:col-span-2 lg:col-span-3';
+                card.innerHTML = `
+                    <div class="px-8 pt-6 pb-4 bg-primary text-white flex justify-between items-center">
+                        <div>
+                            <h3 class="text-xl font-black uppercase tracking-tighter">Horario: ${name}</h3>
+                            <p class="text-[9px] font-bold opacity-60 mt-0.5">REGISTRADO POR IA · INSTITUCIONAL</p>
+                        </div>
+                        <button onclick="deleteSchedule('${cardId}','${name.replace(/'/g,"\\'")}')" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-red-500 transition-all" title="Eliminar">
+                            <span class="material-symbols-outlined" style="font-size:18px">delete</span>
+                        </button>
+                    </div>
+                    <div class="p-4 flex-1 overflow-auto bg-slate-50">${html}</div>
+                    <div class="p-5 bg-white border-t border-slate-100 flex gap-3">
+                        <button onclick="printScheduleCard('${cardId}')" class="flex-1 bg-slate-100 text-slate-700 py-2.5 rounded-xl font-bold text-xs hover:bg-slate-200 transition-all uppercase tracking-widest flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined" style="font-size:16px">download</span> Descargar PDF
+                        </button>
+                        <button onclick="printScheduleCard('${cardId}')" class="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold text-xs shadow-lg hover:-translate-y-0.5 transition-all uppercase tracking-widest flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined" style="font-size:16px">visibility</span> Ver / Imprimir
+                        </button>
+                    </div>
+                `;
+
+                // Marcar el paralelo pill (ya viene con clase desde backend)
+                const pill = card.querySelector('.parallel-pill') || card.querySelector('span[contenteditable="true"]');
+                if (pill && !pill.classList.contains('parallel-pill')) {
+                    pill.classList.add('parallel-pill');
+                }
+
+                // Autosave al editar
+                card.addEventListener('focusout', e => {
+                    if (e.target.hasAttribute('contenteditable')) saveScheduleState(cardId);
+                });
+                card.addEventListener('input', e => {
+                    if (e.target.classList.contains('parallel-pill')) {
+                        const h3 = card.querySelector('h3');
+                        if (h3) h3.innerText = 'Horario: ' + e.target.innerText.trim();
+                    }
+                });
+
+                grid.insertBefore(card, grid.firstChild);
+
+                if (sync) {
+                    const schedules = JSON.parse(localStorage.getItem('saved_schedules') || '[]');
+                    schedules.push({ id: cardId, name, html });
+                    localStorage.setItem('saved_schedules', JSON.stringify(schedules));
+                }
+            } catch(e) { console.error('saveSchedule error:', e); showToast('Error al guardar horario', 'error'); }
+        }
+
+        function deleteSchedule(id, name) {
+            if (!confirm(`¿Eliminar el horario de ${name}?`)) return;
+            const el = document.getElementById(id);
+            if (el) el.remove();
+            let schedules = JSON.parse(localStorage.getItem('saved_schedules') || '[]');
+            localStorage.setItem('saved_schedules', JSON.stringify(schedules.filter(s => s.id !== id)));
+            showToast('Horario eliminado', 'info');
+            filterSpaces('Horarios');
+        }
+
+        function deleteAllSchedules() {
+            if (!confirm('¿Eliminar TODOS los horarios?')) return;
+            document.querySelectorAll('.space-card[data-category="Horarios"]').forEach(c => c.remove());
+            localStorage.removeItem('saved_schedules');
+            showToast('Todos los horarios eliminados', 'success');
+            filterSpaces('Horarios');
+        }
+
+        function loadSavedSchedules() {
+            try {
+                const schedules = JSON.parse(localStorage.getItem('saved_schedules') || '[]');
+                schedules.forEach(s => saveSchedule(s.name, s.html, false));
+            } catch(e) {
+                localStorage.removeItem('saved_schedules');
+                console.warn('localStorage corrupto, limpiado.');
+            }
+            filterSpaces('Espacios');
+        }
+
+        window.addEventListener('DOMContentLoaded', loadSavedSchedules);
+        window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        // ─── AI Chat ─────────────────────────────────────────────────────────
+        function toggleAIChat() {
+            const c = document.getElementById('ai-chat');
+            if (c.classList.contains('hidden')) {
+                c.classList.remove('hidden');
+                setTimeout(() => {
+                    c.classList.replace('translate-y-10', 'translate-y-0');
+                    c.classList.replace('opacity-0', 'opacity-100');
+                }, 10);
+            } else {
+                c.classList.replace('translate-y-0', 'translate-y-10');
+                c.classList.replace('opacity-100', 'opacity-0');
+                setTimeout(() => c.classList.add('hidden'), 400);
+            }
+        }
+
+        async function typeWriter(element, text, speed = 8) {
+            let i = 0;
+            element.innerHTML = '';
+            const container = document.getElementById('ai-messages');
+            return new Promise(resolve => {
+                function type() {
+                    if (i < text.length) {
+                        if (text.charAt(i) === '<') {
+                            let end = text.indexOf('>', i);
+                            if (end !== -1) { element.innerHTML += text.substring(i, end + 1); i = end + 1; }
+                            else { element.innerHTML += text.charAt(i); i++; }
+                        } else { element.innerHTML += text.charAt(i); i++; }
+                        container.scrollTop = container.scrollHeight;
+                        setTimeout(type, speed);
+                    } else { container.scrollTop = container.scrollHeight; resolve(); }
+                }
+                type();
+            });
+        }
+
+        async function sendMessage(providedText = null) {
+            const inp = document.getElementById('ai-input');
+            const m = document.getElementById('ai-messages');
+            const p = document.getElementById('ai-progress');
+            const st = document.getElementById('search-indicator');
+            const sl = document.getElementById('search-text');
+
+            const textRaw = providedText || inp.value;
+            if (!textRaw.trim()) return;
+            const text = textRaw.toLowerCase().trim();
+            if (!providedText) { inp.value = ''; inp.style.height = ''; }
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex justify-end gap-3 fade-in';
+            userMsg.innerHTML = `<div class="user-bubble text-white p-4 shadow-md max-w-[85%] border border-white/5"><p class="text-sm">${textRaw}</p></div>`;
+            m.appendChild(userMsg);
+            m.scrollTop = m.scrollHeight;
+
+            st.classList.remove('hidden');
+            p.classList.remove('hidden');
+
+            const reason = async (step, ms = 500) => {
+                sl.innerText = step;
+                await new Promise(r => setTimeout(r, ms));
+            };
+
+            await reason('Analizando consulta...');
+
+            let responseText = '', extraHtml = '', suggestions = [];
+
+            try {
+                // Guardar horario en el sistema
+                if (text.includes('asignar a')) {
+                    await reason('Registrando horario...');
+                    const msgs = m.querySelectorAll('.ai-bubble');
+                    const lastBubble = msgs[msgs.length - 1];
+                    const wrapper = lastBubble ? lastBubble.querySelector('.institutional-schedule-wrapper') : null;
+                    if (wrapper) {
+                        const groupName = textRaw.replace(/asignar a /i, '').toUpperCase().trim();
+                        saveSchedule(groupName, wrapper.outerHTML);
+                        p.classList.add('hidden'); st.classList.add('hidden');
+                        showToast(`Horario "${groupName}" guardado con éxito`, 'success');
+                        filterSpaces('Horarios');
+                        return;
+                    }
+                }
+
+                // Backend
+                await reason('Consultando sistema...');
+                const response = await fetch('/investigar-ia/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                    body: JSON.stringify({ query: textRaw })
+                });
+                const data = await response.json();
+                responseText = data.respuesta || '';
+                suggestions = data.sugerencias || [];
+                if (data.extra_table) extraHtml = data.extra_table;
+                if (data.fuentes && data.fuentes.length > 0) {
+                    extraHtml += `<div class='mt-4 p-3 bg-white/5 rounded-xl border border-white/5'>
+                        <p class='text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-2'>Fuentes:</p>
+                        <ul>${data.fuentes.slice(0,3).map(f => `<li><a href='${f.url}' target='_blank' class='text-blue-300 hover:text-white text-[10px]'>• ${f.titulo}</a></li>`).join('')}</ul>
+                    </div>`;
+                }
+            } catch (err) {
+                console.error(err);
+                responseText = 'Ups, no pude conectarme. ¿Intentamos de nuevo?';
+                suggestions = ['Generar horario', 'Crear horario 3ro INF F'];
+            }
+
+            p.classList.add('hidden');
+            st.classList.add('hidden');
+
+            const msgId = 'msg-' + Date.now();
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'flex gap-3 fade-in';
+            aiMsg.innerHTML = `
+                <div class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-primary shrink-0"><span class="material-symbols-outlined text-sm">auto_awesome</span></div>
+                <div class="ai-bubble p-4 shadow-sm max-w-[95%] border border-white/5 text-white/90">
+                    <div id="${msgId}" class="leading-relaxed text-sm"></div>
+                    <div class="mt-2 text-white/80">${extraHtml}</div>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        ${suggestions.map(s => `<button onclick="sendMessage('${s.replace(/'/g, "\\'")}')" class="chip px-3 py-1.5 rounded-full text-[9px] font-bold transition-all">${s}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+            m.appendChild(aiMsg);
+            m.scrollTop = m.scrollHeight;
+            await typeWriter(document.getElementById(msgId), responseText);
+            m.scrollTop = m.scrollHeight;
+        }
+    </script>
+    {% else %}
+    <!-- Landing Page (Simulated login flow) -->
+    <div class="min-h-screen flex flex-col items-center justify-center bg-primary p-8 relative overflow-hidden">
+        <!-- Background decorative details -->
+        <div class="absolute w-[500px] h-[500px] bg-white/5 rounded-full -top-40 -left-40 blur-3xl pointer-events-none"></div>
+        <div class="absolute w-[400px] h-[400px] bg-black/10 rounded-full -bottom-20 -right-20 blur-2xl pointer-events-none"></div>
+        
+        <div class="glass max-w-lg w-full p-12 rounded-[3rem] text-center text-white flex flex-col items-center relative z-10">
+            <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-28 w-auto object-contain mb-6 drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)]">
+            <h1 class="text-4xl font-black mb-2 tracking-tighter text-white uppercase">RESERVAEDU</h1>
+            <p class="text-white/80 mb-10 font-bold uppercase tracking-widest text-[10px] bg-black/20 px-4 py-1.5 rounded-full border border-white/10">U.E.F. "La Dolorosa" - Loja</p>
+            <button onclick="window.location.href='?user=Anthony28_DNone'" class="w-full bg-white text-primary py-4 rounded-2xl font-black shadow-xl hover:-translate-y-0.5 hover:shadow-black/20 active:scale-95 transition-all uppercase tracking-widest text-xs">Acceder con Google</button>
+            <div class="mt-8 flex justify-center gap-4">
+                <a href="{% url 'login' %}" class="text-[10px] font-bold uppercase tracking-widest hover:underline text-white/85">Acceso Manual</a>
+                <span class="text-white/20">|</span>
+                <a href="{% url 'registro' %}" class="text-[10px] font-bold uppercase tracking-widest hover:underline text-white/85">Registrarse</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>

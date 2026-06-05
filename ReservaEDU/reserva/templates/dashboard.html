@@ -1,0 +1,362 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Panel de Control - The Academic Atelier</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo_dolorosa.png' %}" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#565e74",
+                        "on-surface": "#191c1e",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#90a8ff",
+                        "primary-fixed": "#dce1ff",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#264191",
+                        "on-tertiary-fixed-variant": "#574500",
+                        "primary": "#00236f",
+                        "background": "#f7f9fb",
+                        "on-secondary-fixed": "#131b2e",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed-dim": "#eec200",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-tint": "#4059aa",
+                        "surface-container-highest": "#e0e3e5",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "on-background": "#191c1e",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-bright": "#f7f9fb",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#cea700",
+                        "secondary-container": "#dae2fd",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-container": "#5c647a",
+                        "outline": "#757682",
+                        "on-surface-variant": "#444651",
+                        "secondary-fixed": "#dae2fd",
+                        "on-primary-fixed": "#00164e",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "inverse-primary": "#b6c4ff",
+                        "primary-container": "#1e3a8a",
+                        "outline-variant": "#c5c5d3",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "on-error": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "on-tertiary-container": "#4e3e00",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary-fixed": "#231b00",
+                        "tertiary": "#735c00",
+                        "tertiary-fixed": "#ffe083"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        .font-headline {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface min-h-screen">
+    <!-- SideNavBar Anchor -->
+    <aside
+        class="flex flex-col p-4 gap-2 h-screen border-r border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 docked left-0 h-full w-64 fixed hidden md:flex z-50">
+        <div class="mb-8 px-4">
+            <span class="text-lg font-black text-blue-900 dark:text-white uppercase tracking-widest">THE ATELIER</span>
+            <p class="text-[10px] uppercase tracking-[0.1em] text-on-surface-variant">Digital Concierge</p>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-900 text-blue-900 dark:text-blue-400 rounded-xl shadow-sm scale-98 transition-transform font-medium"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="calendar_view_day">calendar_view_day</span>
+                <span>Spaces</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+                <span>My Bookings</span>
+            </a>
+        </nav>
+        <div class="mt-auto pt-4 border-t border-outline-variant/15 space-y-1">
+            <button
+                class="w-full mb-4 bg-gradient-to-br from-primary to-primary-container text-white py-3 rounded-2xl font-semibold shadow-lg shadow-primary/20 hover:scale-[0.98] transition-transform">
+                New Reservation
+            </button>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                <span>Settings</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-error hover:bg-error-container/20 rounded-xl transition-all"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                <span>Sign Out</span>
+            </a>
+        </div>
+    </aside>
+    <main class="md:ml-64 min-h-screen">
+        <!-- TopNavBar Anchor -->
+        <header
+            class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl text-blue-900 dark:text-blue-400 docked full-width top-0 sticky z-40 flex justify-between items-center px-8 h-16 w-full">
+            <div class="flex items-center gap-4">
+                <h1 class="text-xl font-bold tracking-tight text-blue-900 dark:text-blue-50">Panel de Control</h1>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="relative hidden sm:block">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-symbols-outlined text-outline text-sm" data-icon="search">search</span>
+                    </div>
+                    <input
+                        class="bg-surface-container-high border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary w-64 transition-all"
+                        placeholder="Search spaces..." type="text" />
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="text-slate-500 hover:text-blue-900 transition-colors">
+                        <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                    </button>
+                    <button class="text-slate-500 hover:text-blue-900 transition-colors">
+                        <span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+                    </button>
+                    <div
+                        class="h-8 w-8 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border border-outline-variant/20">
+                        <img alt="User profile avatar" class="h-full w-full object-cover"
+                            data-alt="professional headshot of a person with a friendly expression in soft natural indoor lighting"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB16gTS0BF8zDfBlktqRdK1TwyYeH3vZtcL_gxA-lXSpYb8WE6S86cwTQ9a8fT5UFyUqpi5Dgi-hhDFcxBT_BM67k41xWUqLOiPtyZ57xIAVqI9_ve1Q59EH75sIMtmUhj9063kDK_PnC0dNejc4RztgQvqKq6MIC16cqzRmaI7BkeT79M3-qM241kHbTPzj6dyJmBW-plFNtEwSRszpo7wuHfDzUyOvu-fARKkt_1pKmk9wILBg3e7NNuqv1bnutP0LbsSJdybHPB" />
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        {% block content %}
+        <div class="p-8 max-w-7xl mx-auto space-y-12">
+            <!-- Welcome Hero Section -->
+            <section
+                class="relative overflow-hidden rounded-3xl bg-primary-container p-12 text-on-primary min-h-[320px] flex flex-col justify-end group">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
+                <img alt="Atmospheric library interior"
+                    class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    data-alt="a majestic high-ceilinged library with dark wood shelves filled with books and soft golden warm lighting from desk lamps"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqqhSqqmT986YDRj88oCeI_4Nd0kOxPlFR_vcAsaanvvBiPaLNMtadb75AFIE27Nhp9s9HmZ1avo9i7Cj_pdgn3-N3KVGh4nNLRMJAltfbBXjRXkOd0XILwoLmnpzxKUwT6k-Cz6MGN6ILC5IDxy-KjHYtIdb4d27OQYkyKHLRo91-06QabOKQPCfkasYhXNpqgQXz-a9nMUeHEHm-ANvFNRPUBkE0NMzZmL-vNIfMzt09xzUdHFKL5SeJQ38tj51qur_gCywVq3Ji" />
+                <div class="relative z-20 max-w-2xl">
+                    <span
+                        class="inline-block px-3 py-1 rounded-full bg-tertiary text-on-tertiary text-[10px] font-bold uppercase tracking-widest mb-4">Institutional
+                        Portal</span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">Bienvenido de
+                        nuevo,<br />Académico.</h2>
+                    <p class="text-blue-100 text-lg font-medium opacity-90 max-w-md">Your curated workspace awaits.
+                        Browse available venues or manage your existing reservations with ease.</p>
+                </div>
+            </section>
+            <!-- Category Grid -->
+            <section class="space-y-6">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <h3 class="text-2xl font-bold text-primary">Categorías</h3>
+                        <p class="text-on-surface-variant text-sm uppercase tracking-widest font-medium">Explore by
+                            environment</p>
+                    </div>
+                    <a class="text-primary font-semibold text-sm hover:underline decoration-tertiary decoration-2 underline-offset-4 transition-all"
+                        href="#">Ver todas</a>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Teatro -->
+                    <div
+                        class="group relative overflow-hidden rounded-2xl bg-surface-container-lowest p-8 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col items-center text-center">
+                        <div
+                            class="w-16 h-16 rounded-2xl bg-secondary-container flex items-center justify-center text-primary mb-6 transition-transform group-hover:scale-110">
+                            <span class="material-symbols-outlined text-4xl"
+                                data-icon="theater_comedy">theater_comedy</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-primary mb-2">Teatro</h4>
+                        <p class="text-on-surface-variant text-sm mb-6">Grand stages for performances, seminars, and
+                            keynote events.</p>
+                        <span class="text-xs font-bold text-tertiary uppercase tracking-widest mt-auto">12
+                            Disponibles</span>
+                    </div>
+                    <!-- Sala de reuniones -->
+                    <div
+                        class="group relative overflow-hidden rounded-2xl bg-surface-container-lowest p-8 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col items-center text-center">
+                        <div
+                            class="w-16 h-16 rounded-2xl bg-secondary-container flex items-center justify-center text-primary mb-6 transition-transform group-hover:scale-110">
+                            <span class="material-symbols-outlined text-4xl" data-icon="groups">groups</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-primary mb-2">Sala de reuniones</h4>
+                        <p class="text-on-surface-variant text-sm mb-6">Collaborative environments equipped with modern
+                            technology.</p>
+                        <span class="text-xs font-bold text-tertiary uppercase tracking-widest mt-auto">45
+                            Disponibles</span>
+                    </div>
+                    <!-- Biblioteca -->
+                    <div
+                        class="group relative overflow-hidden rounded-2xl bg-surface-container-lowest p-8 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col items-center text-center">
+                        <div
+                            class="w-16 h-16 rounded-2xl bg-secondary-container flex items-center justify-center text-primary mb-6 transition-transform group-hover:scale-110">
+                            <span class="material-symbols-outlined text-4xl" data-icon="menu_book">menu_book</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-primary mb-2">Biblioteca</h4>
+                        <p class="text-on-surface-variant text-sm mb-6">Silent zones dedicated to deep focus and
+                            research.</p>
+                        <span class="text-xs font-bold text-tertiary uppercase tracking-widest mt-auto">8
+                            Disponibles</span>
+                    </div>
+                </div>
+            </section>
+            <!-- Featured Spaces - Bento Style -->
+            <section class="space-y-6">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <h3 class="text-2xl font-bold text-primary">Espacios Destacados</h3>
+                        <p class="text-on-surface-variant text-sm uppercase tracking-widest font-medium">Curated for
+                            excellence</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[280px]">
+                    <!-- Main Feature -->
+                    <div class="md:col-span-8 md:row-span-2 relative group overflow-hidden rounded-2xl shadow-sm">
+                        <img alt="Grand Auditorium"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            data-alt="a modern minimalist auditorium with tiered wooden seating and architectural cove lighting along the walls"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBigsM-DTD819cq8kr3WMpeXWUJpNmm3Tvu0-0k3XSAUOhvc77q9O4eMsIhix8qIDuiusiidx4a72xh3x2cgFSYH6TXuC5G4j9Ae-e7fcUhYgXE_Z9iDEf0P9qr8HyO0ZA0osi46X_Bt2G9kOD2ePm_C8uI_IpIJTTGfyUu8lWtyFy8_bgUmQAt5N5WYxs2rgCQFrH8UD6H_G9ayFQZeC-y7rn-8qHLq_zDNxyiHBIYj4xzhEaOX2Lc4DIFHUDc7wM_dGo6kEyrYIjT" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-8 text-white w-full">
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <span
+                                        class="text-[10px] font-bold uppercase tracking-[0.2em] text-tertiary mb-2 block">Top
+                                        Rated</span>
+                                    <h4 class="text-3xl font-bold mb-2">Gran Auditorio Central</h4>
+                                    <div class="flex items-center gap-4 text-sm text-slate-300">
+                                        <span class="flex items-center gap-1"><span
+                                                class="material-symbols-outlined text-base"
+                                                data-icon="person">person</span> 500 pax</span>
+                                        <span class="flex items-center gap-1"><span
+                                                class="material-symbols-outlined text-base" data-icon="wifi">wifi</span>
+                                            Ultra High Speed</span>
+                                    </div>
+                                </div>
+                                <button
+                                    class="bg-white text-primary px-6 py-3 rounded-xl font-bold hover:bg-tertiary hover:text-on-tertiary transition-colors">Reservar
+                                    Ahora</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Small Feature 1 -->
+                    <div
+                        class="md:col-span-4 relative group overflow-hidden rounded-2xl shadow-sm bg-surface-container-lowest">
+                        <img alt="Collaborative Lab"
+                            class="absolute inset-0 w-full h-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
+                            data-alt="bright high-tech laboratory workspace with ergonomic white chairs and large glass windows overlooking a city"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8UIGZNPrzCBafUX5ueRlqCiF_iAlWfTWXEzJDjs_gMcYXP71VC6Km9MOsLJ53s5GK_o6ep3G_SLwC1aq8OYuZJ6LERQ-Vg4-AcmlYGelevUBG-9IKifhmXDB29hGEvaYl1jkeIXXj5B50YLxsoJfef3eO-RHU8gq0aQfSGwiB2G3Bo-97drju4FaxPE9SahrHWtvYZUjUgcbcHpddNp5WcMmg4u04-e3jN7jNXzg6oS7xc3amkbnSbfl6j1ctxDECtaf2R2VQa_L6" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-6 text-white">
+                            <h5 class="font-bold text-lg">Sala de Innovación A</h5>
+                            <p class="text-xs text-slate-300">Ideal for tech workshops</p>
+                        </div>
+                    </div>
+                    <!-- Small Feature 2 -->
+                    <div
+                        class="md:col-span-4 relative group overflow-hidden rounded-2xl shadow-sm bg-surface-container-lowest">
+                        <img alt="History Reading Room"
+                            class="absolute inset-0 w-full h-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
+                            data-alt="quiet academic reading room with emerald green leather desk mats and classic brass reading lamps"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAHTkqEKEXNS71xyKtpOX337YnBLv5---AAmBdQ6ZXZRG2VtfS4S_zC3dQsx8cwNWcJkMfaMw7hfPpW2lhFWn0sU2d2u5fHPf4nSXiyPNy1YG8STFAT_ToB43KFs-B9NWU5xSj0MagaHbPP7PBiNYd7Zxj92YYVmX6JEW1XQWUTq3yGJ2283Ok-4ei9X8Pz_ga75OtG0Q2GT8K0LryUlR4iFNNWb80kFAZQmY14w6ZsERTv0vcdoIow7Up3aRnqUS-NkiTTo-XNw-M" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-6 text-white">
+                            <h5 class="font-bold text-lg">Hemeroteca Histórica</h5>
+                            <p class="text-xs text-slate-300">Quiet study &amp; archival research</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        {% endblock %}
+
+        <!-- Floating Quick Action Mobile -->
+        <button
+            class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-50">
+            <span class="material-symbols-outlined" data-icon="add">add</span>
+        </button>
+    </main>
+    <!-- Mobile Bottom NavBar Anchor -->
+    <nav
+        class="md:hidden fixed bottom-0 left-0 right-0 glass-nav h-16 flex items-center justify-around px-4 border-t border-outline-variant/10 z-50">
+        <a class="flex flex-col items-center gap-1 text-blue-900 font-bold" href="#">
+            <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+            <span class="text-[10px]">Home</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+            <span class="material-symbols-outlined" data-icon="calendar_view_day">calendar_view_day</span>
+            <span class="text-[10px]">Spaces</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+            <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+            <span class="text-[10px]">Bookings</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+            <span class="material-symbols-outlined" data-icon="person">person</span>
+            <span class="text-[10px]">Profile</span>
+        </a>
+    </nav>
+</body>
+
+</html>
+
+<!-- Formulario de Reserva -->
