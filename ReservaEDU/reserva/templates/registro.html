@@ -78,10 +78,12 @@
     <div class="absolute inset-0 z-0 bg-black/45 backdrop-blur-[3px]"></div>
 
     <!-- Centered Card -->
-    <div class="relative z-10 w-full max-w-md glass-card rounded-[2.5rem] p-10 shadow-2xl fade-up my-8 border-2 border-[#d4af37]/30">
+    <div class="relative z-10 w-full max-w-md glass-card rounded-[2.5rem] p-10 pt-20 shadow-2xl fade-up my-8 border-2 border-[#d4af37]/30 mt-8">
+        <!-- Circular Gold Medallion Logo (overlapping the top border) -->
+        <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="absolute -top-16 left-1/2 -translate-x-1/2 h-32 w-auto object-contain drop-shadow-[0_4px_15px_rgba(212,175,55,0.45)] z-20">
+
         <!-- Header -->
         <div class="text-center mb-8">
-            <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-20 w-auto object-contain mx-auto mb-4 drop-shadow-[0_2px_10px_rgba(212,175,55,0.3)]">
             <h1 class="text-3xl font-black text-gold-gradient" style="font-family:'Manrope',sans-serif;">Crear Cuenta</h1>
             <p class="text-[#ffe082]/70 text-xs mt-1">Únete a la plataforma de La Dolorosa</p>
         </div>
@@ -123,5 +125,12 @@
             </a>
         </div>
     </footer>
+    
+    <!-- Premium Sparkle/Star in the bottom right -->
+    <div class="absolute bottom-28 right-20 z-0 pointer-events-none opacity-60 animate-pulse hidden lg:block">
+        <svg class="w-12 h-12 text-[#ffe082]/70 drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
+        </svg>
+    </div>
 </body>
 </html>
