@@ -153,8 +153,8 @@
                     </div>
                     {% endif %}
                     <div class="flex items-center gap-4">
-                        <span class="text-sm font-bold text-primary">¡Hola, {{ user.username }}{{ sim_username }}!</span>
-                        <img class="w-8 h-8 rounded-full border border-outline-variant/30" src="https://api.dicebear.com/7.x/initials/svg?seed={{ user.username }}{{ sim_username }}" />
+                        <span class="text-sm font-bold text-primary">¡Hola, {% if user_simulated %}{{ sim_username }}{% else %}{{ user.username }}{% endif %}!</span>
+                        <img class="w-8 h-8 rounded-full border border-outline-variant/30" src="https://api.dicebear.com/7.x/initials/svg?seed={% if user_simulated %}{{ sim_username }}{% else %}{{ user.username }}{% endif %}" />
                     </div>
                 </div>
             </header>
@@ -769,7 +769,7 @@
             <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-28 w-auto object-contain mb-6 drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)]">
             <h1 class="text-4xl font-black mb-2 tracking-tighter text-white uppercase">RESERVAEDU</h1>
             <p class="text-white/80 mb-10 font-bold uppercase tracking-widest text-[10px] bg-black/20 px-4 py-1.5 rounded-full border border-white/10">U.E.F. "La Dolorosa" - Loja</p>
-            <button onclick="window.location.href='?user=Anthony28_DNone'" class="w-full bg-white text-primary py-4 rounded-2xl font-black shadow-xl hover:-translate-y-0.5 hover:shadow-black/20 active:scale-95 transition-all uppercase tracking-widest text-xs">Acceder con Google</button>
+            <button onclick="window.location.href='{% url 'login' %}?next={{ request.path }}'" class="w-full bg-white text-primary py-4 rounded-2xl font-black shadow-xl hover:-translate-y-0.5 hover:shadow-black/20 active:scale-95 transition-all uppercase tracking-widest text-xs">Acceder con Google</button>
             <div class="mt-8 flex justify-center gap-4">
                 <a href="{% url 'login' %}" class="text-[10px] font-bold uppercase tracking-widest hover:underline text-white/85">Acceso Manual</a>
                 <span class="text-white/20">|</span>

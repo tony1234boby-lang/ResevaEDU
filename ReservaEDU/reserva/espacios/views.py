@@ -286,6 +286,7 @@ def social_auth_mock(request):
 def social_login_callback(request):
     username_raw = request.GET.get('user')
     email = request.GET.get('email', '')
+    next_url = request.GET.get('next') or 'inicio'
     if username_raw:
         username = username_raw.lower().replace(' ', '_')[:30]
         user, created = User.objects.get_or_create(username=username)
@@ -298,7 +299,7 @@ def social_login_callback(request):
             user.save()
         
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-        return redirect('inicio')
+        return redirect(next_url)
     return redirect('login')
 
 def registro(request):
