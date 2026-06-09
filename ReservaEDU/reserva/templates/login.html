@@ -9,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
         tailwind.config = {
             theme: {
@@ -198,7 +199,39 @@
     </footer>
 
     <script>
+        function handleCredentialResponse(response) {
+            try {
+                const base64Url = response.credential.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                
+                const payload = JSON.parse(jsonPayload);
+                const name = payload.name;
+                const email = payload.email;
+                
+                // Redirigir a social callback para registrar e iniciar sesión
+                window.location.href = "{% url 'social_login_callback' %}?user=" + encodeURIComponent(name) + "&email=" + encodeURIComponent(email);
+            } catch (e) {
+                console.error("Error al decodificar token de Google:", e);
+            }
+        }
+
         function openGooglePopup() {
+            const client_id = "{{ GOOGLE_CLIENT_ID }}";
+            if (client_id && client_id !== "" && client_id !== "None") {
+                google.accounts.id.prompt((notification) => {
+                    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                        openMockPopup();
+                    }
+                });
+            } else {
+                openMockPopup();
+            }
+        }
+
+        function openMockPopup() {
             const width = 500;
             const height = 600;
             const left = (screen.width - width) / 2;
@@ -236,6 +269,21 @@
                 showManualLogin();
             } else {
                 showWelcome();
+            }
+
+            // Inicializar Google GSI
+            const client_id = "{{ GOOGLE_CLIENT_ID }}";
+            if (client_id && client_id !== "" && client_id !== "None") {
+                try {
+                    google.accounts.id.initialize({
+                        client_id: client_id,
+                        callback: handleCredentialResponse,
+                        auto_select: true // Intenta inicio automático
+                    });
+                    google.accounts.id.prompt(); // Mostrar banner One Tap
+                } catch (e) {
+                    console.warn("Google GSI no se pudo inicializar:", e);
+                }
             }
         });
     </script>

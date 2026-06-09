@@ -311,3 +311,9 @@ def registro(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'registro.html', {'form': form})
+
+def google_settings(request):
+    from django.conf import settings
+    return {
+        'GOOGLE_CLIENT_ID': getattr(settings, 'GOOGLE_CLIENT_ID', '')
+    }

@@ -22,6 +22,7 @@ load_dotenv(BASE_DIR / '.env')
 
 # API Keys (cargadas de forma segura desde el archivo .env)
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
 
 
 
@@ -75,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'espacios.views.google_settings',
             ],
         },
     },
