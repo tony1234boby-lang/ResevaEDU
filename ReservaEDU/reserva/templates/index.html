@@ -11,6 +11,7 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
         tailwind.config = {
@@ -75,6 +76,31 @@
         
         .chip { transition: all 0.2s; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #e3e3e3; }
         .chip:hover { background: rgba(126, 25, 47, 0.1); border-color: #7e192f; transform: translateY(-1px); }
+        
+        /* Mock Google One Tap Slide Animation */
+        #mock-one-tap-container {
+            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+        }
+        #mock-one-tap-container.show {
+            transform: translateX(0) translateY(0) !important;
+            opacity: 1 !important;
+        }
+        @media (max-width: 767px) {
+            #mock-one-tap-container {
+                top: auto !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 1.5rem 1.5rem 0 0 !important;
+                transform: translateY(120%) !important;
+            }
+            #mock-one-tap-container.show {
+                transform: translateY(0) !important;
+                opacity: 1 !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-surface text-on-surface min-h-screen">
@@ -769,7 +795,7 @@
             <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-28 w-auto object-contain mb-6 drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)]">
             <h1 class="text-4xl font-black mb-2 tracking-tighter text-white uppercase">RESERVAEDU</h1>
             <p class="text-white/80 mb-10 font-bold uppercase tracking-widest text-[10px] bg-black/20 px-4 py-1.5 rounded-full border border-white/10">U.E.F. "La Dolorosa" - Loja</p>
-            <button onclick="window.location.href='{% url 'login' %}?next={{ request.path }}'" class="w-full bg-white text-primary py-4 rounded-2xl font-black shadow-xl hover:-translate-y-0.5 hover:shadow-black/20 active:scale-95 transition-all uppercase tracking-widest text-xs">Acceder con Google</button>
+            <button onclick="openGooglePopup()" class="w-full bg-white text-primary py-4 rounded-2xl font-black shadow-xl hover:-translate-y-0.5 hover:shadow-black/20 active:scale-95 transition-all uppercase tracking-widest text-xs">Acceder con Google</button>
             <div class="mt-8 flex justify-center gap-4">
                 <a href="{% url 'login' %}" class="text-[10px] font-bold uppercase tracking-widest hover:underline text-white/85">Acceso Manual</a>
                 <span class="text-white/20">|</span>
@@ -777,6 +803,173 @@
             </div>
         </div>
     </div>
+
+    <!-- Mock Google One Tap Floating Widget -->
+    <div id="mock-one-tap-container" class="fixed top-6 right-6 z-[100] w-[370px] bg-white text-slate-800 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.25),0_1px_3px_rgba(0,0,0,0.1)] border border-slate-200 p-5 flex flex-col pointer-events-auto transform translate-x-[120%] opacity-0 md:max-w-[370px] max-w-[calc(100vw-2rem)] select-none">
+        <!-- One Tap Header -->
+        <div class="flex justify-between items-start mb-3">
+            <div class="flex items-center gap-2.5">
+                <!-- Google SVG Logo -->
+                <svg class="w-6 h-6" viewBox="0 0 24 24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                <div>
+                    <h3 class="text-sm font-semibold text-slate-800">Acceder con Google</h3>
+                    <p class="text-[11px] text-slate-500">para continuar en <span class="font-bold text-slate-700">ReservaEDU</span></p>
+                </div>
+            </div>
+            <!-- Close Button -->
+            <button onclick="closeMockOneTap()" class="text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 p-1 flex items-center justify-center transition-colors">
+                <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+        </div>
+
+        <div id="mock-one-tap-content" class="w-full border-t border-slate-100 mt-2">
+            <!-- Account 1 -->
+            <button onclick="selectMockAccount('TONY JIMENEZ', 'tony1234boby@gmail.com')" class="w-full flex items-center gap-3 py-3 border-b border-slate-100 hover:bg-slate-50 transition-colors text-left group px-1">
+                <img src="https://ui-avatars.com/api/?name=Tony+Jimenez&background=333&color=fff" class="w-8 h-8 rounded-full border border-slate-200" alt="TONY">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[12px] font-medium text-slate-800 truncate">TONY JIMENEZ</p>
+                        <span id="badge-tony" class="hidden text-[9px] text-green-600 font-semibold bg-green-50 px-1.5 py-0.5 rounded border border-green-200">Sesión activa</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 truncate">tony1234boby@gmail.com</p>
+                </div>
+            </button>
+
+            <!-- Account 2 -->
+            <button onclick="selectMockAccount('ANTHONY LEONARDO RAMIREZ JIMENEZ', 'aramirez@ladolorosa-loja.edu.ec')" class="w-full flex items-center gap-3 py-3 border-b border-slate-100 hover:bg-slate-50 transition-colors text-left group px-1">
+                <img src="https://ui-avatars.com/api/?name=Anthony+Ramirez&background=1e3a8a&color=fff" class="w-8 h-8 rounded-full border border-slate-200" alt="ANTHONY">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[12px] font-medium text-slate-800 truncate uppercase">ANTHONY LEONARDO RAMIREZ JIMENEZ</p>
+                        <span id="badge-anthony-leo" class="hidden text-[9px] text-green-600 font-semibold bg-green-50 px-1.5 py-0.5 rounded border border-green-200">Sesión activa</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 truncate">aramirez@ladolorosa-loja.edu.ec</p>
+                </div>
+            </button>
+
+            <!-- Account 3 -->
+            <button onclick="selectMockAccount('Anthony Ramírez', 'anthony@dominio.com')" class="w-full flex items-center gap-3 py-3 hover:bg-slate-50 transition-colors text-left group px-1">
+                <img src="https://api.dicebear.com/7.x/initials/svg?seed=AR&backgroundColor=2d9da6" class="w-8 h-8 rounded-full border border-slate-200" alt="Anthony">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[12px] font-medium text-slate-800 truncate">Anthony Ramírez</p>
+                        <span id="badge-anthony" class="hidden text-[9px] text-green-600 font-semibold bg-green-50 px-1.5 py-0.5 rounded border border-green-200">Sesión activa</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 truncate">anthony@dominio.com</p>
+                </div>
+            </button>
+        </div>
+
+        <!-- Loading spinner layout -->
+        <div id="mock-one-tap-loading" class="hidden w-full flex flex-col items-center justify-center py-8">
+            <svg class="animate-spin h-8 w-8 text-primary mb-3" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-xs text-slate-600 font-medium">Iniciando sesión con Google...</p>
+        </div>
+
+        <!-- Footer -->
+        <p class="text-[9px] text-slate-400 mt-4 leading-normal text-center border-t border-slate-100 pt-3">
+            Para continuar, Google compartirá tu nombre, dirección de correo electrónico y foto de perfil con ReservaEDU.
+        </p>
+    </div>
+
+    <!-- Script Block for Google One Tap / Mock One Tap -->
+    <script>
+        function handleCredentialResponse(response) {
+            try {
+                const base64Url = response.credential.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                
+                const payload = JSON.parse(jsonPayload);
+                const name = payload.name;
+                const email = payload.email;
+                
+                window.location.href = "{% url 'social_login_callback' %}?user=" + encodeURIComponent(name) + "&email=" + encodeURIComponent(email) + "&next=/";
+            } catch (e) {
+                console.error("Error al decodificar token de Google:", e);
+            }
+        }
+
+        function openGooglePopup() {
+            const client_id = "{{ GOOGLE_CLIENT_ID }}";
+            if (client_id && client_id !== "" && client_id !== "None") {
+                google.accounts.id.prompt((notification) => {
+                    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                        showMockOneTap();
+                    }
+                });
+            } else {
+                showMockOneTap();
+            }
+        }
+
+        function showMockOneTap() {
+            const container = document.getElementById('mock-one-tap-container');
+            if (container) {
+                container.classList.add('show');
+            }
+        }
+
+        function closeMockOneTap() {
+            const container = document.getElementById('mock-one-tap-container');
+            if (container) {
+                container.classList.remove('show');
+            }
+        }
+
+        function selectMockAccount(name, email) {
+            document.getElementById('mock-one-tap-content').classList.add('hidden');
+            document.getElementById('mock-one-tap-loading').classList.remove('hidden');
+            
+            localStorage.setItem('last_google_user', email);
+            
+            setTimeout(() => {
+                window.location.href = "{% url 'social_login_callback' %}?user=" + encodeURIComponent(name) + "&email=" + encodeURIComponent(email) + "&next=/";
+            }, 800);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Resaltar cuenta usada recientemente
+            const lastUser = localStorage.getItem('last_google_user');
+            if (lastUser) {
+                if (lastUser === 'tony1234boby@gmail.com') document.getElementById('badge-tony')?.classList.remove('hidden');
+                if (lastUser === 'aramirez@ladolorosa-loja.edu.ec') document.getElementById('badge-anthony-leo')?.classList.remove('hidden');
+                if (lastUser === 'anthony@dominio.com') document.getElementById('badge-anthony')?.classList.remove('hidden');
+            }
+
+            // Inicializar Google GSI
+            const client_id = "{{ GOOGLE_CLIENT_ID }}";
+            if (client_id && client_id !== "" && client_id !== "None") {
+                try {
+                    google.accounts.id.initialize({
+                        client_id: client_id,
+                        callback: handleCredentialResponse,
+                        auto_select: true
+                    });
+                    google.accounts.id.prompt((notification) => {
+                        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                            setTimeout(showMockOneTap, 1500);
+                        }
+                    });
+                } catch (e) {
+                    console.warn("Google GSI no se pudo inicializar:", e);
+                    setTimeout(showMockOneTap, 1500);
+                }
+            } else {
+                setTimeout(showMockOneTap, 1500);
+            }
+        });
+    </script>
     {% endif %}
 </body>
 </html>
