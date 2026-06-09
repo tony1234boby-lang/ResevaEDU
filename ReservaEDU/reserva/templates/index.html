@@ -201,13 +201,27 @@
                         </button>
                     </div>
 
+                    <!-- Sub-category filters row -->
+                    <div id="sub-category-filters" class="mb-8 flex flex-wrap items-center gap-2.5 transition-all duration-300">
+                        <button onclick="filterSubCategory('All')" class="px-5 py-2 rounded-full bg-primary text-white border border-primary font-bold text-xs filter-chip transition-all uppercase tracking-wider shadow-sm" data-subcategory="All">Todos los espacios</button>
+                        <button onclick="filterSubCategory('Teatro')" class="px-5 py-2 rounded-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 font-semibold text-xs filter-chip transition-all uppercase tracking-wider" data-subcategory="Teatro">Teatro</button>
+                        <button onclick="filterSubCategory('Sala de reuniones')" class="px-5 py-2 rounded-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 font-semibold text-xs filter-chip transition-all uppercase tracking-wider" data-subcategory="Sala de reuniones">Sala de reuniones</button>
+                        <button onclick="filterSubCategory('Biblioteca')" class="px-5 py-2 rounded-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 font-semibold text-xs filter-chip transition-all uppercase tracking-wider" data-subcategory="Biblioteca">Biblioteca</button>
+                        <button onclick="filterSubCategory('Laboratorio')" class="px-5 py-2 rounded-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 font-semibold text-xs filter-chip transition-all uppercase tracking-wider" data-subcategory="Laboratorio">Laboratorio</button>
+                        <button onclick="filterSubCategory('Deportivo')" class="px-5 py-2 rounded-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 font-semibold text-xs filter-chip transition-all uppercase tracking-wider" data-subcategory="Deportivo">Deportivo</button>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {% for espacio in espacios %}
                         {% with img=espacio.imagen_url|default:"https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800" %}
                         <article data-category="{{ espacio.categoria }}" class="space-card group bg-white rounded-[2rem] overflow-hidden shadow-sm flex flex-col">
                             <div class="relative h-64 overflow-hidden bg-slate-200">
                                 <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="{{ img }}" onerror="this.src='https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800'" />
-                                <div class="absolute top-4 left-4"><span class="bg-white/90 backdrop-blur-md text-primary text-[10px] font-bold uppercase px-4 py-1.5 rounded-full">{{ espacio.categoria }}</span></div>
+                                <div class="absolute top-4 left-4">
+                                    <button onclick="filterSubCategory('{{ espacio.categoria }}')" class="bg-white/90 backdrop-blur-md text-primary text-[10px] font-bold uppercase px-4 py-1.5 rounded-full hover:bg-white hover:scale-105 active:scale-95 transition-all shadow-sm">
+                                        {{ espacio.categoria }}
+                                    </button>
+                                </div>
                             </div>
                             <div class="p-8 flex-1 flex flex-col">
                                 <h3 class="text-2xl font-bold mb-2">{{ espacio.nombre }}</h3>
@@ -247,22 +261,22 @@
                 <div class="w-full md:w-1/2 h-64 md:h-96 bg-primary relative"><img id="modal-image" class="w-full h-full object-cover"><div class="absolute bottom-4 left-4"><h2 id="modal-title" class="text-white text-2xl font-bold"></h2></div></div>
                 <div class="w-full md:w-1/2 p-8 bg-white flex flex-col gap-5">
                     <div>
-                        <p id="modal-category" class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1"></p>
+                        <p id="modal-category" class="text-xs font-bold text-primary uppercase tracking-widest mb-1"></p>
                         <p id="modal-description" class="text-sm text-slate-500 leading-relaxed"></p>
                     </div>
                     
                     <div class="space-y-4">
                         <div class="flex flex-col gap-1.5">
                             <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2"><span class="material-symbols-outlined text-xs">calendar_today</span> Seleccionar Día</label>
-                            <input id="res-date" type="date" class="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-sm focus:ring-2 focus:ring-blue-900 outline-none transition-all">
+                            <input id="res-date" type="date" class="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none transition-all">
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2"><span class="material-symbols-outlined text-xs">schedule</span> Seleccionar Hora</label>
-                            <input id="res-time" type="time" class="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-sm focus:ring-2 focus:ring-blue-900 outline-none transition-all">
+                            <input id="res-time" type="time" class="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none transition-all">
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2"><span class="material-symbols-outlined text-xs">notifications_active</span> Notificar a las autoridades</label>
-                            <select id="res-notify" class="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-sm focus:ring-2 focus:ring-blue-900 outline-none transition-all">
+                            <select id="res-notify" class="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none transition-all">
                                 <option value="Ninguno">No notificar</option>
                                 <option value="Rector">Rector (P. Néstor Alcívar)</option>
                                 <option value="Administración">Administración Central</option>
@@ -271,11 +285,11 @@
                             </select>
                         </div>
                         <p class="text-xs font-bold text-slate-700 flex items-center gap-2 mt-2">
-                            <span class="material-symbols-outlined text-sm">groups</span> Capacidad: <span id="modal-capacity" class="text-blue-900"></span> Personas
+                            <span class="material-symbols-outlined text-sm">groups</span> Capacidad: <span id="modal-capacity" class="text-primary"></span> Personas
                         </p>
                     </div>
 
-                    <button onclick="confirmReservation()" class="bg-primary text-white w-full py-4 rounded-xl font-bold mt-auto uppercase tracking-widest text-[10px] shadow-lg hover:bg-blue-950 hover:scale-[1.02] active:scale-95 transition-all">
+                    <button onclick="confirmReservation()" class="bg-primary text-white w-full py-4 rounded-xl font-bold mt-auto uppercase tracking-widest text-[10px] shadow-lg hover:bg-primary-dark hover:scale-[1.02] active:scale-95 transition-all">
                         Confirmar Reserva Institucional
                     </button>
                 </div>
@@ -380,6 +394,56 @@
             }
         }
 
+        // ─── Calcular conteos dinámicos de categorías ─────────────────────────
+        function updateCategoryCounts() {
+            try {
+                const counts = { All: 0 };
+                document.querySelectorAll('.space-card').forEach(c => {
+                    const itemCat = c.dataset.category;
+                    if (itemCat && itemCat !== 'Horarios') {
+                        counts.All++;
+                        counts[itemCat] = (counts[itemCat] || 0) + 1;
+                    }
+                });
+
+                document.querySelectorAll('.filter-chip').forEach(b => {
+                    const subCat = b.dataset.subcategory;
+                    const count = counts[subCat] || 0;
+                    // Get base name
+                    let name = b.innerText.split('(')[0].trim();
+                    b.innerText = `${name} (${count})`;
+                });
+            } catch (e) {
+                console.warn("Error al calcular conteo de categorías:", e);
+            }
+        }
+
+        // ─── Filtrar por subcategoría ────────────────────────────────────────
+        function filterSubCategory(subCat) {
+            document.querySelectorAll('.filter-chip').forEach(b => {
+                if (b.dataset.subcategory === subCat) {
+                    b.classList.remove('bg-white', 'text-slate-600', 'border-slate-200', 'hover:bg-slate-50');
+                    b.classList.add('bg-primary', 'text-white', 'border-primary', 'shadow-sm');
+                } else {
+                    b.classList.add('bg-white', 'text-slate-600', 'border-slate-200', 'hover:bg-slate-50');
+                    b.classList.remove('bg-primary', 'text-white', 'border-primary', 'shadow-sm');
+                }
+            });
+
+            document.querySelectorAll('.space-card').forEach(c => {
+                const itemCat = c.dataset.category;
+                if (itemCat === 'Horarios') {
+                    c.style.display = 'none';
+                } else {
+                    if (subCat === 'All' || itemCat === subCat) {
+                        c.style.display = '';
+                    } else {
+                        c.style.display = 'none';
+                    }
+                }
+            });
+        }
+
         // ─── Filtrar tarjetas por categoría ─────────────────────────────────
         function filterSpaces(cat) {
             // Botón eliminar todos
@@ -387,6 +451,26 @@
             if (delBtn) {
                 if (cat === 'Horarios') delBtn.classList.remove('hidden');
                 else delBtn.classList.add('hidden');
+            }
+
+            // Mostrar/ocultar filtros de subcategorías
+            const subCatFilters = document.getElementById('sub-category-filters');
+            if (subCatFilters) {
+                if (cat === 'Espacios') {
+                    subCatFilters.classList.remove('hidden');
+                    // Reset sub-category active state to 'All'
+                    document.querySelectorAll('.filter-chip').forEach(b => {
+                        if (b.dataset.subcategory === 'All') {
+                            b.classList.remove('bg-white', 'text-slate-600', 'border-slate-200', 'hover:bg-slate-50');
+                            b.classList.add('bg-primary', 'text-white', 'border-primary', 'shadow-sm');
+                        } else {
+                            b.classList.add('bg-white', 'text-slate-600', 'border-slate-200', 'hover:bg-slate-50');
+                            b.classList.remove('bg-primary', 'text-white', 'border-primary', 'shadow-sm');
+                        }
+                    });
+                } else {
+                    subCatFilters.classList.add('hidden');
+                }
             }
 
             // Resaltar botón de filtro activo
@@ -650,6 +734,7 @@
                 localStorage.removeItem('saved_schedules');
                 console.warn('localStorage corrupto, limpiado.');
             }
+            updateCategoryCounts();
             filterSpaces('Espacios');
         }
 
@@ -902,7 +987,7 @@
 
         function openGooglePopup() {
             const client_id = "{{ GOOGLE_CLIENT_ID }}";
-            if (client_id && client_id !== "" && client_id !== "None") {
+            if (typeof google !== 'undefined' && client_id && client_id !== "" && client_id !== "None" && client_id !== "TU_ID_DE_CLIENTE_AQUI") {
                 google.accounts.id.prompt((notification) => {
                     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
                         showMockOneTap();
@@ -949,7 +1034,7 @@
 
             // Inicializar Google GSI
             const client_id = "{{ GOOGLE_CLIENT_ID }}";
-            if (client_id && client_id !== "" && client_id !== "None") {
+            if (typeof google !== 'undefined' && client_id && client_id !== "" && client_id !== "None" && client_id !== "TU_ID_DE_CLIENTE_AQUI") {
                 try {
                     google.accounts.id.initialize({
                         client_id: client_id,

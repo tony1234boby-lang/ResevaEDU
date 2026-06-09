@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Nueva Reserva - The Academic Atelier</title>
+    <title>Nueva Reserva - ReservaEDU | La Dolorosa</title>
     <link rel="icon" type="image/png" href="{% static 'images/logo_dolorosa.png' %}" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
@@ -34,7 +34,7 @@
                         "error": "#ba1a1a",
                         "on-primary-fixed-variant": "#264191",
                         "on-tertiary-fixed-variant": "#574500",
-                        "primary": "#00236f",
+                        "primary": "#7e192f",
                         "background": "#f7f9fb",
                         "on-secondary-fixed": "#131b2e",
                         "surface-container-low": "#f2f4f6",
@@ -42,7 +42,7 @@
                         "on-tertiary": "#ffffff",
                         "surface": "#f7f9fb",
                         "surface-container-high": "#e6e8ea",
-                        "surface-tint": "#4059aa",
+                        "surface-tint": "#7e192f",
                         "surface-container-highest": "#e0e3e5",
                         "secondary-fixed-dim": "#bec6e0",
                         "on-background": "#191c1e",
@@ -60,7 +60,7 @@
                         "on-primary-fixed": "#00164e",
                         "primary-fixed-dim": "#b6c4ff",
                         "inverse-primary": "#b6c4ff",
-                        "primary-container": "#1e3a8a",
+                        "primary-container": "#7e192f",
                         "outline-variant": "#c5c5d3",
                         "on-secondary-fixed-variant": "#3f465c",
                         "on-error": "#ffffff",
@@ -121,49 +121,51 @@
 
         .form-django input:focus {
             background-color: #ffffff;
-            ring: 1px;
-            ring-color: #00236f;
-            outline: 1px solid #00236f;
+            outline: 1px solid #7e192f;
+            box-shadow: 0 0 0 1px #7e192f;
         }
     </style>
 </head>
 
 <body class="bg-background text-on-surface font-body min-h-screen">
     <aside
-        class="flex flex-col p-4 gap-2 h-screen border-r border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 docked left-0 h-full w-64 fixed hidden md:flex">
-        <div class="mb-8 px-4 py-2">
-            <h1 class="text-lg font-black text-blue-900 dark:text-white uppercase tracking-widest">The Atelier</h1>
-            <p class="text-[10px] font-medium text-slate-500 uppercase tracking-[0.1em]">Digital Concierge</p>
+        class="flex flex-col p-4 gap-2 h-screen border-r border-slate-200 bg-slate-50 docked left-0 h-full w-64 fixed hidden md:flex">
+        <div class="mb-6 px-4 flex flex-col items-center gap-3">
+            <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-16 w-auto object-contain mt-2 drop-shadow-sm">
+            <div class="text-center">
+                <h2 class="text-xl font-black text-primary uppercase tracking-tighter">RESERVAEDU</h2>
+                <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">La Dolorosa</p>
+            </div>
         </div>
         <nav class="flex-1 flex flex-col gap-2">
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all"
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold"
                 href="{% url 'inicio' %}">
                 <span class="material-symbols-outlined">grid_view</span>
-                <span class="font-medium">Espacios</span>
+                <span>Espacios</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all"
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold"
                 href="{% url 'mis_reservas' %}">
                 <span class="material-symbols-outlined">event_available</span>
-                <span class="font-medium">Mis Reservas</span>
+                <span>Mis Reservas</span>
             </a>
             {% if es_secretaria %}
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all"
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold"
                 href="{% url 'dashboard_secretaria' %}">
                 <span class="material-symbols-outlined">dashboard</span>
-                <span class="font-medium">Panel Secretaría</span>
+                <span>Panel Secretaría</span>
             </a>
             {% endif %}
         </nav>
-        <div class="mt-auto flex flex-col gap-2 pt-4 border-t border-slate-200/50">
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all"
+        <div class="mt-auto flex flex-col gap-2 pt-4 border-t border-slate-200">
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-medium"
                 href="#">
-                <span class="material-symbols-outlined" data-icon="settings">settings</span>
-                <span class="font-medium">Settings</span>
+                <span class="material-symbols-outlined">settings</span>
+                <span>Ajustes</span>
             </a>
             <form action="{% url 'logout' %}" method="post" class="w-full m-0">
                 {% csrf_token %}
                 <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all text-left font-bold border-none bg-transparent cursor-pointer">
-                    <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                    <span class="material-symbols-outlined">logout</span>
                     <span>Cerrar sesión</span>
                 </button>
             </form>
@@ -171,13 +173,12 @@
     </aside>
     <main class="md:ml-64 min-h-screen">
         <header
-            class="flex justify-between items-center px-8 h-16 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl docked full-width top-0 sticky z-40">
+            class="flex justify-between items-center px-8 h-16 w-full bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-200">
             <div class="flex items-center gap-4">
                 <button class="md:hidden p-2 text-primary">
-                    <span class="material-symbols-outlined" data-icon="menu">menu</span>
+                    <span class="material-symbols-outlined">menu</span>
                 </button>
-                <h2 class="text-xl font-bold tracking-tight text-blue-900 dark:text-blue-50 font-headline">Nueva Reserva
-                </h2>
+                <h2 class="text-xl font-bold tracking-tight text-primary font-headline">Nueva Reserva</h2>
             </div>
             <div class="flex items-center gap-6">
                 <!-- Campana de Notificaciones -->

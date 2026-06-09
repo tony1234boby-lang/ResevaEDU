@@ -8,16 +8,19 @@ django.setup()
 from espacios.models import Espacio
 
 def populate():
+    # Eliminar espacios antiguos con errores ortográficos si existen
+    Espacio.objects.filter(nombre__in=["sala de reuniiones", "labotario de Informatica", "mini teatro"]).delete()
+
     espacios_data = [
         {
-            "nombre": "mini teatro",
+            "nombre": "Mini Teatro",
             "categoria": "Teatro",
             "descripcion": "Espacio majestuoso de acústica impecable, ideal para eventos culturales y académicos de gran escala.",
             "capacidad": 450,
             "imagen_url": "https://lh3.googleusercontent.com/aida-public/AB6AXuCPX8ytcOeNLDqht-x2jWKMtnldPCDQ5iAr4zpay9oAJGRHvafkD4IX8YVVInSmMdhvdtBavFY_KXpRtNDkJyp_ZvRYS2XI_B3g3NwgkSxbBKzlpv4u2hc4nFF-haxzvYsuS4tHIUhj4kMn2QAhDKn3to3xVZ6Rw2Mwz_YrvfGnxci1BjUO0Z47KUAeiaQU-9znaZTqYIDX3gVZeX3jE7ojANqwWJhyRLJke9OIMtj5Kc3lbhb6OjwIck4OHax0GrAXkGROcIH_Hbcw"
         },
         {
-            "nombre": "sala de reuniiones",
+            "nombre": "Sala de Reuniones",
             "categoria": "Sala de reuniones",
             "descripcion": "Sala equipada con tecnología de punta para videoconferencias y juntas directivas.",
             "capacidad": 12,
@@ -31,7 +34,7 @@ def populate():
             "imagen_url": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&q=80&w=800"
         },
         {
-            "nombre": "labotario de Informatica",
+            "nombre": "Laboratorio de Informática",
             "categoria": "Laboratorio",
             "descripcion": "Equipado con kits de Arduino, sensores y estaciones de soldadura para proyectos técnicos.",
             "capacidad": 25,

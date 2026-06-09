@@ -12,17 +12,18 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Cargar variables de entorno desde el archivo .env
-load_dotenv(BASE_DIR / '.env')
+# Inicializar environ
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / '.env')
 
 # API Keys (cargadas de forma segura desde el archivo .env)
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
-GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
+GEMINI_API_KEY = env('GEMINI_API_KEY', default='')
+GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID', default='')
 
 
 
@@ -35,6 +36,7 @@ SECRET_KEY = 'django-insecure-^4ru-$+&vqii2_-1vu3*l+5y)ck3fp@(h(tc()ybs3v4mc3tyk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+# Host configuration
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = ['https://reservaedu.onrender.com']
@@ -50,6 +52,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'espacios',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 MIDDLEWARE = [
@@ -59,9 +71,9 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
 ]
 
 ROOT_URLCONF = 'reserva.urls'
@@ -140,3 +152,16 @@ STATICFILES_DIRS = [
 LOGIN_REDIRECT_URL = 'inicio'
 LOGOUT_REDIRECT_URL = 'inicio'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Google allauth configuration
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': env('GOOGLE_CLIENT_ID'),
+            'secret': env('GOOGLE_CLIENT_SECRET'),
+            'key': ''
+        }
+    }
+}
+
+SITE_ID = 1

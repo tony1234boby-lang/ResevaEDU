@@ -1,482 +1,211 @@
 {% load static %}
 <!DOCTYPE html>
-
 <html class="light" lang="es">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Mis Reservas - The Academic Atelier</title>
+    <title>Mis Reservas - ReservaEDU | La Dolorosa</title>
     <link rel="icon" type="image/png" href="{% static 'images/logo_dolorosa.png' %}" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        h1,
-        h2,
-        h3,
-        .display-font {
-            font-family: 'Manrope', sans-serif;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
-                    "colors": {
-                        "secondary": "#565e74",
-                        "on-surface": "#191c1e",
-                        "surface-dim": "#d8dadc",
-                        "surface-container-lowest": "#ffffff",
-                        "on-primary-container": "#90a8ff",
-                        "primary-fixed": "#dce1ff",
-                        "on-secondary": "#ffffff",
-                        "error": "#ba1a1a",
-                        "on-primary-fixed-variant": "#264191",
-                        "on-tertiary-fixed-variant": "#574500",
-                        "primary": "#00236f",
-                        "background": "#f7f9fb",
-                        "on-secondary-fixed": "#131b2e",
-                        "surface-container-low": "#f2f4f6",
-                        "tertiary-fixed-dim": "#eec200",
-                        "on-tertiary": "#ffffff",
-                        "surface": "#f7f9fb",
-                        "surface-container-high": "#e6e8ea",
-                        "surface-tint": "#4059aa",
-                        "surface-container-highest": "#e0e3e5",
-                        "secondary-fixed-dim": "#bec6e0",
-                        "on-background": "#191c1e",
-                        "inverse-on-surface": "#eff1f3",
-                        "surface-bright": "#f7f9fb",
-                        "on-error-container": "#93000a",
-                        "tertiary-container": "#cea700",
-                        "secondary-container": "#dae2fd",
-                        "error-container": "#ffdad6",
-                        "inverse-surface": "#2d3133",
-                        "on-secondary-container": "#5c647a",
-                        "outline": "#757682",
-                        "on-surface-variant": "#444651",
-                        "secondary-fixed": "#dae2fd",
-                        "on-primary-fixed": "#00164e",
-                        "primary-fixed-dim": "#b6c4ff",
-                        "inverse-primary": "#b6c4ff",
-                        "primary-container": "#1e3a8a",
-                        "outline-variant": "#c5c5d3",
-                        "on-secondary-fixed-variant": "#3f465c",
-                        "on-error": "#ffffff",
-                        "surface-container": "#eceef0",
-                        "on-tertiary-container": "#4e3e00",
-                        "on-primary": "#ffffff",
-                        "surface-variant": "#e0e3e5",
-                        "on-tertiary-fixed": "#231b00",
-                        "tertiary": "#735c00",
-                        "tertiary-fixed": "#ffe083"
+                    colors: {
+                        primary: "#7e192f", // Vino institucional
+                        "primary-dark": "#5c0f1e",
+                        secondary: "#5A626A",
+                        surface: "#F8FAFC",
+                        "on-surface": "#1E293B",
+                        "surface-container-low": "#F1F5F9",
+                        "on-surface-variant": "#475569",
+                        "outline-variant": "#CBD5E1",
+                        accent: "#D97706"
                     },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
+                    borderRadius: {
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
                     },
-                    "fontFamily": {
-                        "headline": ["Manrope"],
-                        "body": ["Inter"],
-                        "label": ["Inter"]
+                    fontFamily: {
+                        headline: ["Manrope"],
+                        body: ["Inter"],
+                        label: ["Inter"]
                     }
                 }
             }
         }
     </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .display-font { font-family: 'Manrope', sans-serif; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
 
 <body class="bg-surface text-on-surface min-h-screen">
-    <!-- TopNavBar -->
-    <header
-        class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl flex justify-between items-center px-8 h-16 w-full docked full-width top-0 sticky z-40">
-        <div class="flex items-center gap-4">
-            <span class="text-xl font-bold tracking-tight text-blue-900 dark:text-blue-50">The Academic Atelier</span>
-        </div>
-        <div class="hidden md:flex items-center gap-8">
-            <nav class="flex items-center gap-6">
-                <a class="text-slate-500 dark:text-slate-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200"
-                    href="#">Dashboard</a>
-                <a class="text-slate-500 dark:text-slate-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200"
-                    href="#">Spaces</a>
-                <a class="text-blue-900 dark:text-blue-400 font-bold border-b-2 border-yellow-500" href="#">My
-                    Bookings</a>
-            </nav>
-            <div class="flex items-center gap-4 pl-4">
-                <span class="material-symbols-outlined text-on-surface-variant cursor-pointer">notifications</span>
-                <span class="material-symbols-outlined text-on-surface-variant cursor-pointer">help_outline</span>
-                <div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high">
-                    <img alt="User profile avatar"
-                        data-alt="Close-up portrait of a professional man in a business suit with a friendly and composed expression, high-end studio lighting"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuATuRSpZglA8ryvOyaJSprqsLU-NUHPArqN0es3-ej18DX2IDYDHUgsNpE--m_my-y4WRD8p3fWlMYTYo6s5AlRRNAMP92SqHRdfIN2C_RZy5kwa3lzoe8sR2XxX9W85TERFao3iKw0r1bEIvhxU-3G3IpTGazM4FLzVM8-R6aLm8YMYfnxepf6o_nH6Cmp7yYTzVi2xVDZnOVIQNh6ODsueJH-A50C4od7id5TxsBZV-ZOCUnDZXeC4udbOOp53FP_fmltmmaAu6kj" />
-                </div>
-            </div>
-        </div>
-    </header>
-    <div class="flex min-h-[calc(100vh-64px)]">
+    <div class="flex">
         <!-- SideNavBar -->
-        <aside
-            class="hidden md:flex flex-col p-4 gap-2 h-full w-64 border-r border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
-            <div class="px-4 py-6 mb-4">
-                <div class="text-lg font-black text-blue-900 dark:text-white uppercase tracking-widest">The Atelier
+        <aside class="hidden md:flex flex-col p-4 gap-2 h-screen border-r border-slate-200 bg-slate-50 fixed left-0 w-64 z-50">
+            <div class="mb-6 px-4 flex flex-col items-center gap-3">
+                <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-16 w-auto object-contain mt-2 drop-shadow-sm">
+                <div class="text-center">
+                    <h2 class="text-xl font-black text-primary uppercase tracking-tighter">RESERVAEDU</h2>
+                    <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">La Dolorosa</p>
                 </div>
-                <div class="text-[10px] text-on-surface-variant uppercase tracking-[0.1em] font-medium">Digital
-                    Concierge</div>
             </div>
-            <nav class="flex flex-col gap-2">
-                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all"
-                    href="#">
-                    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-                    <span class="font-medium">Dashboard</span>
+            <nav class="flex-1 flex flex-col gap-2">
+                <a id="nav-spaces" href="{% url 'inicio' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold">
+                    <span class="material-symbols-outlined">grid_view</span>
+                    <span>Espacios</span>
                 </a>
-                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all"
-                    href="#">
-                    <span class="material-symbols-outlined" data-icon="calendar_view_day">calendar_view_day</span>
-                    <span class="font-medium">Spaces</span>
+                <a id="nav-reservations" href="{% url 'mis_reservas' %}" class="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl shadow-lg transition-all font-bold">
+                    <span class="material-symbols-outlined">event_available</span>
+                    <span>Mis Reservas</span>
                 </a>
-                <a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-900 text-blue-900 dark:text-blue-400 rounded-xl shadow-sm scale-98 transition-transform"
-                    href="#">
-                    <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
-                    <span class="font-bold">My Bookings</span>
+                {% if es_secretaria %}
+                <a id="nav-secretaria" href="{% url 'dashboard_secretaria' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Panel Secretaría</span>
                 </a>
+                {% endif %}
             </nav>
-            <div class="mt-auto flex flex-col gap-2 pt-8">
-                <button
-                    class="bg-gradient-to-br from-primary to-primary-container text-on-primary py-3 px-6 rounded-xl font-bold mb-4 flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-sm">add</span>
-                    New Reservation
-                </button>
-                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 transition-all rounded-xl"
-                    href="#">
-                    <span class="material-symbols-outlined" data-icon="settings">settings</span>
-                    <span class="text-sm">Settings</span>
+            <div class="mt-auto pt-4 flex flex-col gap-1 border-t border-slate-200">
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-medium" href="#">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Ajustes</span>
                 </a>
-                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 transition-all rounded-xl"
-                    href="#">
-                    <span class="material-symbols-outlined" data-icon="logout">logout</span>
-                    <span class="text-sm font-medium">Sign Out</span>
-                </a>
+                <form action="{% url 'logout' %}" method="post" class="w-full m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all text-left font-bold">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </form>
             </div>
         </aside>
+
         <!-- Main Content Area -->
-        <main class="flex-1 p-8 lg:p-12 bg-surface">
-            <header class="mb-12">
-                <div class="flex flex-col gap-1">
-                    <span
-                        class="text-xs font-bold text-on-surface-variant uppercase tracking-[0.1em] font-label">Atelier
-                        Dashboard</span>
-                    <h1 class="text-4xl md:text-5xl font-extrabold text-primary display-font tracking-tight">Mis
-                        Reservas</h1>
+        <main class="flex-1 md:ml-64 min-h-screen">
+            <!-- TopNavBar -->
+            <header class="flex justify-between items-center px-8 h-16 w-full bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-200">
+                <div class="flex items-center gap-3">
+                    <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-8 w-auto object-contain">
+                    <span class="text-lg font-black text-primary">RESERVAEDU</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm font-bold text-primary">¡Hola, {{ request.user.username }}!</span>
+                        <img class="w-8 h-8 rounded-full border border-outline-variant/30" src="https://api.dicebear.com/7.x/initials/svg?seed={{ request.user.username }}" />
+                    </div>
                 </div>
             </header>
-            <!-- Bookings List Container -->
-            <div class="relative">
-                <!-- Bento Grid Layout for reservations -->
-                <div class="grid grid-cols-1 gap-6">
-                    <!-- Django Loop Placeholder -->
-                    {% for reserva in mis_reservas %}
-                    <div
-                        class="group bg-surface-container-lowest rounded-xl p-6 transition-all duration-300 hover:shadow-[0_32px_64px_-12px_rgba(25,28,30,0.06)] flex flex-col md:flex-row md:items-center justify-between gap-6 border-l-4 border-tertiary">
-                        <!-- Space Identification -->
-                        <div class="flex items-center gap-5">
-                            <div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0">
-                                <img alt="Space view"
-                                    data-alt="Modern minimalist study space with large windows, dark wood desk, and high-end ergonomic chair in a soft daylight setting"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmD4gHHsTHLjZ-UXsGTUUcIPzHXA6k3RGcrh6UAwUItAk45BTYPZ4Iu-gF_sT6zyQoN57PDi4AMkkfJObo6KLa2ugYEXJ1xQ1EAvdDPLzvfUcT3CnawpFs_11HqrqetgUHP6BnT7lRcw7wFk5CDYimT1zVKw6W5qLL7Q3NcJ9wR-CCvdZT6ffIUbhkvl72CuRdvZGrhOr0onUF-kwgb5feQxjg-UqAoa6L7b8ofGLT_-YbUDtklQPt0u5l-Ysb0ez3w6XdSZ6YNKpp" />
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-primary mb-1">{{ reserva.espacio_nombre }}</h3>
-                                <div class="flex items-center gap-3 text-on-surface-variant text-sm">
-                                    <span class="flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-[18px]">location_on</span>
-                                        Wing A, Level 2
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Time and Date -->
-                        <div class="grid grid-cols-2 md:flex items-center gap-8 md:gap-12">
-                            <div class="flex flex-col gap-1">
-                                <span
-                                    class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Fecha</span>
-                                <span class="font-semibold text-on-surface">{{ reserva.fecha }}</span>
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <span
-                                    class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Horario</span>
-                                <span class="font-semibold text-on-surface">{{ reserva.hora_inicio }} - {{
-                                    reserva.hora_fin }}</span>
-                            </div>
-                        </div>
-                        <!-- Status Badge and Actions -->
-                        <div
-                            class="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-4 md:pt-0 border-surface-container-high">
-                            <div class="flex flex-col gap-1">
-                                <span
-                                    class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold text-right hidden md:block">Estado</span>
-                                <div
-                                    class="px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5 {% if reserva.status == 'Confirmed' %} bg-secondary-container text-on-primary-fixed-variant {% elif reserva.status == 'Pending' %} bg-tertiary-fixed text-on-tertiary-fixed-variant {% else %} bg-surface-container-high text-on-surface-variant {% endif %}">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                                    {{ reserva.status }}
-                                </div>
-                            </div>
-                            <button
-                                class="px-6 py-2.5 rounded-xl text-sm font-bold bg-surface-container-high text-on-secondary-fixed-variant hover:bg-error hover:text-on-error transition-all duration-200 active:scale-95">
-                                Cancelar Reserva
-                            </button>
-                        </div>
-                    </div>
-                    {% endfor %}
 
-                    <!-- Mock Entry 1 (For visual reference) -->
-                    <div
-                        class="bg-surface-container-lowest rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 border-l-4 border-tertiary">
-                        <div class="flex items-center gap-5">
-                            <div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0">
-                                <img alt="Library Space"
-                                    data-alt="Contemporary private study cubicle in a high-end academic library with warm pendant lighting and acoustic wall panels"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1suzbuOU7O90QeQaHA_0VT0yd4iRy_HeGcAaWGWonwOmgLQbfHbV4FWO36d8pdHYiFmyI5kjHemMWj9lpdgbPrTrPKoKOpvfrX6uTFLYxN5bgoul22JB_VHb4fJ9HFyRB-ohZZk3laX8yOtmZJs7QZGtCG7XplClEkxN2vf9yCZta3VceKvH3yJtqfdBLLnGnW0elofyGw60iuyxRipX4sjVSFZkMu8QkIV0szqGepqUBZlnI6aLEtiHBm70Np7EvfjnaWwolQ0el" />
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-primary mb-1">Biblioteca Central - Cubículo 04</h3>
-                                <div class="flex items-center gap-3 text-on-surface-variant text-sm">
-                                    <span class="flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-[18px]">location_on</span>
-                                        Planta Principal
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 md:flex items-center gap-8 md:gap-12">
-                            <div class="flex flex-col gap-1">
-                                <span
-                                    class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Fecha</span>
-                                <span class="font-semibold text-on-surface">24 Oct 2023</span>
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <span
-                                    class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Horario</span>
-                                <span class="font-semibold text-on-surface">09:00 - 11:30</span>
-                            </div>
-                        </div>
-                        <div
-                            class="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-4 md:pt-0 border-surface-container-high">
-                            <div class="flex flex-col gap-1">
-                                <span
-                                    class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold text-right hidden md:block">Estado</span>
-                                <div
-                                    class="px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5 bg-secondary-container text-on-primary-fixed-variant">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                                    Confirmed
-                                </div>
-                            </div>
-                            <button
-                                class="px-6 py-2.5 rounded-xl text-sm font-bold bg-surface-container-high text-on-secondary-fixed-variant hover:bg-error hover:text-on-error transition-all duration-200 active:scale-95">
-                                Cancelar Reserva
-                            </button>
-                        </div>
+            <div class="p-8 lg:p-12">
+                <header class="mb-12">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Portal del Estudiante/Docente</span>
+                        <h1 class="text-4xl md:text-5xl font-extrabold text-primary display-font tracking-tight">Mis Reservas</h1>
                     </div>
-                    <!-- Mock Entry 2 (For visual reference) -->
-                    <div
-                        class="bg-surface-container-lowest rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 border-l-4 border-tertiary-fixed-dim">
-                        <div class="flex items-center gap-5">
-                            <div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0">
-                                <img alt="Conference Room"
-                                    data-alt="Luxurious small meeting room with a round oak table, leather chairs, and a glass wall with frosted privacy film"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoeqnYyv7zBLPAoCmvINDllqZXEChYDYhuWy6sGLXvumfr2AaEbkVPrQJkWqdsPdUtZd4Eb0HT5DwjWFsoOySDVW2ms_TN03IX55pR2Ye2NFyhkZ4tff_Iw-l9ecp83lVlFFr7oT_5r6clpnH7xZwkeeIvALBaaqnm7FuiYmm24eJR7UKYAFbKqUivfXIrv_SIF3Gid7mXeYYKs8qjkut__JM1wjfLMSWb4_ErD6kC6qq-_O1nnBQafFhye7wmojGa9RrhZTrh2gf6" />
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-primary mb-1">Sala de Innovación B</h3>
-                                <div class="flex items-center gap-3 text-on-surface-variant text-sm">
-                                    <span class="flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-[18px]">location_on</span>
-                                        Tech Hub - Nivel 3
-                                    </span>
+                </header>
+
+                <!-- Bookings List Container -->
+                <div class="relative">
+                    <div class="grid grid-cols-1 gap-6">
+                        {% if mis_reservas %}
+                            {% for r in mis_reservas %}
+                            <div class="group bg-white rounded-3xl p-6 transition-all duration-300 hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6 border border-slate-100 fade-in">
+                                <!-- Space Identification -->
+                                <div class="flex items-center gap-5">
+                                    <div class="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-primary shrink-0">
+                                        <span class="material-symbols-outlined text-3xl">
+                                            {% if r.espacio.categoria == 'Teatro' %}theater_comedy
+                                            {% elif r.espacio.categoria == 'Biblioteca' %}menu_book
+                                            {% elif r.espacio.categoria == 'Laboratorio' %}science
+                                            {% elif r.espacio.categoria == 'Deportivo' %}sports_soccer
+                                            {% else %}groups{% endif %}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-bold text-primary mb-1">{{ r.espacio.nombre }}</h3>
+                                        <div class="flex items-center gap-3 text-slate-400 text-xs font-semibold">
+                                            <span class="flex items-center gap-1">
+                                                <span class="material-symbols-outlined text-sm">groups</span>
+                                                Capacidad: {{ r.espacio.capacidad }} personas
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Time and Date -->
+                                <div class="grid grid-cols-2 md:flex items-center gap-8 md:gap-12">
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Fecha</span>
+                                        <span class="font-semibold text-slate-700">{{ r.fecha }}</span>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Horario</span>
+                                        <span class="font-semibold text-slate-700">{{ r.hora_inicio|time:"H:i" }} - {{ r.hora_fin|time:"H:i" }}</span>
+                                    </div>
+                                </div>
+                                <!-- Status Badge and Actions -->
+                                <div class="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-4 md:pt-0 border-slate-100">
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-[10px] uppercase tracking-widest text-slate-400 font-bold text-right hidden md:block">Estado</span>
+                                        <div class="px-3.5 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5 
+                                            {% if r.estado == 'aprobada' %} bg-green-50 text-green-700 
+                                            {% elif r.estado == 'pendiente' %} bg-amber-50 text-amber-700 
+                                            {% else %} bg-red-50 text-red-700 {% endif %}">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>
+                                            <span class="capitalize">{{ r.estado }}</span>
+                                        </div>
+                                    </div>
+                                    <a href="{% url 'cancelar_reserva' r.id %}" onclick="return confirm('¿Estás seguro de que deseas cancelar esta reserva?');"
+                                        class="px-6 py-2.5 rounded-xl text-xs font-bold bg-slate-50 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-100 border border-slate-100 transition-all duration-200">
+                                        Cancelar
+                                    </a>
                                 </div>
                             </div>
-                        </div>
-                        <div class="grid grid-cols-2 md:flex items-center gap-8 md:gap-12">
-                            <div class="flex flex-col gap-1">
-                                <span
-                                    class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Fecha</span>
-                                <span class="font-semibold text-on-surface">26 Oct 2023</span>
+                            {% endfor %}
+                        {% else %}
+                            <div class="bg-white rounded-[2.5rem] p-20 text-center border-2 border-dashed border-slate-200/60 flex flex-col items-center justify-center">
+                                <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">event_busy</span>
+                                <h3 class="text-xl font-bold text-slate-700 mb-1">Aún no tienes reservas</h3>
+                                <p class="text-slate-400 text-sm max-w-sm">Tus solicitudes de reservas de espacios académicos aparecerán aquí.</p>
+                                <a href="{% url 'inicio' %}" class="mt-6 bg-primary text-white px-8 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-primary-dark transition-all shadow-md">Reservar un espacio</a>
                             </div>
-                            <div class="flex flex-col gap-1">
-                                <span
-                                    class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Horario</span>
-                                <span class="font-semibold text-on-surface">14:00 - 16:00</span>
-                            </div>
-                        </div>
-                        <div
-                            class="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-4 md:pt-0 border-surface-container-high">
-                            <div class="flex flex-col gap-1">
-                                <span
-                                    class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold text-right hidden md:block">Estado</span>
-                                <div
-                                    class="px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5 bg-tertiary-fixed text-on-tertiary-fixed-variant">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                                    Pending
-                                </div>
-                            </div>
-                            <button
-                                class="px-6 py-2.5 rounded-xl text-sm font-bold bg-surface-container-high text-on-secondary-fixed-variant hover:bg-error hover:text-on-error transition-all duration-200 active:scale-95">
-                                Cancelar Reserva
-                            </button>
-                        </div>
+                        {% endif %}
                     </div>
-                </div>
-                <!-- Pagination/Tonal Background Decoration -->
-                <div class="mt-12 flex items-center justify-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-primary"></div>
-                    <div class="w-2 h-2 rounded-full bg-outline-variant/30"></div>
-                    <div class="w-2 h-2 rounded-full bg-outline-variant/30"></div>
                 </div>
             </div>
         </main>
     </div>
+
     <!-- Mobile Navigation Bar -->
-    <nav
-        class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/90 backdrop-blur-lg border-t border-slate-100 flex items-center justify-around z-50">
-        <a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/90 backdrop-blur-lg border-t border-slate-200 flex items-center justify-around z-50">
+        <a class="flex flex-col items-center gap-1 text-slate-500 font-bold" href="{% url 'inicio' %}">
+            <span class="material-symbols-outlined">grid_view</span>
+            <span class="text-[10px]">Espacios</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-primary font-bold" href="{% url 'mis_reservas' %}">
+            <span class="material-symbols-outlined">event_available</span>
+            <span class="text-[10px]">Reservas</span>
+        </a>
+        {% if es_secretaria %}
+        <a class="flex flex-col items-center gap-1 text-slate-500 font-bold" href="{% url 'dashboard_secretaria' %}">
             <span class="material-symbols-outlined">dashboard</span>
-            <span class="text-[10px] font-medium uppercase">Dash</span>
+            <span class="text-[10px]">Secretaría</span>
         </a>
-        <a class="flex flex-col items-center gap-1 text-slate-500" href="#">
-            <span class="material-symbols-outlined">calendar_view_day</span>
-            <span class="text-[10px] font-medium uppercase">Spaces</span>
-        </a>
-        <a class="flex flex-col items-center gap-1 text-blue-900" href="#">
-            <span class="material-symbols-outlined font-bold">event_available</span>
-            <span class="text-[10px] font-bold uppercase">Bookings</span>
-        </a>
-        <a class="flex flex-col items-center gap-1 text-slate-500" href="#">
-            <span class="material-symbols-outlined">person</span>
-            <span class="text-[10px] font-medium uppercase">Profile</span>
-        </a>
+        {% endif %}
     </nav>
 </body>
 
 </html>
-
-<!-- Mis Reservas -->
-# Estructura de Archivos del Proyecto Django
-
-## 1. Modelos (models.py)
-```python
-from django.db import models
-from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-
-class Categoria(models.Model):
-nombre = models.CharField(max_length=100) # Teatro, Sala de reuniones, Biblioteca
-
-def __str__(self):
-return self.nombre
-
-class Espacio(models.Model):
-nombre = models.CharField(max_length=100)
-categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
-capacidad = models.IntegerField()
-descripcion = models.TextField()
-imagen_url = models.URLField(blank=True)
-
-def __str__(self):
-return self.nombre
-
-class Reserva(models.Model):
-usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-espacio = models.ForeignKey(Espacio, on_delete=models.CASCADE)
-fecha = models.DateField()
-hora_inicio = models.TimeField()
-hora_fin = models.TimeField()
-
-def clean(self):
-solapamiento = Reserva.objects.filter(
-espacio=self.espacio,
-fecha=self.fecha
-).filter(
-models.Q(hora_inicio__lt=self.hora_fin, hora_fin__gt=self.hora_inicio)
-).exclude(pk=self.pk)
-
-if solapamiento.exists():
-raise ValidationError('Este espacio ya está reservado en el horario seleccionado.')
-
-def save(self, *args, **kwargs):
-self.full_clean()
-super().save(*args, **kwargs)
-```
-
-## 2. Vistas (views.py)
-```python
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Espacio, Reserva, Categoria
-from .forms import ReservaForm # Asumiendo un ModelForm
-
-def index(request):
-categorias = Categoria.objects.all()
-espacios = Espacio.objects.all()
-return render(request, 'index.html', {'categorias': categorias, 'espacios': espacios})
-
-@login_required
-def reservar(request, espacio_id):
-espacio = get_object_or_404(Espacio, id=espacio_id)
-if request.method == 'POST':
-form = ReservaForm(request.POST)
-if form.is_valid():
-reserva = form.save(commit=False)
-reserva.usuario = request.user
-reserva.espacio = espacio
-reserva.save()
-return redirect('mis_reservas')
-else:
-form = ReservaForm()
-return render(request, 'reservar.html', {'form': form, 'espacio': espacio})
-
-@login_required
-def mis_reservas(request):
-reservas = Reserva.objects.filter(usuario=request.user)
-return render(request, 'mis_reservas.html', {'reservas': reservas})
-
-@login_required
-def cancelar_reserva(request, reserva_id):
-reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
-reserva.delete()
-return redirect('mis_reservas')
-```
-
-## 3. URLs (urls.py)
-```python
-from django.urls import path
-from . import views
-
-urlpatterns = [
-path('', views.index, name='index'),
-path('reservar/<int:espacio_id>/', views.reservar, name='reservar'),
-    path('mis-reservas/', views.mis_reservas, name='mis_reservas'),
-    path('cancelar/<int:reserva_id>/', views.cancelar_reserva, name='cancelar_reserva'),
-        ]
-        ```
-
-        <!-- Código Backend Django (Python) -->
-        

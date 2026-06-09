@@ -248,7 +248,7 @@
 
         function openGooglePopup() {
             const client_id = "{{ GOOGLE_CLIENT_ID }}";
-            if (client_id && client_id !== "" && client_id !== "None") {
+            if (typeof google !== 'undefined' && client_id && client_id !== "" && client_id !== "None" && client_id !== "TU_ID_DE_CLIENTE_AQUI") {
                 google.accounts.id.prompt((notification) => {
                     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
                         showMockOneTap();
@@ -329,7 +329,7 @@
 
             // Inicializar Google GSI
             const client_id = "{{ GOOGLE_CLIENT_ID }}";
-            if (client_id && client_id !== "" && client_id !== "None") {
+            if (typeof google !== 'undefined' && client_id && client_id !== "" && client_id !== "None" && client_id !== "TU_ID_DE_CLIENTE_AQUI") {
                 try {
                     google.accounts.id.initialize({
                         client_id: client_id,
