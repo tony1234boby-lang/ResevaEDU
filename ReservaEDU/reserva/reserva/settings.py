@@ -149,8 +149,9 @@ STATICFILES_DIRS = [
 ]
 
 # Auth redirects
-LOGIN_REDIRECT_URL = 'inicio'
-LOGOUT_REDIRECT_URL = 'inicio'
+LOGIN_URL = '/login/'                        # URL de login para @login_required
+LOGIN_REDIRECT_URL = '/'                     # Redirigir al inicio tras login
+LOGOUT_REDIRECT_URL = '/login/'              # Redirigir al login tras logout
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Google allauth configuration
@@ -166,12 +167,10 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# Allauth settings
-ACCOUNT_EMAIL_VERIFICATION = 'none'          # No pedir verificación de email
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-SOCIALACCOUNT_AUTO_SIGNUP = True             # Crear cuenta automáticamente al iniciar con Google
-SOCIALACCOUNT_LOGIN_ON_GET = True            # No mostrar pantalla intermedia de confirmación
-LOGIN_REDIRECT_URL = '/'                     # Redirigir al inicio tras login
-ACCOUNT_LOGOUT_REDIRECT_URL = '/login/'      # Redirigir al login tras logout
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+ACCOUNT_LOGOUT_REDIRECT_URL = '/login/'
 
 SITE_ID = 1

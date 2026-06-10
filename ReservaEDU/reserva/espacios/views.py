@@ -61,7 +61,10 @@ def notificar_reserva(reserva, accion, comentario=None):
             print(f"[SIMULACIÓN EMAIL] De: noreply@reservaedu.edu | Para: {email_address} | Asunto: Actualización de Reserva - ReservaEDU | Mensaje: {mensaje}")
 
 def lista_espacios(request):
-    # Auto-seed if database is empty (important for fresh Render deployments)
+    # Redirigir al login si el usuario no está autenticado
+    if not request.user.is_authenticated:
+        return redirect('login')
+
     if not Espacio.objects.exists():
         from django.contrib.auth.models import User
         responsable_user = User.objects.filter(is_superuser=True).first()
