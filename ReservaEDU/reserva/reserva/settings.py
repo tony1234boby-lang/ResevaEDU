@@ -156,6 +156,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Google allauth configuration
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
         'APP': {
             'client_id': env('GOOGLE_CLIENT_ID', default=''),
             'secret': env('GOOGLE_CLIENT_SECRET', default=''),
@@ -163,5 +165,13 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
+# Allauth settings
+ACCOUNT_EMAIL_VERIFICATION = 'none'          # No pedir verificación de email
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+SOCIALACCOUNT_AUTO_SIGNUP = True             # Crear cuenta automáticamente al iniciar con Google
+SOCIALACCOUNT_LOGIN_ON_GET = True            # No mostrar pantalla intermedia de confirmación
+LOGIN_REDIRECT_URL = '/'                     # Redirigir al inicio tras login
+ACCOUNT_LOGOUT_REDIRECT_URL = '/login/'      # Redirigir al login tras logout
 
 SITE_ID = 1

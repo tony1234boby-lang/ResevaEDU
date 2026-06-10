@@ -369,12 +369,12 @@
 
     <script>
         function showTab(tabId) {
-            // Hide all tab content
+            // Ocultar todo el contenido de las pestañas
             document.getElementById('tab-content-pendientes').classList.add('hidden');
             document.getElementById('tab-content-aprobadas').classList.add('hidden');
             document.getElementById('tab-content-rechazadas').classList.add('hidden');
             
-            // Reset all tab button classes
+            // Restablecer clases de los botones de pestaña
             const buttons = ['btn-tab-pendientes', 'btn-tab-aprobadas', 'btn-tab-rechazadas'];
             buttons.forEach(id => {
                 const btn = document.getElementById(id);
@@ -384,7 +384,7 @@
                 }
             });
             
-            // Show selected content and set button active
+            // Mostrar el contenido seleccionado y activar el botón
             document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
             const activeBtn = document.getElementById(`btn-tab-${tabId}`);
             if (activeBtn) {
@@ -408,12 +408,12 @@
             
             if (action === 'aprobar') {
                 title.innerText = `Aprobar Reserva`;
-                obsInput.placeholder = "Observaciones para el solicitante (e.g. 'Entrada habilitada por el portón principal')...";
+                obsInput.placeholder = "Observaciones para el solicitante (ej. 'Entrada habilitada por el portón principal')...";
                 submitBtn.innerText = "Confirmar Aprobación";
                 submitBtn.className = "flex-1 bg-green-600 hover:bg-green-700 text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-md";
             } else {
                 title.innerText = `Rechazar Reserva`;
-                obsInput.placeholder = "Motivo del rechazo (e.g. 'Espacio reservado con anterioridad para un acto institucional')...";
+                obsInput.placeholder = "Motivo del rechazo (ej. 'Espacio reservado con anterioridad para un acto institucional')...";
                 submitBtn.innerText = "Confirmar Rechazo";
                 submitBtn.className = "flex-1 bg-red-600 hover:bg-red-700 text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-md";
             }

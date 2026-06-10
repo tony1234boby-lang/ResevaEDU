@@ -1,7 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 
-<html class="light" lang="en">
+<html class="light" lang="es">
 
 <head>
     <meta charset="utf-8" />
@@ -280,25 +280,25 @@
                         </ul>
                     </div>
                     <div class="bg-surface-container-high p-8 rounded-3xl">
-                        <h4 class="text-lg font-bold text-primary mb-6">Current Availability</h4>
+                        <h4 class="text-lg font-bold text-primary mb-6">Disponibilidad Actual</h4>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl">
                                 <span class="text-xs font-bold text-on-surface-variant uppercase tracking-tighter">09:00
                                     - 11:00</span>
                                 <span
-                                    class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-bold rounded uppercase">Reserved</span>
+                                    class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-bold rounded uppercase">Reservado</span>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl">
                                 <span class="text-xs font-bold text-on-surface-variant uppercase tracking-tighter">11:00
                                     - 14:00</span>
                                 <span
-                                    class="px-2 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded uppercase">Available</span>
+                                    class="px-2 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded uppercase">Disponible</span>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl">
                                 <span class="text-xs font-bold text-on-surface-variant uppercase tracking-tighter">14:00
                                     - 15:30</span>
                                 <span
-                                    class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-bold rounded uppercase">Reserved</span>
+                                    class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-bold rounded uppercase">Reservado</span>
                             </div>
                         </div>
                     </div>
@@ -308,21 +308,21 @@
     </main>
     <nav
         class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md px-6 py-4 flex justify-around items-center z-50 border-t-0 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.1)]">
-        <a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+        <a class="flex flex-col items-center gap-1 text-slate-400" href="{% url 'inicio' %}">
             <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-            <span class="text-[10px] font-bold uppercase">Home</span>
+            <span class="text-[10px] font-bold uppercase">Inicio</span>
         </a>
-        <a class="flex flex-col items-center gap-1 text-blue-900" href="#">
+        <a class="flex flex-col items-center gap-1 text-blue-900" href="{% url 'inicio' %}">
             <span class="material-symbols-outlined" data-icon="calendar_view_day">calendar_view_day</span>
-            <span class="text-[10px] font-bold uppercase">Spaces</span>
+            <span class="text-[10px] font-bold uppercase">Espacios</span>
         </a>
-        <a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+        <a class="flex flex-col items-center gap-1 text-slate-400" href="{% url 'mis_reservas' %}">
             <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
-            <span class="text-[10px] font-bold uppercase">Bookings</span>
+            <span class="text-[10px] font-bold uppercase">Reservas</span>
         </a>
         <a class="flex flex-col items-center gap-1 text-slate-400" href="#">
             <span class="material-symbols-outlined" data-icon="settings">settings</span>
-            <span class="text-[10px] font-bold uppercase">Profile</span>
+            <span class="text-[10px] font-bold uppercase">Ajustes</span>
         </a>
     </nav>
 </body>
