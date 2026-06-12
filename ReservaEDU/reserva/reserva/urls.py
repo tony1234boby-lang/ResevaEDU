@@ -29,6 +29,7 @@ urlpatterns = [
     # Notificaciones
     path('notificaciones/', views.lista_notificaciones, name='lista_notificaciones'),
     path('notificaciones/leer/<int:notificacion_id>/', views.leer_notificacion, name='leer_notificacion'),
+    path('api/notificaciones/nuevas/', views.api_notificaciones_nuevas, name='api_notificaciones_nuevas'),
 
     # API Horario automático
     path('api/reservas-horario/', views.api_reservas_horario, name='api_reservas_horario'),

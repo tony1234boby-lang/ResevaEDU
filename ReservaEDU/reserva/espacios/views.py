@@ -566,3 +566,26 @@ def ayuda(request):
         'google_picture': google_picture,
         'mis_reservas': mis_reservas,
     })
+
+@login_required
+def api_notificaciones_nuevas(request):
+    """
+    Endpoint JSON que devuelve las nuevas notificaciones (mostrado=False)
+    para el usuario actual y las marca como mostradas.
+    """
+    nuevas = Notificacion.objects.filter(usuario=request.user, mostrado=False)
+    
+    data = []
+    for n in nuevas:
+        data.append({
+            'id': n.id,
+            'mensaje': n.mensaje,
+            'reserva_id': n.reserva.id,
+            'espacio': n.reserva.espacio.nombre,
+            'fecha': str(n.reserva.fecha),
+            'horario': f"{n.reserva.hora_inicio.strftime('%H:%M')} - {n.reserva.hora_fin.strftime('%H:%M')}",
+        })
+        n.mostrado = True
+        n.save()
+        
+    return JsonResponse({'nuevas': data})

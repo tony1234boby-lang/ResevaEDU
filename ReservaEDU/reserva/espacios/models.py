@@ -117,6 +117,7 @@ class Notificacion(models.Model):
     reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE)
     mensaje = models.TextField()
     leida = models.BooleanField(default=False)
+    mostrado = models.BooleanField(default=False)
     fecha = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
