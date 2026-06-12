@@ -14,6 +14,7 @@
 <link rel="apple-touch-icon" href="{% static 'images/icons/icon-192x192.png' %}" />
 
 <!-- Service Worker Registration -->
+<!-- Service Worker Registration & PWA Install Prompter -->
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -26,4 +27,208 @@
                 });
         });
     }
+
+    // PWA Installation & Dynamic Injection Flow
+    (function() {
+        let deferredPrompt = null;
+
+        function isStandalone() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        }
+
+        function updatePWAInstallElements() {
+            const show = !isStandalone();
+            
+            const headerBtn = document.getElementById('btn-descargar-app');
+            if (headerBtn) {
+                if (show) headerBtn.classList.remove('hidden');
+                else headerBtn.classList.add('hidden');
+            }
+            
+            const sidebarBtn = document.getElementById('sidebar-descargar-app');
+            if (sidebarBtn) {
+                if (show) sidebarBtn.classList.remove('hidden');
+                else sidebarBtn.classList.add('hidden');
+            }
+
+            const banner = document.getElementById('pwa-install-banner');
+            if (banner) {
+                if (show) banner.classList.remove('hidden');
+                else banner.classList.add('hidden');
+            }
+        }
+
+        function injectPWAElements() {
+            if (isStandalone()) return;
+
+            // 1. Header Button Injection
+            const headerActions = document.querySelector('header > div:last-child');
+            if (headerActions && !document.getElementById('btn-descargar-app')) {
+                const btn = document.createElement('button');
+                btn.id = 'btn-descargar-app';
+                btn.onclick = window.installPWA;
+                btn.className = 'hidden bg-blue-50 hover:bg-blue-100 text-primary border border-blue-100 transition-all font-bold px-3 py-1.5 rounded-full text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer border-none mr-2';
+                btn.innerHTML = `
+                    <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 0, 'wght' 600">install_mobile</span>
+                    <span>Descargar App</span>
+                `;
+                headerActions.insertBefore(btn, headerActions.firstChild);
+            }
+
+            // 2. Sidebar Button Injection
+            const sidebarNav = document.querySelector('aside nav');
+            if (sidebarNav && !document.getElementById('sidebar-descargar-app')) {
+                const btn = document.createElement('button');
+                btn.id = 'sidebar-descargar-app';
+                btn.onclick = window.installPWA;
+                btn.className = 'hidden w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold border-none bg-transparent cursor-pointer text-left';
+                btn.style.color = 'inherit';
+                btn.innerHTML = `
+                    <span class="material-symbols-outlined">install_mobile</span>
+                    <span>Descargar App</span>
+                `;
+                sidebarNav.appendChild(btn);
+            }
+
+            // 3. Homepage Banner Injection
+            const isHomepage = window.location.pathname === '/' || window.location.pathname === '/index.html' || window.location.pathname.endsWith('/');
+            const mainContainer = document.querySelector('main > div.p-8');
+            if (isHomepage && mainContainer && !document.getElementById('pwa-install-banner')) {
+                const banner = document.createElement('div');
+                banner.id = 'pwa-install-banner';
+                banner.className = 'hidden bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-[2rem] p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-300 mb-8';
+                banner.innerHTML = `
+                    <div class="absolute -right-10 -bottom-10 opacity-10">
+                        <span class="material-symbols-outlined text-[12rem]" style="font-variation-settings: 'FILL' 0, 'wght' 200">install_mobile</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 relative z-10 text-left">
+                        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md shrink-0">
+                            <span class="material-symbols-outlined text-3xl text-white">install_mobile</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-black font-headline tracking-tight leading-tight" style="font-family:'Manrope',sans-serif;">Instala ReservaEDU en tu Teléfono</h4>
+                            <p class="text-xs text-blue-100 mt-1 max-w-xl font-medium" style="font-family:'Inter',sans-serif;">Obtén notificaciones inmediatas en la bandeja del celular, vibración, sonido personalizado y acceso instantáneo sin navegador.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 w-full md:w-auto relative z-10 shrink-0">
+                        <button onclick="window.installPWA()" class="w-full md:w-auto bg-[#FACC15] hover:brightness-105 text-primary font-bold px-6 py-3 rounded-2xl text-xs uppercase tracking-wider transition-all shadow-lg active:scale-95 border-none cursor-pointer">
+                            Descargar en el Teléfono
+                        </button>
+                        <button onclick="document.getElementById('pwa-install-banner').remove()" class="bg-white/10 hover:bg-white/20 text-white p-3 rounded-2xl transition-all border-none cursor-pointer" title="Cerrar">
+                            <span class="material-symbols-outlined text-sm">close</span>
+                        </button>
+                    </div>
+                `;
+                
+                const topNav = mainContainer.querySelector('.flex.flex-wrap.items-center.justify-between.w-full');
+                if (topNav) {
+                    topNav.after(banner);
+                } else {
+                    mainContainer.insertBefore(banner, mainContainer.firstChild);
+                }
+            }
+
+            updatePWAInstallElements();
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            updatePWAInstallElements();
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            injectPWAElements();
+        });
+
+        if (document.readyState === 'interactive' || document.readyState === 'complete') {
+            injectPWAElements();
+        }
+
+        window.installPWA = async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`PWA Install Choice: ${outcome}`);
+                if (outcome === 'accepted') {
+                    deferredPrompt = null;
+                    updatePWAInstallElements();
+                }
+            } else {
+                showPWAInstructionsModal();
+            }
+        };
+
+        function showPWAInstructionsModal() {
+            if (document.getElementById('pwa-instructions-modal')) return;
+
+            const modal = document.createElement('div');
+            modal.id = 'pwa-instructions-modal';
+            modal.className = 'fixed inset-0 z-[250] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm transition-all duration-300';
+            modal.innerHTML = `
+                <div class="bg-white max-w-md w-full rounded-[2.5rem] p-8 shadow-2xl relative border border-slate-100 flex flex-col items-center transform scale-95 opacity-0 transition-all duration-300 text-center" id="pwa-instructions-content" style="font-family:'Inter',sans-serif;">
+                    <button onclick="window.closePWAInstructions()" class="absolute top-6 right-6 z-10 w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200 transition-colors border-none cursor-pointer">
+                        <span class="material-symbols-outlined text-sm">close</span>
+                    </button>
+
+                    <div class="w-16 h-16 rounded-2xl bg-blue-50 text-primary flex items-center justify-center mb-6 shadow-sm">
+                        <span class="material-symbols-outlined text-3xl">install_mobile</span>
+                    </div>
+
+                    <h3 class="text-xl font-black text-slate-800 mb-2 tracking-tight text-center" style="font-family:'Manrope',sans-serif;">Cómo instalar en tu Teléfono</h3>
+                    <p class="text-xs text-slate-500 text-center mb-6 font-medium">Sigue estas sencillas instrucciones para agregar ReservaEDU a la pantalla de inicio de tu celular:</p>
+
+                    <div class="w-full space-y-4 text-left mb-8">
+                        <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-emerald-600 text-lg">adb</span>
+                                <span class="text-xs font-black text-slate-800">Para Android (Chrome)</span>
+                            </div>
+                            <ol class="list-decimal list-inside text-[11px] text-slate-600 font-semibold space-y-1">
+                                <li>Presiona los tres puntos <strong class="text-slate-850">⋮</strong> arriba a la derecha.</li>
+                                <li>Selecciona <strong class="text-slate-850">"Instalar aplicación"</strong> o <strong class="text-slate-850">"Añadir a pantalla de inicio"</strong>.</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-blue-600 text-lg">phone_iphone</span>
+                                <span class="text-xs font-black text-slate-800">Para iPhone/iPad (Safari)</span>
+                            </div>
+                            <ol class="list-decimal list-inside text-[11px] text-slate-600 font-semibold space-y-1">
+                                <li>Presiona el botón de Compartir <strong class="text-slate-850">⎋</strong> (cuadrado con flecha arriba).</li>
+                                <li>Desplázate y selecciona <strong class="text-slate-850">"Añadir a la pantalla de inicio"</strong>.</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <button onclick="window.closePWAInstructions()" class="w-full bg-primary hover:bg-primary-dark text-white py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all shadow-md cursor-pointer border-none">
+                        Entendido
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            setTimeout(() => {
+                const mc = document.getElementById('pwa-instructions-content');
+                if (mc) {
+                    mc.classList.replace('scale-95', 'scale-100');
+                    mc.classList.replace('opacity-0', 'opacity-100');
+                }
+            }, 50);
+        }
+
+        window.closePWAInstructions = () => {
+            const modal = document.getElementById('pwa-instructions-modal');
+            const mc = document.getElementById('pwa-instructions-content');
+            if (modal && mc) {
+                mc.classList.replace('scale-100', 'scale-95');
+                mc.classList.replace('opacity-100', 'opacity-0');
+                setTimeout(() => modal.remove(), 300);
+            }
+        };
+    })();
 </script>
