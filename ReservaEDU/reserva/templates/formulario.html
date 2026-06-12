@@ -557,9 +557,9 @@
                 const data = await resp.json();
                 const reservas = data.reservas || [];
 
-                // Filtrar para este espacio y fecha seleccionada
+                // Filtrar para este espacio y fecha seleccionada de manera robusta usando ID
                 const filtered = reservas.filter(r => 
-                    r.espacio === "{{ espacio.nombre|escapejs }}" && r.fecha === fecha
+                    r.espacio_id === {{ espacio.id }} && r.fecha === fecha
                 );
 
                 // Ordenar por hora de inicio
@@ -567,6 +567,15 @@
 
                 const startLimit = parseMin('08:00');
                 const endLimit = parseMin('14:00');
+
+                // Obtener fecha y hora actuales del cliente para deshabilitar bloques pasados en tiempo real
+                const now = new Date();
+                const currentYr = now.getFullYear();
+                const currentMo = String(now.getMonth() + 1).padStart(2, '0');
+                const currentDy = String(now.getDate()).padStart(2, '0');
+                const currentDateStr = `${currentYr}-${currentMo}-${currentDy}`;
+                const isToday = (fecha === currentDateStr);
+                const currentMins = now.getHours() * 60 + now.getMinutes();
 
                 // Definir franjas horarias fijas de 1 hora
                 const slots = [
@@ -591,8 +600,15 @@
                             start: slot.start,
                             end: slot.end,
                             estado: 'ocupado',
+                            reserva_estado: overlap.estado,
                             usuario: overlap.usuario,
                             usuario_username: overlap.usuario_username
+                        };
+                    } else if (isToday && slot.end <= currentMins) {
+                        return {
+                            start: slot.start,
+                            end: slot.end,
+                            estado: 'expirado'
                         };
                     } else {
                         return {
@@ -603,10 +619,10 @@
                     }
                 });
 
-                // Si el slot seleccionado actualmente se vuelve ocupado en tiempo real, limpiamos la selección
+                // Si el slot seleccionado actualmente se vuelve ocupado o expira en tiempo real, limpiamos la selección
                 if (seleccionadoInicio && seleccionadoFin) {
                     const isStillAvailable = !blocks.some(b => 
-                        b.estado === 'ocupado' && 
+                        (b.estado === 'ocupado' || b.estado === 'expirado') && 
                         formatTime(b.start) === seleccionadoInicio && 
                         formatTime(b.end) === seleccionadoFin
                     );
@@ -624,12 +640,15 @@
                     const timeStr = `${formatTime(b.start)} - ${formatTime(b.end)}`;
                     if (b.estado === 'ocupado') {
                         const esMio = (b.usuario_username === currentUsername);
+                        const isPending = (b.reserva_estado === 'pendiente');
                         if (esMio) {
                             return `
                                 <div class="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-xl shadow-sm hover:shadow-md transition-all">
                                     <span class="text-xs font-bold text-red-900 font-mono">${timeStr}</span>
                                     <div class="flex flex-col items-end gap-0.5">
-                                        <span class="px-2.5 py-1 bg-red-600 text-white text-[10px] font-black rounded-lg uppercase tracking-wider">Reservado por mí</span>
+                                        <span class="px-2.5 py-1 ${isPending ? 'bg-amber-500' : 'bg-red-600'} text-white text-[10px] font-black rounded-lg uppercase tracking-wider">
+                                            ${isPending ? 'Mi solicitud (Pendiente)' : 'Reservado por mí'}
+                                        </span>
                                     </div>
                                 </div>
                             `;
@@ -638,12 +657,21 @@
                                 <div class="flex items-center justify-between p-3 bg-white border border-red-100 rounded-xl shadow-sm hover:shadow-md transition-all">
                                     <span class="text-xs font-bold text-slate-700 font-mono">${timeStr}</span>
                                     <div class="flex flex-col items-end gap-0.5">
-                                        <span class="px-2.5 py-1 bg-red-100 text-red-800 text-[10px] font-black rounded-lg uppercase tracking-wider">Ocupado</span>
+                                        <span class="px-2.5 py-1 ${isPending ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-red-100 text-red-800 border border-red-200'} text-[10px] font-black rounded-lg uppercase tracking-wider">
+                                            ${isPending ? 'Ocupado (Pendiente)' : 'Ocupado'}
+                                        </span>
                                         <span class="text-[9px] font-bold text-slate-400">Por: ${b.usuario}</span>
                                     </div>
                                 </div>
                             `;
                         }
+                    } else if (b.estado === 'expirado') {
+                        return `
+                            <div class="flex items-center justify-between p-3 bg-slate-100/70 border border-slate-200 rounded-xl opacity-60">
+                                <span class="text-xs font-bold text-slate-400 font-mono">${timeStr}</span>
+                                <span class="px-2.5 py-1 bg-slate-200 text-slate-500 text-[10px] font-black rounded-lg uppercase tracking-wider">No disponible</span>
+                            </div>
+                        `;
                     } else {
                         const isSelected = (formatTime(b.start) === seleccionadoInicio && formatTime(b.end) === seleccionadoFin);
                         const selClasses = isSelected ? 'ring-2 ring-primary bg-blue-50/50 border-primary/30' : 'bg-white border-blue-50';

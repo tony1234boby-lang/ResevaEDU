@@ -456,7 +456,7 @@ def api_reservas_horario(request):
     if user_only and request.user.is_authenticated:
         reservas = reservas.filter(usuario=request.user)
     if upcoming:
-        reservas = reservas.filter(fecha__gte=date.today())
+        reservas = reservas.filter(fecha__gte=timezone.localdate())
 
     reservas = reservas.select_related('espacio', 'usuario').order_by('fecha', 'hora_inicio')
 
@@ -465,6 +465,7 @@ def api_reservas_horario(request):
         data.append({
             'id': r.id,
             'espacio': r.espacio.nombre,
+            'espacio_id': r.espacio.id,
             'categoria': r.espacio.categoria,
             'usuario': r.usuario.get_full_name() or r.usuario.username,
             'usuario_username': r.usuario.username,
