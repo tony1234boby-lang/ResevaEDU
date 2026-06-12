@@ -42,6 +42,10 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['https://resevaedu.onrender.com', 'https://reservaedu.onrender.com', 'http://localhost:8000', 'http://127.0.0.1:8000'])
 
+# Proxy configuration for Render
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
 
 # Application definition
 
