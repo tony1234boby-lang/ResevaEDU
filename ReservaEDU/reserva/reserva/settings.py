@@ -170,6 +170,9 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+# Force HTTPS protocol for allauth redirect URIs in production, use HTTP in development
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http' if DEBUG else 'https'
+
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
