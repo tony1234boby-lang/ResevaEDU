@@ -2,10 +2,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    {% include 'pwa_meta.html' %}
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registro - ReservaEDU | La Dolorosa</title>
-    <link rel="icon" type="image/png" href="{% static 'images/logo_dolorosa.png' %}" />
+    <link rel="icon" type="image/png" href="{% static 'images/escudo_dolorosa.jpg' %}" />
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -13,7 +14,7 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { primary: '#7e192f', 'primary-dark': '#5c0f1e', accent: '#D97706' },
+                    colors: { primary: '#1e40af', 'primary-dark': '#1e3a8a', accent: '#D97706' },
                     fontFamily: { display: ['Manrope','sans-serif'], body: ['Inter','sans-serif'] }
                 }
             }
@@ -21,26 +22,18 @@
     </script>
     <style>
         * { font-family: 'Inter', sans-serif; }
-        html { zoom: 80%; }
+        html { zoom: 100%; }
         body { font-family: 'Inter', sans-serif; }
-        @-moz-document url-prefix() {
-            body {
-                transform: scale(0.8);
-                transform-origin: top center;
-                width: 125%;
-                height: 125%;
-            }
-        }
         h1,h2,h3 { font-family: 'Manrope', sans-serif; }
         .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
         
         /* Premium Gold & Silk Theme */
         .glass-card { 
-            background: rgba(30, 20, 20, 0.55); 
+            background: rgba(15, 23, 42, 0.55); 
             backdrop-filter: blur(20px); 
             -webkit-backdrop-filter: blur(20px); 
             border: 1.5px solid rgba(212, 175, 55, 0.35); 
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(126, 25, 47, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(30, 64, 175, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
         
         .text-gold-gradient {
@@ -72,15 +65,25 @@
         .fade-up { animation: fadeUp 0.4s ease forwards; }
     </style>
 </head>
-<body class="min-h-screen relative flex items-center justify-center p-6 overflow-x-hidden bg-[#1a0f12]">
+<body class="min-h-screen relative flex items-center justify-center p-6 overflow-x-hidden bg-[#0f172a]">
     <!-- Full-screen Background with image and overlay -->
-    <div class="absolute inset-0 z-0 bg-cover bg-center" style="background-image: url('{% static 'images/image_d2d181.jpg' %}');"></div>
+    <div class="absolute inset-0 z-0" style="
+        background-image: url('{% static 'images/iglesia_dolorosa.jpg' %}');
+        background-size: cover;
+        background-position: center 30%;
+        background-repeat: no-repeat;
+        image-rendering: high-quality;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+        will-change: transform;
+    "></div>
     <div class="absolute inset-0 z-0 bg-black/45 backdrop-blur-[3px]"></div>
 
     <!-- Centered Card -->
     <div class="relative z-10 w-full max-w-md glass-card rounded-[2.5rem] p-10 pt-20 shadow-2xl fade-up my-8 border-2 border-[#d4af37]/30 mt-8">
         <!-- Circular Gold Medallion Logo (overlapping the top border) -->
-        <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="absolute -top-16 left-1/2 -translate-x-1/2 h-32 w-auto object-contain drop-shadow-[0_4px_15px_rgba(212,175,55,0.45)] z-20">
+        <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Escudo UEF La Dolorosa" class="absolute -top-16 left-1/2 -translate-x-1/2 h-32 w-auto object-contain drop-shadow-[0_4px_15px_rgba(212,175,55,0.45)] z-20">
 
         <!-- Header -->
         <div class="text-center mb-8">
@@ -91,7 +94,7 @@
         <form method="post" action="{% url 'registro' %}">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="w-full bg-[#d4af37] hover:bg-[#ffe082] text-[#1a0f12] font-black py-4 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#d4af37]/30 text-xs uppercase tracking-widest mt-6" style="font-family:'Manrope',sans-serif;">
+            <button type="submit" class="w-full bg-[#d4af37] hover:bg-[#ffe082] text-[#0f172a] font-black py-4 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#d4af37]/30 text-xs uppercase tracking-widest mt-6" style="font-family:'Manrope',sans-serif;">
                 Registrarse
             </button>
         </form>

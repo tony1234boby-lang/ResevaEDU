@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from espacios import views
 from django.contrib.auth import views as auth_views
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('accounts/', include('allauth.urls')),
@@ -27,4 +28,13 @@ urlpatterns = [
     # Notificaciones
     path('notificaciones/', views.lista_notificaciones, name='lista_notificaciones'),
     path('notificaciones/leer/<int:notificacion_id>/', views.leer_notificacion, name='leer_notificacion'),
+
+    # API Horario automático
+    path('api/reservas-horario/', views.api_reservas_horario, name='api_reservas_horario'),
+    path('proximas-reservas/', views.proximas_reservas, name='proximas_reservas'),
+    path('ayuda/', views.ayuda, name='ayuda'),
+    
+    # PWA Puntos de entrada
+    path('serviceworker.js', TemplateView.as_view(template_name='serviceworker.js', content_type='application/javascript'), name='serviceworker.js'),
+    path('offline/', TemplateView.as_view(template_name='offline.html'), name='offline'),
 ]

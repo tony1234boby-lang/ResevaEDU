@@ -1,0 +1,9 @@
+{
+  "appId": "ec.edu.ladolorosa.reservaedu",
+  "appName": "ReservaEDU",
+  "webDir": "www",
+  "server": {
+    "url": "https://resevaedu.onrender.com",
+    "cleartext": true
+  }
+}

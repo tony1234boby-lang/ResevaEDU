@@ -2,19 +2,24 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    {% include 'pwa_meta.html' %}
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Iniciar Sesión - ReservaEDU | La Dolorosa</title>
-    <link rel="icon" type="image/png" href="{% static 'images/logo_dolorosa.png' %}" />
+    <title>Iniciar Sesión - ReservaEDU | U.E.F. La Dolorosa</title>
+    <link rel="icon" type="image/png" href="{% static 'images/escudo_dolorosa.jpg' %}" />
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { primary: '#7e192f', 'primary-dark': '#5c0f1e', accent: '#D97706' },
+                    colors: {
+                        primary: '#1e40af',
+                        'primary-dark': '#1e3a8a',
+                        'primary-light': '#3b82f6',
+                        accent: '#F59E0B'
+                    },
                     fontFamily: { display: ['Manrope','sans-serif'], body: ['Inter','sans-serif'] }
                 }
             }
@@ -22,109 +27,96 @@
     </script>
     <style>
         * { font-family: 'Inter', sans-serif; }
-        html { zoom: 80%; }
-        body { font-family: 'Inter', sans-serif; }
-        @-moz-document url-prefix() {
-            body {
-                transform: scale(0.8);
-                transform-origin: top center;
-                width: 125%;
-                height: 125%;
-            }
-        }
+        html { zoom: 100%; }
         h1,h2,h3 { font-family: 'Manrope', sans-serif; }
         .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
-        
-        /* Premium Gold & Silk Theme */
-        .glass-card { 
-            background: rgba(30, 20, 20, 0.55); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px); 
-            border: 1.5px solid rgba(212, 175, 55, 0.35); 
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(126, 25, 47, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        }
-        
-        .text-gold-gradient {
-            background: linear-gradient(135deg, #ffe082 0%, #d4af37 50%, #aa7c11 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.4));
+
+        /* Blue premium card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1.5px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 30px 60px rgba(30, 64, 175, 0.18), 0 8px 24px rgba(0,0,0,0.12);
         }
 
         .btn-google-premium {
-            background: linear-gradient(180deg, #faf6eb 0%, #e3dac3 100%);
-            border: 1.5px solid rgba(212, 175, 55, 0.4);
-            color: #4a3814 !important;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            background: linear-gradient(180deg, #ffffff 0%, #f0f4ff 100%);
+            border: 1.5px solid rgba(59,130,246,0.3);
+            color: #1e293b !important;
+            box-shadow: 0 4px 12px rgba(30,64,175,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
             transition: all 0.2s ease-in-out;
         }
         .btn-google-premium:hover {
-            background: linear-gradient(180deg, #fffcf5 0%, #ecdcb8 100%);
-            border-color: rgba(212, 175, 55, 0.7);
-            box-shadow: 0 12px 20px rgba(212, 175, 55, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            background: linear-gradient(180deg, #f8faff 0%, #e0eaff 100%);
+            border-color: #3b82f6;
+            box-shadow: 0 8px 20px rgba(59,130,246,0.2), inset 0 1px 0 rgba(255,255,255,1);
             transform: translateY(-1px);
         }
-        
-        .input-premium {
-            background: rgba(255, 255, 255, 0.03) !important;
-            border: 1px solid rgba(212, 175, 55, 0.2) !important;
-            color: #ffffff !important;
-        }
-        .input-premium:focus {
-            background: rgba(255, 255, 255, 0.08) !important;
-            border-color: #d4af37 !important;
-            box-shadow: 0 0 12px rgba(212, 175, 55, 0.25) !important;
-        }
-        
-        @keyframes fadeUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
-        .fade-up { animation: fadeUp 0.4s ease forwards; }
 
-        /* Mock Google One Tap Slide Animation */
-        #mock-one-tap-container {
-            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+        .input-field {
+            background: #f8faff !important;
+            border: 1.5px solid #bfdbfe !important;
+            color: #1e293b !important;
+            transition: all 0.2s;
         }
-        #mock-one-tap-container.show {
-            transform: translateX(0) translateY(0) !important;
-            opacity: 1 !important;
+        .input-field:focus {
+            background: #fff !important;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.12) !important;
+            outline: none !important;
         }
-        @media (max-width: 767px) {
-            #mock-one-tap-container {
-                top: auto !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                border-radius: 1.5rem 1.5rem 0 0 !important;
-                transform: translateY(120%) !important;
-            }
-            #mock-one-tap-container.show {
-                transform: translateY(0) !important;
-                opacity: 1 !important;
-            }
-        }
+
+        @keyframes fadeUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
+        .fade-up { animation: fadeUp 0.45s ease forwards; }
+
+        /* Decorative bg circles */
+        .bg-circle { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.15; pointer-events: none; }
     </style>
 </head>
-<body class="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-[#1a0f12]">
-    <!-- Full-screen Background with image and overlay -->
-    <div class="absolute inset-0 z-0 bg-cover bg-center" style="background-image: url('{% static 'images/image_d2d181.jpg' %}');"></div>
-    <div class="absolute inset-0 z-0 bg-black/45 backdrop-blur-[3px]"></div>
+<body class="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-[#0f172a]">
 
-    <!-- Centered Login/Welcome Card -->
-    <div class="relative z-10 w-full max-w-md glass-card rounded-[2.5rem] p-10 pt-20 shadow-2xl transition-all duration-300 border-2 border-[#d4af37]/30 mt-8">
-        <!-- Circular Gold Medallion Logo (overlapping the top border) -->
-        <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="absolute -top-16 left-1/2 -translate-x-1/2 h-32 w-auto object-contain drop-shadow-[0_4px_15px_rgba(212,175,55,0.45)] z-20">
+    <!-- Background: UEF La Dolorosa -->
+    <div class="absolute inset-0 z-0" style="
+        background-image: url('{% static 'images/iglesia_dolorosa.jpg' %}');
+        background-size: cover;
+        background-position: center 30%;
+        background-repeat: no-repeat;
+        image-rendering: high-quality;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+        will-change: transform;
+    "></div>
+    <div class="absolute inset-0 z-0 bg-gradient-to-br from-blue-950/75 via-blue-900/60 to-indigo-950/80"></div>
 
-        <!-- ================= WELCOME CARD ================= -->
+    <!-- Decorative blobs -->
+    <div class="bg-circle w-96 h-96 bg-blue-400 top-[-100px] right-[-80px]"></div>
+    <div class="bg-circle w-80 h-80 bg-indigo-300 bottom-[-80px] left-[-60px]"></div>
+
+    <!-- Login Card -->
+    <div class="relative z-10 w-full max-w-md glass-card rounded-[2.5rem] p-10 pt-16 shadow-2xl">
+
+        <!-- Logo centered on top -->
+        <div class="absolute -top-16 left-1/2 -translate-x-1/2 flex flex-col items-center z-20">
+            <div class="w-28 h-28 rounded-full bg-white shadow-xl border-4 border-blue-100 flex items-center justify-center overflow-hidden">
+                <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Escudo UEF La Dolorosa"
+                     class="h-24 w-auto object-contain" />
+            </div>
+        </div>
+
+        <!-- Welcome Card -->
         <div id="welcome-card" class="fade-up">
-            <div class="text-center">
-                <h1 class="text-4xl font-black tracking-tight mb-1 text-gold-gradient" style="font-family:'Manrope',sans-serif;">ReservaEDU</h1>
-                <p class="text-[#ffe082] font-bold uppercase tracking-widest text-[11px] mb-10">U.E.F. "LA DOLOROSA" - LOJA</p>
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-black tracking-tight text-primary leading-none">ReservaEDU</h1>
+                <p class="text-blue-400 font-bold uppercase tracking-widest text-[10px] mt-1">U.E.F. "La Dolorosa" · Loja</p>
+                <p class="text-slate-400 text-sm mt-3">Bienvenido al sistema de gestión de espacios institucionales</p>
             </div>
 
-            <!-- Acceder con Google Button (OAuth real vía allauth) -->
-            <a href="/accounts/google/login/?next=/" class="w-full flex items-center justify-center gap-4 btn-google-premium font-bold py-4 px-6 rounded-2xl transition-all duration-250 hover:-translate-y-0.5 text-xs uppercase tracking-wider mb-8">
-                <svg class="w-5 h-5" viewBox="0 0 24 24">
+            <!-- Google OAuth Button -->
+            <a href="/accounts/google/login/?next=/"
+               class="w-full flex items-center justify-center gap-3 btn-google-premium font-bold py-4 px-6 rounded-2xl text-sm mb-6">
+                <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
@@ -133,136 +125,109 @@
                 <span>Acceder con Google</span>
             </a>
 
+            <div class="flex items-center gap-3 mb-6">
+                <div class="flex-1 h-px bg-blue-100"></div>
+                <span class="text-slate-400 text-xs font-semibold">o</span>
+                <div class="flex-1 h-px bg-blue-100"></div>
+            </div>
+
             <div class="flex flex-col items-center gap-3 text-center">
-                <button onclick="showManualLogin()" class="text-[#ffe082] hover:text-[#d4af37] text-xs font-bold tracking-widest hover:underline uppercase transition-colors">Acceso Manual</button>
-                <div class="w-12 h-px bg-white/10 my-1"></div>
-                <p class="text-slate-300 text-xs">¿No tienes cuenta? <a href="{% url 'registro' %}" class="text-[#ffe082] hover:text-[#d4af37] font-bold hover:underline transition-colors">Regístrate aquí</a></p>
+                <button onclick="showManualLogin()"
+                        class="w-full py-3 rounded-xl border-2 border-blue-200 text-primary font-bold text-sm hover:bg-blue-50 hover:border-primary transition-all">
+                    Acceso con contraseña
+                </button>
+                <p class="text-slate-400 text-xs">¿No tienes cuenta?
+                    <a href="{% url 'registro' %}" class="text-primary font-bold hover:underline">Regístrate aquí</a>
+                </p>
             </div>
         </div>
 
-        <!-- ================= MANUAL LOGIN CARD ================= -->
+        <!-- Manual Login Card -->
         <div id="login-card" class="hidden fade-up">
-            <div class="text-center mb-8">
-                <h2 class="text-2xl font-black text-gold-gradient">Acceso Manual</h2>
-                <p class="text-[#ffe082]/70 text-xs mt-1">Ingresa tus credenciales institucionales</p>
+            <div class="text-center mb-6">
+                <h2 class="text-xl font-black text-primary">Acceso Manual</h2>
+                <p class="text-slate-400 text-xs mt-1">Ingresa tus credenciales institucionales</p>
             </div>
 
             <form method="post" action="{% url 'login' %}" class="space-y-4">
                 {% csrf_token %}
 
                 <div>
-                    <label class="block text-[10px] font-bold text-[#ffe082] uppercase tracking-widest mb-1.5">Usuario</label>
+                    <label class="block text-[10px] font-bold text-primary uppercase tracking-widest mb-1.5">Usuario</label>
                     <div class="relative">
-                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#ffe082]/60 text-lg">person</span>
-                        <input type="text" name="username" class="w-full py-3.5 pl-10 pr-4 input-premium rounded-xl text-white text-sm outline-none transition-all placeholder-white/20" placeholder="Nombre de usuario" required>
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-blue-300 text-lg">person</span>
+                        <input type="text" name="username"
+                               class="w-full py-3 pl-10 pr-4 input-field rounded-xl text-sm placeholder-slate-300"
+                               placeholder="Nombre de usuario" required>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold text-[#ffe082] uppercase tracking-widest mb-1.5">Contraseña</label>
+                    <label class="block text-[10px] font-bold text-primary uppercase tracking-widest mb-1.5">Contraseña</label>
                     <div class="relative">
-                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#ffe082]/60 text-lg">lock</span>
-                        <input type="password" name="password" id="pwd" class="w-full py-3.5 pl-10 pr-10 input-premium rounded-xl text-white text-sm outline-none transition-all placeholder-white/20" placeholder="••••••••" required>
-                        <button type="button" onclick="togglePwd()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#ffe082]/60 hover:text-white transition-colors">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-blue-300 text-lg">lock</span>
+                        <input type="password" name="password" id="pwd"
+                               class="w-full py-3 pl-10 pr-10 input-field rounded-xl text-sm placeholder-slate-300"
+                               placeholder="••••••••" required>
+                        <button type="button" onclick="togglePwd()"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-300 hover:text-primary transition-colors">
                             <span id="eye-icon" class="material-symbols-outlined text-lg">visibility</span>
                         </button>
                     </div>
                 </div>
 
                 {% if form.errors %}
-                <div class="flex items-center gap-3 bg-red-500/20 border border-red-500/30 rounded-xl p-3">
+                <div class="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-3">
                     <span class="material-symbols-outlined text-red-400 text-base">error</span>
-                    <p class="text-red-300 text-xs font-semibold">Usuario o contraseña incorrectos.</p>
+                    <p class="text-red-500 text-xs font-semibold">Usuario o contraseña incorrectos.</p>
                 </div>
                 {% endif %}
 
-                <div class="flex items-center justify-between text-xs pt-1">
-                    <label class="flex items-center gap-2 cursor-pointer text-slate-300">
-                        <input type="checkbox" class="w-4 h-4 rounded border-white/20 bg-white/10 text-[#d4af37] focus:ring-0 focus:ring-offset-0">
-                        <span>Recordarme</span>
-                    </label>
-                    <a href="#" class="text-[#ffe082] hover:text-[#d4af37] font-semibold hover:underline transition-colors">¿Olvidaste tu contraseña?</a>
-                </div>
-
-                <button type="submit" class="w-full bg-[#d4af37] hover:bg-[#ffe082] text-[#1a0f12] font-black py-4 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#d4af37]/30 text-xs uppercase tracking-widest mt-4" style="font-family:'Manrope',sans-serif;">
+                <button type="submit"
+                        class="w-full bg-primary hover:bg-primary-dark text-white font-black py-3.5 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/30 text-sm uppercase tracking-widest">
                     Iniciar Sesión
                 </button>
             </form>
 
-            <div class="mt-6 flex flex-col items-center gap-3 text-center">
-                <button onclick="showWelcome()" class="text-slate-300 hover:text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors"><span class="material-symbols-outlined text-sm">arrow_back</span> Volver</button>
-                <div class="w-12 h-px bg-white/10 my-1"></div>
-                <p class="text-slate-300 text-xs">¿No tienes cuenta? <a href="{% url 'registro' %}" class="text-[#ffe082] hover:text-[#d4af37] font-bold hover:underline transition-colors">Regístrate aquí</a></p>
+            <div class="mt-5 flex flex-col items-center gap-3 text-center">
+                <button onclick="showWelcome()"
+                        class="text-slate-400 hover:text-primary text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span> Volver
+                </button>
+                <p class="text-slate-400 text-xs">¿No tienes cuenta?
+                    <a href="{% url 'registro' %}" class="text-primary font-bold hover:underline">Regístrate aquí</a>
+                </p>
             </div>
         </div>
-
     </div>
 
-    <!-- Premium Footer with copyright and social links -->
-    <footer class="absolute bottom-6 left-0 right-0 z-10 text-center flex flex-col items-center gap-3">
-        <p class="text-[10px] font-bold text-[#d4af37]/80 uppercase tracking-widest">© 2028 U.E.F. La Dolorosa - Loja. Todos los derechos reservados.</p>
-        <div class="flex gap-5 items-center">
-            <!-- Facebook SVG Icon -->
-            <a href="#" class="text-[#d4af37]/70 hover:text-[#d4af37] hover:scale-110 transition-all">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/>
-                </svg>
-            </a>
-            <!-- X SVG Icon -->
-            <a href="#" class="text-[#d4af37]/70 hover:text-[#d4af37] hover:scale-110 transition-all">
-                <svg class="w-4.5 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-            </a>
-            <!-- YouTube SVG Icon -->
-            <a href="#" class="text-[#d4af37]/70 hover:text-[#d4af37] hover:scale-110 transition-all">
-                <svg class="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.518 3.5 12 3.5 12 3.5s-7.518 0-9.388.553a3.003 3.003 0 0 0-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.87.553 9.388.553 9.388.553s7.518 0 9.388-.553a3.003 3.003 0 0 0 2.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-            </a>
-        </div>
+    <!-- Footer -->
+    <footer class="absolute bottom-5 left-0 right-0 z-10 text-center">
+        <p class="text-[10px] font-bold text-blue-200/60 uppercase tracking-widest">
+            © 2025 U.E.F. La Dolorosa · Loja. Todos los derechos reservados.
+        </p>
     </footer>
 
     <script>
         function showManualLogin() {
             document.getElementById('welcome-card').classList.add('hidden');
             document.getElementById('login-card').classList.remove('hidden');
-            const url = new URL(window.location);
-            url.searchParams.set('manual', 'true');
-            window.history.pushState({}, '', url);
         }
-
         function showWelcome() {
             document.getElementById('login-card').classList.add('hidden');
             document.getElementById('welcome-card').classList.remove('hidden');
-            const url = new URL(window.location);
-            url.searchParams.delete('manual');
-            window.history.pushState({}, '', url);
         }
-
         function togglePwd() {
             const p = document.getElementById('pwd');
             const i = document.getElementById('eye-icon');
             if (p.type === 'password') { p.type = 'text'; i.textContent = 'visibility_off'; }
             else { p.type = 'password'; i.textContent = 'visibility'; }
         }
-
         window.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
             const hasErrors = {% if form.errors %}true{% else %}false{% endif %};
-            if (params.get('manual') === 'true' || hasErrors) {
-                showManualLogin();
-            } else {
-                showWelcome();
-            }
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('manual') === 'true' || hasErrors) showManualLogin();
         });
     </script>
-    
-    <!-- Estrella decorativa -->
-    <div class="absolute bottom-28 right-20 z-0 pointer-events-none opacity-60 animate-pulse hidden lg:block">
-        <svg class="w-12 h-12 text-[#ffe082]/70 drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
-        </svg>
-    </div>
 </body>
 </html>

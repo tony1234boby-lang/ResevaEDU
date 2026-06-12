@@ -184,7 +184,7 @@ def generar_horario_sin_cruces(query):
 <div class="institutional-schedule-wrapper bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-200 w-full overflow-x-auto text-slate-800" style="font-family: 'Inter', sans-serif;">
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 border-b border-slate-200 pb-5">
         <div class="flex items-center gap-4">
-            <img src="/static/images/logo_dolorosa.png" class="h-16 w-auto object-contain shrink-0" alt="La Dolorosa">
+            <img src="/static/images/escudo_dolorosa.jpg" class="h-16 w-auto object-contain shrink-0" alt="La Dolorosa">
             <div class="text-left">
                 <h2 class="text-xl font-bold text-[#1e3a8a] tracking-tight leading-tight" style="font-family: 'Manrope', sans-serif;">Unidad Educativa Fiscomisional La Dolorosa</h2>
                 <p class="text-xs text-blue-600 italic font-bold">¡Siempre! ... un paso adelante</p>

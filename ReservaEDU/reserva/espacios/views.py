@@ -9,6 +9,22 @@ import json
 
 from .forms import CustomUserCreationForm
 from .models import Espacio, Reserva, HistorialReserva, Notificacion
+from .ai_utils import investigar_internet
+
+
+
+def get_google_picture(user):
+    """Obtiene la URL de la foto de perfil de Google del usuario."""
+    if not user or not user.is_authenticated:
+        return ''
+    try:
+        from allauth.socialaccount.models import SocialAccount
+        social = SocialAccount.objects.filter(user=user, provider='google').first()
+        if social:
+            return social.extra_data.get('picture', '')
+    except Exception:
+        pass
+    return ''
 
 # Helper para verificar si un usuario es del grupo Secretaría o Superusuario
 def es_secretaria(user):
@@ -23,7 +39,7 @@ def secretaria_required(view_func):
     return wrapper
 
 # Helper para enviar notificaciones en base de datos y simular logs de correo
-def notificar_reserva(reserva, accion, comentario=None):
+def notificar_reserva(reserva, accion, comentario=None, notificar_todos=False, notificar_personas=None):
     recipientes = set()
     
     # El solicitante siempre es notificado
@@ -36,6 +52,28 @@ def notificar_reserva(reserva, accion, comentario=None):
     # El responsable del espacio es notificado
     if reserva.espacio.responsable:
         recipientes.add(reserva.espacio.responsable)
+
+    if notificar_todos:
+        for u in User.objects.all():
+            recipientes.add(u)
+
+    mapping = {
+        'Padre Rector': ('padre_rector', 'Padre Rector', ''),
+        'Lic. Jorge Sarmiento': ('jorge_sarmiento', 'Jorge', 'Sarmiento'),
+        'Lic. Patricio Espinoza': ('patricio_espinoza', 'Patricio', 'Espinoza'),
+        'Secretaría': ('secretaria', 'Secretaría', ''),
+        'Otros Licenciados': ('otros_licenciados', 'Otros Licenciados', ''),
+    }
+
+    if notificar_personas:
+        for p in notificar_personas:
+            if p in mapping:
+                username, first_name, last_name = mapping[p]
+                user_obj, _ = User.objects.get_or_create(
+                    username=username,
+                    defaults={'first_name': first_name, 'last_name': last_name, 'email': f"{username}@reservaedu.edu"}
+                )
+                recipientes.add(user_obj)
         
     # Construir mensaje según la acción
     if accion == 'creacion':
@@ -103,10 +141,18 @@ def lista_espacios(request):
                 "capacidad": 25,
                 "imagen_url": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800",
                 "responsable": responsable_user
+            },
+            {
+                "nombre": "Coliseo Deportivo",
+                "categoria": "Deportivo",
+                "descripcion": "Instalaciones deportivas completas para básquetbol, fútbol sala y eventos deportivos escolares.",
+                "capacidad": 600,
+                "imagen_url": "https://images.unsplash.com/photo-1541252260730-0412e8e2108e?auto=format&fit=crop&q=80&w=800",
+                "responsable": responsable_user
             }
         ]
         for data in espacios_data:
-            Espacio.objects.create(**data)
+            Espacio.objects.get_or_create(nombre=data["nombre"], defaults=data)
 
     espacios = Espacio.objects.all()
     sim_username = request.GET.get('user')
@@ -127,11 +173,14 @@ def lista_espacios(request):
     notificaciones_count = 0
     user_actual = sim_user_obj if user_simulated else request.user
     
+    mis_reservas = []
     if user_actual and user_actual.is_authenticated:
         notificaciones = Notificacion.objects.filter(usuario=user_actual, leida=False).order_by('-fecha')[:5]
         notificaciones_count = Notificacion.objects.filter(usuario=user_actual, leida=False).count()
+        mis_reservas = Reserva.objects.filter(usuario=user_actual).order_by('-fecha')
 
     is_sec = es_secretaria(user_actual) if user_actual else False
+    google_picture = get_google_picture(request.user)
 
     return render(request, 'index.html', {
         'espacios': espacios,
@@ -140,6 +189,8 @@ def lista_espacios(request):
         'notificaciones': notificaciones,
         'notificaciones_count': notificaciones_count,
         'es_secretaria': is_sec,
+        'google_picture': google_picture,
+        'mis_reservas': mis_reservas,
     })
 
 @login_required
@@ -158,7 +209,7 @@ def reservar_espacio(request, espacio_id):
             fecha=fecha,
             hora_inicio=hora_inicio,
             hora_fin=hora_fin,
-            estado='pendiente'
+            estado='aprobada'
         )
         
         try:
@@ -170,11 +221,23 @@ def reservar_espacio(request, espacio_id):
                 reserva=reserva,
                 usuario=request.user,
                 accion='creacion',
-                comentario=f"Reserva creada por {request.user.username} (Pendiente de aprobación)"
+                comentario=f"Reserva creada y aprobada automáticamente por {request.user.username}"
             )
             
+            # Opciones de Notificación del Formulario
+            notificar_todos = request.POST.get('notificar_todos') == 'true'
+            notificar_personas = request.POST.getlist('notificar_personas')
+
             # Notificaciones
-            notificar_reserva(reserva, 'creacion')
+            notificar_reserva(
+                reserva, 
+                'aprobacion', 
+                notificar_todos=notificar_todos, 
+                notificar_personas=notificar_personas
+            )
+            
+            from django.contrib import messages
+            messages.success(request, f"¡Reserva confirmada en {espacio.nombre} para el {fecha} ({hora_inicio} - {hora_fin})!")
             
             return redirect('mis_reservas')
         except ValidationError as e:
@@ -204,7 +267,8 @@ def mis_reservas(request):
         'mis_reservas': reservas,
         'notificaciones': notificaciones,
         'notificaciones_count': notificaciones_count,
-        'es_secretaria': es_secretaria(request.user)
+        'es_secretaria': es_secretaria(request.user),
+        'google_picture': get_google_picture(request.user),
     })
 
 @login_required
@@ -295,6 +359,11 @@ def rechazar_reserva(request, reserva_id):
 def lista_notificaciones(request):
     notifs = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
     
+    # Marcar todas como leídas si se solicita
+    if request.GET.get('marcar_todas'):
+        Notificacion.objects.filter(usuario=request.user, leida=False).update(leida=True)
+        return redirect('lista_notificaciones')
+    
     # Cargar notificaciones del header
     notificaciones_cinco = Notificacion.objects.filter(usuario=request.user, leida=False).order_by('-fecha')[:5]
     notificaciones_count = Notificacion.objects.filter(usuario=request.user, leida=False).count()
@@ -303,7 +372,8 @@ def lista_notificaciones(request):
         'todas_notificaciones': notifs,
         'notificaciones': notificaciones_cinco,
         'notificaciones_count': notificaciones_count,
-        'es_secretaria': es_secretaria(request.user)
+        'es_secretaria': es_secretaria(request.user),
+        'google_picture': get_google_picture(request.user),
     })
 
 @login_required
@@ -354,7 +424,7 @@ def registro(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('inicio')
     else:
         form = CustomUserCreationForm()
@@ -365,3 +435,83 @@ def google_settings(request):
     return {
         'GOOGLE_CLIENT_ID': getattr(settings, 'GOOGLE_CLIENT_ID', '')
     }
+
+
+def api_reservas_horario(request):
+    """
+    Endpoint JSON que devuelve las reservas (pendientes y aprobadas)
+    para poblar el horario automático en el frontend.
+    Admite filtros user_only=true y upcoming=true para uso personalizado.
+    """
+    from django.db.models import Q
+    from datetime import date
+
+    reservas = Reserva.objects.filter(
+        Q(estado='aprobada') | Q(estado='pendiente')
+    )
+
+    user_only = request.GET.get('user_only') == 'true'
+    upcoming = request.GET.get('upcoming') == 'true'
+
+    if user_only and request.user.is_authenticated:
+        reservas = reservas.filter(usuario=request.user)
+    if upcoming:
+        reservas = reservas.filter(fecha__gte=date.today())
+
+    reservas = reservas.select_related('espacio', 'usuario').order_by('fecha', 'hora_inicio')
+
+    data = []
+    for r in reservas:
+        data.append({
+            'id': r.id,
+            'espacio': r.espacio.nombre,
+            'categoria': r.espacio.categoria,
+            'usuario': r.usuario.get_full_name() or r.usuario.username,
+            'usuario_username': r.usuario.username,
+            'fecha': str(r.fecha),
+            'hora_inicio': str(r.hora_inicio)[:5],
+            'hora_fin': str(r.hora_fin)[:5],
+            'estado': r.estado,
+        })
+    return JsonResponse({'reservas': data})
+
+@login_required
+def proximas_reservas(request):
+    """
+    Vista que renderiza la agenda y calendario de reservas futuras del usuario autenticado.
+    """
+    notificaciones = Notificacion.objects.filter(usuario=request.user, leida=False).order_by('-fecha')[:5]
+    notificaciones_count = Notificacion.objects.filter(usuario=request.user, leida=False).count()
+    
+    # Para la barra flotante y conteos en menús
+    mis_reservas = Reserva.objects.filter(usuario=request.user).order_by('-fecha')
+    
+    espacios = Espacio.objects.all()
+    
+    return render(request, 'proximas_reservas.html', {
+        'notificaciones': notificaciones,
+        'notificaciones_count': notificaciones_count,
+        'es_secretaria': es_secretaria(request.user),
+        'mis_reservas': mis_reservas,
+        'espacios': espacios,
+    })
+
+
+@login_required
+def ayuda(request):
+    """
+    Vista que renderiza la sección de Ayuda y Tutoriales del sistema.
+    """
+    notificaciones = Notificacion.objects.filter(usuario=request.user, leida=False).order_by('-fecha')[:5]
+    notificaciones_count = Notificacion.objects.filter(usuario=request.user, leida=False).count()
+    es_sec = es_secretaria(request.user)
+    google_picture = get_google_picture(request.user)
+    mis_reservas = Reserva.objects.filter(usuario=request.user).order_by('-fecha')
+
+    return render(request, 'ayuda.html', {
+        'notificaciones': notificaciones,
+        'notificaciones_count': notificaciones_count,
+        'es_secretaria': es_sec,
+        'google_picture': google_picture,
+        'mis_reservas': mis_reservas,
+    })

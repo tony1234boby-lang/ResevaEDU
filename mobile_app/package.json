@@ -1,0 +1,22 @@
+{
+  "name": "reservaedu-mobile-app",
+  "version": "1.0.0",
+  "description": "Contenedor nativo móvil para ReservaEDU U.E.F. La Dolorosa",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'No build required for remote server wrapper'",
+    "cap:sync": "npx cap sync",
+    "cap:open:android": "npx cap open android",
+    "cap:open:ios": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/cli": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/ios": "^6.0.0"
+  },
+  "author": "U.E.F. La Dolorosa",
+  "license": "MIT"
+}

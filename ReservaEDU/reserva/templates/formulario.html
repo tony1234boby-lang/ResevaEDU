@@ -4,11 +4,15 @@
 <html class="light" lang="es">
 
 <head>
+    {% include 'pwa_meta.html' %}
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Nueva Reserva - ReservaEDU | La Dolorosa</title>
-    <link rel="icon" type="image/png" href="{% static 'images/logo_dolorosa.png' %}" />
+    <link rel="icon" type="image/png" href="{% static 'images/escudo_dolorosa.jpg' %}" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
         rel="stylesheet" />
@@ -34,7 +38,7 @@
                         "error": "#ba1a1a",
                         "on-primary-fixed-variant": "#264191",
                         "on-tertiary-fixed-variant": "#574500",
-                        "primary": "#7e192f",
+                        "primary": "#1e40af",
                         "background": "#f7f9fb",
                         "on-secondary-fixed": "#131b2e",
                         "surface-container-low": "#f2f4f6",
@@ -42,7 +46,7 @@
                         "on-tertiary": "#ffffff",
                         "surface": "#f7f9fb",
                         "surface-container-high": "#e6e8ea",
-                        "surface-tint": "#7e192f",
+                        "surface-tint": "#1e40af",
                         "surface-container-highest": "#e0e3e5",
                         "secondary-fixed-dim": "#bec6e0",
                         "on-background": "#191c1e",
@@ -60,7 +64,7 @@
                         "on-primary-fixed": "#00164e",
                         "primary-fixed-dim": "#b6c4ff",
                         "inverse-primary": "#b6c4ff",
-                        "primary-container": "#7e192f",
+                        "primary-container": "#1e40af",
                         "outline-variant": "#c5c5d3",
                         "on-secondary-fixed-variant": "#3f465c",
                         "on-error": "#ffffff",
@@ -94,6 +98,9 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
 
+        .fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+
         .form-django p {
             margin-bottom: 1.5rem;
             display: flex;
@@ -121,8 +128,8 @@
 
         .form-django input:focus {
             background-color: #ffffff;
-            outline: 1px solid #7e192f;
-            box-shadow: 0 0 0 1px #7e192f;
+            outline: 1px solid #1e40af;
+            box-shadow: 0 0 0 1px #1e40af;
         }
     </style>
 </head>
@@ -131,7 +138,7 @@
     <aside
         class="flex flex-col p-4 gap-2 h-screen border-r border-slate-200 bg-slate-50 docked left-0 h-full w-64 fixed hidden md:flex">
         <div class="mb-6 px-4 flex flex-col items-center gap-3">
-            <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-16 w-auto object-contain mt-2 drop-shadow-sm">
+            <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Logo La Dolorosa" class="h-16 w-auto object-contain mt-2 drop-shadow-sm">
             <div class="text-center">
                 <h2 class="text-xl font-black text-primary uppercase tracking-tighter">RESERVAEDU</h2>
                 <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">La Dolorosa</p>
@@ -144,9 +151,18 @@
                 <span>Espacios</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold"
+                href="/?view=horarios">
+                <span class="material-symbols-outlined">description</span>
+                <span>Disponibilidad de reservas</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold"
                 href="{% url 'mis_reservas' %}">
                 <span class="material-symbols-outlined">event_available</span>
                 <span>Mis Reservas</span>
+            </a>
+            <a id="nav-proximas" href="{% url 'proximas_reservas' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span>Próximos días</span>
             </a>
             {% if es_secretaria %}
             <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold"
@@ -157,10 +173,9 @@
             {% endif %}
         </nav>
         <div class="mt-auto flex flex-col gap-2 pt-4 border-t border-slate-200">
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-medium"
-                href="#">
-                <span class="material-symbols-outlined">settings</span>
-                <span>Ajustes</span>
+            <a id="nav-ayuda" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold" href="{% url 'ayuda' %}">
+                <span class="material-symbols-outlined">help</span>
+                <span>Ayuda</span>
             </a>
             <form action="{% url 'logout' %}" method="post" class="w-full m-0">
                 {% csrf_token %}
@@ -220,15 +235,49 @@
                         <div class="h-1 w-12 bg-tertiary-container rounded-full"></div>
                     </div>
                     {% if error_msg %}
+                    <!-- Banner de error estático -->
                     <div class="mb-6 p-4 rounded-xl bg-red-100 text-red-800 border-l-4 border-red-500 font-bold text-sm">
                         {{ error_msg }}
                     </div>
+
+                    <!-- Modal de error flotante (Solapamiento o conflicto) -->
+                    <div id="error-collision-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center fade-in">
+                        <div class="bg-white p-8 rounded-[2.5rem] shadow-2xl border border-red-100 max-w-sm w-full flex flex-col items-center gap-5 text-center relative mx-4">
+                            <!-- Botón de cerrar superior -->
+                            <button onclick="closeErrorModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 transition-colors">
+                                <span class="material-symbols-outlined text-lg">close</span>
+                            </button>
+                            <!-- Icono de Advertencia animado -->
+                            <div class="w-16 h-16 rounded-full bg-red-50 border border-red-100 flex items-center justify-center text-red-600 shadow-sm animate-bounce">
+                                <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1">warning</span>
+                            </div>
+                            <!-- Títulos y Texto -->
+                            <div>
+                                <h3 class="text-lg font-extrabold text-slate-800 tracking-tight">Espacio No Disponible</h3>
+                                <p class="text-xs text-slate-500 mt-2 leading-relaxed">No se puede completar el proceso. {{ error_msg }}</p>
+                            </div>
+                            <!-- Botón Entendido -->
+                            <button onclick="closeErrorModal()" class="w-full py-3.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md mt-2">
+                                Entendido
+                            </button>
+                        </div>
+                    </div>
+                    <script>
+                        function closeErrorModal() {
+                            const modal = document.getElementById('error-collision-modal');
+                            if (modal) {
+                                modal.classList.add('opacity-0');
+                                modal.style.transition = 'opacity 0.25s ease';
+                                setTimeout(() => { modal.remove(); }, 250);
+                            }
+                        }
+                    </script>
                     {% endif %}
                     <form class="form-django" method="POST" action="{% url 'reservar_espacio' espacio.id %}">
                         {% csrf_token %}
                         <p>
                             <label for="id_date">Fecha</label>
-                            <input id="id_date" name="date" required="" type="date" />
+                            <input id="id_date" name="date" required="" type="text" placeholder="Seleccione fecha..." />
                         </p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <p>
@@ -240,6 +289,111 @@
                                 <input id="id_end_time" name="end_time" required="" type="time" />
                             </p>
                         </div>
+                        <!-- Horas generales permitidas para la categoría actual -->
+                        <div class="mt-6 p-5 rounded-2xl bg-blue-50/60 border border-blue-100 flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary">schedule</span>
+                            <div>
+                                <h6 class="text-xs font-bold text-slate-700 uppercase tracking-wide">Horario General Permitido (Categoría: {{ espacio.categoria }})</h6>
+                                <p class="text-sm text-primary font-black mt-1">
+                                    08:00 - 14:00
+                                </p>
+                                <p class="text-[10px] text-slate-400 mt-1">Las reservas fuera de esta franja horaria serán denegadas automáticamente por el sistema.</p>
+                            </div>
+                        </div>
+
+                        <!-- Opciones de Notificación -->
+                        <div class="mt-8 p-6 bg-slate-50 border border-slate-200 rounded-3xl">
+                            <h5 class="text-sm font-bold text-slate-700 uppercase tracking-wide mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">notifications_active</span>
+                                Configuración de Notificaciones
+                            </h5>
+                            
+                            <!-- Checkbox principal para Notificar a Todos -->
+                            <label class="flex items-center gap-3 mb-4 cursor-pointer">
+                                <input type="checkbox" name="notificar_todos" id="notify-all" value="true" class="rounded text-primary focus:ring-primary border-slate-300 w-5 h-5" onchange="toggleSpecificNotificationOptions()">
+                                <span class="text-sm font-bold text-slate-800">Notificar a todos los usuarios</span>
+                            </label>
+                            
+                            <!-- Opción para notificar a personas específicas -->
+                            <div class="border-t border-slate-200 pt-4 transition-all duration-300" id="specific-notification-wrapper">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">Notificar a personas específicas:</span>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <!-- Padre Rector -->
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-2xl border border-slate-100 bg-white hover:bg-slate-50 transition-all shadow-sm">
+                                        <input type="checkbox" name="notificar_personas" value="Padre Rector" class="notify-person rounded text-primary focus:ring-primary border-slate-300 w-4 h-4">
+                                        <div class="text-left">
+                                            <span class="text-xs font-black text-slate-800 block">Padre Rector</span>
+                                            <span class="text-[10px] text-slate-400 font-semibold block">Rectorado</span>
+                                        </div>
+                                    </label>
+                                    
+                                    <!-- Lic. Jorge Sarmiento -->
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-2xl border border-slate-100 bg-white hover:bg-slate-50 transition-all shadow-sm">
+                                        <input type="checkbox" name="notificar_personas" value="Lic. Jorge Sarmiento" class="notify-person rounded text-primary focus:ring-primary border-slate-300 w-4 h-4">
+                                        <div class="text-left">
+                                            <span class="text-xs font-black text-slate-800 block">Lic. Jorge Sarmiento</span>
+                                            <span class="text-[10px] text-slate-400 font-semibold block">Coordinación Académica</span>
+                                        </div>
+                                    </label>
+
+                                    <!-- Lic. Patricio Espinoza -->
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-2xl border border-slate-100 bg-white hover:bg-slate-50 transition-all shadow-sm">
+                                        <input type="checkbox" name="notificar_personas" value="Lic. Patricio Espinoza" class="notify-person rounded text-primary focus:ring-primary border-slate-300 w-4 h-4">
+                                        <div class="text-left">
+                                            <span class="text-xs font-black text-slate-800 block">Lic. Patricio Espinoza</span>
+                                            <span class="text-[10px] text-slate-400 font-semibold block">Inspección General</span>
+                                        </div>
+                                    </label>
+                                    
+                                    <!-- Secretarias -->
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-2xl border border-slate-100 bg-white hover:bg-slate-50 transition-all shadow-sm">
+                                        <input type="checkbox" name="notificar_personas" value="Secretaría" class="notify-person rounded text-primary focus:ring-primary border-slate-300 w-4 h-4">
+                                        <div class="text-left">
+                                            <span class="text-xs font-black text-slate-800 block">Secretaría</span>
+                                            <span class="text-[10px] text-slate-400 font-semibold block">Administración / Atención</span>
+                                        </div>
+                                    </label>
+
+                                    <!-- Otros Licenciados -->
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-2xl border border-slate-100 bg-white hover:bg-slate-50 transition-all shadow-sm col-span-1 md:col-span-2">
+                                        <input type="checkbox" name="notificar_personas" value="Otros Licenciados" class="notify-person rounded text-primary focus:ring-primary border-slate-300 w-4 h-4">
+                                        <div class="text-left">
+                                            <span class="text-xs font-black text-slate-800 block">Otros Administrativos / Docentes</span>
+                                            <span class="text-[10px] text-slate-400 font-semibold block">Personal de la Institución</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            function toggleSpecificNotificationOptions() {
+                                const notifyAllCheckbox = document.getElementById('notify-all');
+                                const checkboxes = document.querySelectorAll('.notify-person');
+                                const wrapper = document.getElementById('specific-notification-wrapper');
+                                if (notifyAllCheckbox && notifyAllCheckbox.checked) {
+                                    checkboxes.forEach(cb => {
+                                        cb.checked = false;
+                                        cb.disabled = true;
+                                    });
+                                    if (wrapper) {
+                                        wrapper.style.opacity = '0.5';
+                                        wrapper.style.pointerEvents = 'none';
+                                    }
+                                } else {
+                                    checkboxes.forEach(cb => {
+                                        cb.disabled = false;
+                                    });
+                                    if (wrapper) {
+                                        wrapper.style.opacity = '1';
+                                        wrapper.style.pointerEvents = 'auto';
+                                    }
+                                }
+                            }
+                            window.addEventListener('DOMContentLoaded', toggleSpecificNotificationOptions);
+                        </script>
+
                         <div class="mt-8 bg-surface-container-low p-6 rounded-2xl flex items-start gap-4">
                             <span class="material-symbols-outlined text-tertiary" data-icon="info">info</span>
                             <div>
@@ -281,24 +435,10 @@
                     </div>
                     <div class="bg-surface-container-high p-8 rounded-3xl">
                         <h4 class="text-lg font-bold text-primary mb-6">Disponibilidad Actual</h4>
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl">
-                                <span class="text-xs font-bold text-on-surface-variant uppercase tracking-tighter">09:00
-                                    - 11:00</span>
-                                <span
-                                    class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-bold rounded uppercase">Reservado</span>
-                            </div>
-                            <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl">
-                                <span class="text-xs font-bold text-on-surface-variant uppercase tracking-tighter">11:00
-                                    - 14:00</span>
-                                <span
-                                    class="px-2 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded uppercase">Disponible</span>
-                            </div>
-                            <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl">
-                                <span class="text-xs font-bold text-on-surface-variant uppercase tracking-tighter">14:00
-                                    - 15:30</span>
-                                <span
-                                    class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-bold rounded uppercase">Reservado</span>
+                        <div id="slots-container" class="space-y-4">
+                            <div class="flex items-center justify-center p-4">
+                                <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                <span class="ml-2 text-xs text-slate-500 font-bold">Cargando disponibilidad...</span>
                             </div>
                         </div>
                     </div>
@@ -320,11 +460,298 @@
             <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
             <span class="text-[10px] font-bold uppercase">Reservas</span>
         </a>
-        <a class="flex flex-col items-center gap-1 text-slate-400" href="#">
-            <span class="material-symbols-outlined" data-icon="settings">settings</span>
-            <span class="text-[10px] font-bold uppercase">Ajustes</span>
+        <a class="flex flex-col items-center gap-1 text-slate-400" href="{% url 'ayuda' %}">
+            <span class="material-symbols-outlined" data-icon="help">help</span>
+            <span class="text-[10px] font-bold uppercase">Ayuda</span>
         </a>
     </nav>
+    <script>
+        const currentUsername = "{{ request.user.username|escapejs }}";
+        let seleccionadoInicio = null;
+        let seleccionadoFin = null;
+        let pollingInterval = null;
+
+        // Funciones de utilidad para convertir tiempo a minutos y viceversa
+        const parseMin = t => {
+            const [h, m] = t.split(':').map(Number);
+            return h * 60 + m;
+        };
+
+        const formatTime = mins => {
+            const h = Math.floor(mins / 60);
+            const m = mins % 60;
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        };
+
+        function iniciarPolling(fecha) {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+            }
+            if (!fecha) return;
+            pollingInterval = setInterval(() => {
+                actualizarDisponibilidad(fecha, true);
+            }, 4000); // Actualiza en segundo plano cada 4 segundos
+        }
+
+        function seleccionarHorario(inicio, fin, elemento) {
+            const startInput = document.getElementById('id_start_time');
+            const endInput = document.getElementById('id_end_time');
+            if (startInput && endInput) {
+                startInput.value = inicio;
+                endInput.value = fin;
+                seleccionadoInicio = inicio;
+                seleccionadoFin = fin;
+                
+                // Remover clases de selección previa de todos los slots disponibles
+                document.querySelectorAll('.slot-disponible').forEach(el => {
+                    el.classList.remove('ring-2', 'ring-primary', 'bg-blue-50/50', 'border-primary/30');
+                    el.classList.add('bg-white', 'border-blue-50');
+                });
+                
+                // Agregar clase de selección activa al elemento actual
+                if (elemento) {
+                    elemento.classList.add('ring-2', 'ring-primary', 'bg-blue-50/50', 'border-primary/30');
+                    elemento.classList.remove('bg-white', 'border-blue-50');
+                }
+            }
+        }
+
+        function deseleccionarSlots() {
+            seleccionadoInicio = null;
+            seleccionadoFin = null;
+            document.querySelectorAll('.slot-disponible').forEach(el => {
+                el.classList.remove('ring-2', 'ring-primary', 'bg-blue-50/50', 'border-primary/30');
+                el.classList.add('bg-white', 'border-blue-50');
+            });
+        }
+
+        async function actualizarDisponibilidad(fecha, silencioso = false) {
+            const container = document.getElementById('slots-container');
+            if (!container) return;
+
+            // Si no hay fecha seleccionada, mostramos aviso
+            if (!fecha) {
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                }
+                container.innerHTML = `
+                    <div class="text-center p-6 bg-slate-50 border border-slate-100 rounded-2xl">
+                        <span class="material-symbols-outlined text-slate-300 text-4xl mb-2 block" style="font-variation-settings: 'FILL' 0">calendar_today</span>
+                        <span class="text-xs font-bold text-slate-450 leading-relaxed block">Por favor, seleccione una fecha para ver la disponibilidad actual de este espacio.</span>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!silencioso) {
+                container.innerHTML = `
+                    <div class="flex items-center justify-center p-4">
+                        <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        <span class="ml-2 text-xs text-slate-500 font-bold">Cargando disponibilidad...</span>
+                    </div>
+                `;
+            }
+
+            try {
+                const resp = await fetch('/api/reservas-horario/?t=' + new Date().getTime());
+                const data = await resp.json();
+                const reservas = data.reservas || [];
+
+                // Filtrar para este espacio y fecha seleccionada
+                const filtered = reservas.filter(r => 
+                    r.espacio === "{{ espacio.nombre|escapejs }}" && r.fecha === fecha
+                );
+
+                // Ordenar por hora de inicio
+                filtered.sort((a, b) => a.hora_inicio.localeCompare(b.hora_inicio));
+
+                const startLimit = parseMin('08:00');
+                const endLimit = parseMin('14:00');
+
+                // Definir franjas horarias fijas de 1 hora
+                const slots = [
+                    { start: parseMin('08:00'), end: parseMin('09:00') },
+                    { start: parseMin('09:00'), end: parseMin('10:00') },
+                    { start: parseMin('10:00'), end: parseMin('11:00') },
+                    { start: parseMin('11:00'), end: parseMin('12:00') },
+                    { start: parseMin('12:00'), end: parseMin('13:00') },
+                    { start: parseMin('13:00'), end: parseMin('14:00') }
+                ];
+
+                const blocks = slots.map(slot => {
+                    // Buscar si hay alguna reserva que se solape con esta franja horaria
+                    const overlap = filtered.find(res => {
+                        const rStart = parseMin(res.hora_inicio);
+                        const rEnd = parseMin(res.hora_fin);
+                        return rStart < slot.end && rEnd > slot.start;
+                    });
+
+                    if (overlap) {
+                        return {
+                            start: slot.start,
+                            end: slot.end,
+                            estado: 'ocupado',
+                            usuario: overlap.usuario,
+                            usuario_username: overlap.usuario_username
+                        };
+                    } else {
+                        return {
+                            start: slot.start,
+                            end: slot.end,
+                            estado: 'disponible'
+                        };
+                    }
+                });
+
+                // Si el slot seleccionado actualmente se vuelve ocupado en tiempo real, limpiamos la selección
+                if (seleccionadoInicio && seleccionadoFin) {
+                    const isStillAvailable = !blocks.some(b => 
+                        b.estado === 'ocupado' && 
+                        formatTime(b.start) === seleccionadoInicio && 
+                        formatTime(b.end) === seleccionadoFin
+                    );
+                    
+                    if (!isStillAvailable) {
+                        deseleccionarSlots();
+                        const startInput = document.getElementById('id_start_time');
+                        const endInput = document.getElementById('id_end_time');
+                        if (startInput) startInput.value = '';
+                        if (endInput) endInput.value = '';
+                    }
+                }
+
+                container.innerHTML = blocks.map(b => {
+                    const timeStr = `${formatTime(b.start)} - ${formatTime(b.end)}`;
+                    if (b.estado === 'ocupado') {
+                        const esMio = (b.usuario_username === currentUsername);
+                        if (esMio) {
+                            return `
+                                <div class="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-xl shadow-sm hover:shadow-md transition-all">
+                                    <span class="text-xs font-bold text-red-900 font-mono">${timeStr}</span>
+                                    <div class="flex flex-col items-end gap-0.5">
+                                        <span class="px-2.5 py-1 bg-red-600 text-white text-[10px] font-black rounded-lg uppercase tracking-wider">Reservado por mí</span>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            return `
+                                <div class="flex items-center justify-between p-3 bg-white border border-red-100 rounded-xl shadow-sm hover:shadow-md transition-all">
+                                    <span class="text-xs font-bold text-slate-700 font-mono">${timeStr}</span>
+                                    <div class="flex flex-col items-end gap-0.5">
+                                        <span class="px-2.5 py-1 bg-red-100 text-red-800 text-[10px] font-black rounded-lg uppercase tracking-wider">Ocupado</span>
+                                        <span class="text-[9px] font-bold text-slate-400">Por: ${b.usuario}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        const isSelected = (formatTime(b.start) === seleccionadoInicio && formatTime(b.end) === seleccionadoFin);
+                        const selClasses = isSelected ? 'ring-2 ring-primary bg-blue-50/50 border-primary/30' : 'bg-white border-blue-50';
+                        return `
+                            <div onclick="seleccionarHorario('${formatTime(b.start)}', '${formatTime(b.end)}', this)" 
+                                 class="slot-disponible flex items-center justify-between p-3 ${selClasses} hover:border-blue-300 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer group">
+                                <span class="text-xs font-bold text-slate-700 font-mono group-hover:text-primary transition-colors">${timeStr}</span>
+                                <span class="px-2.5 py-1 bg-blue-100 group-hover:bg-blue-600 group-hover:text-white text-blue-800 text-[10px] font-black rounded-lg uppercase tracking-wider transition-all">Disponible</span>
+                            </div>
+                        `;
+                    }
+                }).join('');
+
+            } catch (e) {
+                console.error(e);
+                if (!silencioso) {
+                    container.innerHTML = `
+                        <div class="bg-red-50 text-red-800 p-4 rounded-xl text-center font-bold text-xs">
+                            Error al cargar disponibilidad
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            let date = params.get('date');
+            const startTime = params.get('start_time');
+            
+            // Si no hay fecha en el parámetro, usamos hoy como fecha por defecto
+            if (!date) {
+                const today = new Date();
+                const yr = today.getFullYear();
+                const mo = String(today.getMonth() + 1).padStart(2, '0');
+                const dy = String(today.getDate()).padStart(2, '0');
+                date = `${yr}-${mo}-${dy}`;
+            }
+
+            document.getElementById('id_date').value = date;
+
+            if (startTime) {
+                document.getElementById('id_start_time').value = startTime;
+                
+                // Calcular hora de fin automática (+1 hora)
+                const [h, m] = startTime.split(':').map(Number);
+                const endH = (h + 1) % 24;
+                const endHStr = String(endH).padStart(2, '0');
+                const endMStr = String(m).padStart(2, '0');
+                document.getElementById('id_end_time').value = `${endHStr}:${endMStr}`;
+            }
+
+            // Opciones de Flatpickr
+            const fpOptions = {
+                dateFormat: "Y-m-d",
+                defaultDate: date,
+                disable: [
+                    function(date) {
+                        return (date.getDay() === 0 || date.getDay() === 6);
+                    }
+                ],
+                onChange: function(selectedDates, dateStr, instance) {
+                    actualizarDisponibilidad(dateStr);
+                    iniciarPolling(dateStr);
+                }
+            };
+
+            // Verificación a prueba de fallos del idioma
+            if (typeof flatpickr !== 'undefined' && flatpickr.l10ns && flatpickr.l10ns.es) {
+                fpOptions.locale = "es";
+            }
+
+            // Inicializar Flatpickr
+            const fpInstance = flatpickr("#id_date", fpOptions);
+
+            // Carga inicial de disponibilidad para la fecha por defecto
+            actualizarDisponibilidad(date);
+            iniciarPolling(date);
+
+            // Escuchar cambios directos (cambios/input) en el campo de fecha
+            const dateInput = document.getElementById('id_date');
+            if (dateInput) {
+                const handleDateChange = () => {
+                    const val = dateInput.value;
+                    actualizarDisponibilidad(val);
+                    iniciarPolling(val);
+                };
+                dateInput.addEventListener('change', handleDateChange);
+                dateInput.addEventListener('input', handleDateChange);
+            }
+
+            // Deseleccionar al modificar manualmente
+            document.getElementById('id_start_time').addEventListener('input', deseleccionarSlots);
+            document.getElementById('id_end_time').addEventListener('input', deseleccionarSlots);
+        });
+
+        // Manejar evento pageshow para sincronización robusta al navegar atrás/adelante en el historial
+        window.addEventListener('pageshow', (event) => {
+            const dateInput = document.getElementById('id_date');
+            if (dateInput) {
+                const currentDate = dateInput.value;
+                if (currentDate) {
+                    actualizarDisponibilidad(currentDate, true);
+                    iniciarPolling(currentDate);
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

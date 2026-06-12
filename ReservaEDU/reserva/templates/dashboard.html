@@ -3,10 +3,11 @@
 <html class="light" lang="es">
 
 <head>
+    {% include 'pwa_meta.html' %}
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Panel de Secretaría - ReservaEDU | La Dolorosa</title>
-    <link rel="icon" type="image/png" href="{% static 'images/logo_dolorosa.png' %}" />
+    <link rel="icon" type="image/png" href="{% static 'images/escudo_dolorosa.jpg' %}" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -16,8 +17,8 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: "#7e192f", // Vino institucional
-                        "primary-dark": "#5c0f1e",
+                        primary: "#1e40af", // Azul institucional
+                        "primary-dark": "#1e3a8a",
                         secondary: "#5A626A",
                         surface: "#F8FAFC",
                         "on-surface": "#1E293B",
@@ -57,7 +58,7 @@
     <!-- SideNavBar -->
     <aside class="flex flex-col p-4 gap-2 h-screen border-r border-slate-200 bg-slate-50 docked left-0 h-full w-64 fixed hidden md:flex z-50">
         <div class="mb-8 px-4 flex flex-col items-center gap-3">
-            <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-16 w-auto object-contain mt-2 drop-shadow-sm">
+            <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Logo La Dolorosa" class="h-16 w-auto object-contain mt-2 drop-shadow-sm">
             <div class="text-center">
                 <h2 class="text-xl font-black text-primary uppercase tracking-tighter">RESERVAEDU</h2>
                 <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">La Dolorosa</p>
@@ -70,9 +71,18 @@
                 <span>Espacios</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold"
+                href="/?view=horarios">
+                <span class="material-symbols-outlined">description</span>
+                <span>Disponibilidad de reservas</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold"
                 href="{% url 'mis_reservas' %}">
                 <span class="material-symbols-outlined">event_available</span>
                 <span>Mis Reservas</span>
+            </a>
+            <a id="nav-proximas" href="{% url 'proximas_reservas' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span>Próximos días</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl shadow-lg transition-all font-bold"
                 href="{% url 'dashboard_secretaria' %}">
@@ -81,10 +91,9 @@
             </a>
         </nav>
         <div class="mt-auto pt-4 border-t border-slate-200 space-y-1">
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-medium"
-                href="#">
-                <span class="material-symbols-outlined">settings</span>
-                <span>Ajustes</span>
+            <a id="nav-ayuda" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold" href="{% url 'ayuda' %}">
+                <span class="material-symbols-outlined">help</span>
+                <span>Ayuda</span>
             </a>
             <form action="{% url 'logout' %}" method="post" class="w-full m-0">
                 {% csrf_token %}

@@ -2,16 +2,20 @@
 <!DOCTYPE html>
 <html class="light" lang="es">
 <head>
+    {% include 'pwa_meta.html' %}
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>ReservaEDU - Sistema de Gestión de Espacios | La Dolorosa</title>
-    <link rel="icon" type="image/png" href="{% static 'images/logo_dolorosa.png' %}" />
+    <link rel="icon" type="image/png" href="{% static 'images/escudo_dolorosa.jpg' %}" />
     <meta name="description" content="Plataforma institucional de la Unidad Educativa Fiscomisional La Dolorosa para la gestión y reserva de espacios académicos y culturales.">
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
         tailwind.config = {
@@ -19,16 +23,18 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: "#7e192f", // Vino
-                        secondary: "#5A626A", // Gris
-                        surface: "#F8FAFC",
+                        primary: "#1e40af",       // Azul institucional
+                        "primary-dark": "#1e3a8a", // Azul oscuro
+                        "primary-light": "#3b82f6", // Azul claro
+                        secondary: "#475569",
+                        surface: "#F0F4FF",
                         "on-surface": "#1E293B",
-                        "surface-container-low": "#F1F5F9",
-                        "on-surface-variant": "#475569",
-                        "outline-variant": "#CBD5E1",
+                        "surface-container-low": "#EFF6FF",
+                        "on-surface-variant": "#334155",
+                        "outline-variant": "#BFDBFE",
                         tertiary: "#94A3B8",
                         "on-tertiary": "#1E293B",
-                        accent: "#D97706"
+                        accent: "#F59E0B"
                     },
                     borderRadius: { lg: "0.5rem", xl: "0.75rem", full: "9999px" },
                     fontFamily: { headline: ["Manrope"], body: ["Inter"] }
@@ -39,44 +45,47 @@
     <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         html {
-            zoom: 90%;
+            zoom: 100%;
         }
         body { 
             font-family: 'Inter', sans-serif; 
             transition: background-color 0.5s ease; 
         }
-        @-moz-document url-prefix() {
-            body {
-                transform: scale(0.8);
-                transform-origin: top center;
-                width: 125%;
-                height: 125%;
-            }
-        }
         h1, h2, h3 { font-family: 'Manrope', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); }
         
-        /* Gemini Premium Styles (La Dolorosa Palette) */
-        .gemini-dark { background: #1a1516 !important; color: #e3e3e3 !important; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .gemini-gradient { background: linear-gradient(135deg, #7e192f, #a22b46, #5A626A); }
-        .gemini-glow { box-shadow: 0 0 30px rgba(126, 25, 47, 0.2); }
-        .gemini-star { color: #a22b46; animation: float 3s ease-in-out infinite; }
+        /* Blue Institutional Theme */
+        .gemini-dark { background: #0f172a !important; color: #e3e3e3 !important; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gemini-gradient { background: linear-gradient(135deg, #1e40af, #3b82f6, #1d4ed8); }
+        .gemini-glow { box-shadow: 0 0 30px rgba(30, 64, 175, 0.3); }
+        .gemini-star { color: #3b82f6; animation: float 3s ease-in-out infinite; }
         @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-5px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
         
-        .ai-bubble { background: rgba(43, 31, 33, 0.7); border-radius: 1.5rem; border-top-left-radius: 0.2rem; }
-        .user-bubble { background: #2f2b2c; border-radius: 1.5rem; border-top-right-radius: 0.2rem; }
+        .ai-bubble { background: rgba(15, 23, 42, 0.8); border-radius: 1.5rem; border-top-left-radius: 0.2rem; }
+        .user-bubble { background: #1e293b; border-radius: 1.5rem; border-top-right-radius: 0.2rem; }
         
         .space-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .fade-in { animation: fadeIn 0.5s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .thinking-glow { position: relative; overflow: hidden; height: 2px; }
-        .thinking-glow::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, #7e192f, #5A626A, transparent); animation: sweep 2s infinite; }
+        .thinking-glow::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, #1e40af, #3b82f6, transparent); animation: sweep 2s infinite; }
         @keyframes sweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
         
         .chip { transition: all 0.2s; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #e3e3e3; }
-        .chip:hover { background: rgba(126, 25, 47, 0.1); border-color: #7e192f; transform: translateY(-1px); }
-        
+        .chip:hover { background: rgba(30, 64, 175, 0.15); border-color: #3b82f6; transform: translateY(-1px); }
+
+        /* Sidebar blue gradient */
+        aside { background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 60%, #1d4ed8 100%) !important; }
+        aside * { color: rgba(255,255,255,0.85); }
+        aside .text-primary { color: #fff !important; }
+        aside .text-secondary { color: rgba(255,255,255,0.6) !important; }
+        aside a.active-nav, aside a.bg-primary { background: rgba(255,255,255,0.15) !important; color: #fff !important; }
+        aside a:hover { background: rgba(255,255,255,0.1) !important; }
+        aside .border-t { border-color: rgba(255,255,255,0.15) !important; }
+        aside button.text-red-500 { color: #fca5a5 !important; }
+        aside button.text-red-500:hover { background: rgba(239,68,68,0.15) !important; }
+
         /* Mock Google One Tap Slide Animation */
         #mock-one-tap-container {
             transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
@@ -104,14 +113,67 @@
     </style>
 </head>
 <body class="bg-surface text-on-surface min-h-screen">
+    {% if mis_reservas %}
+    <div id="floating-active-reservations-card" class="hidden fixed bottom-20 md:bottom-6 left-6 md:left-72 z-50 max-w-sm bg-white/95 border border-primary/20 p-5 rounded-3xl shadow-2xl flex flex-col gap-3 backdrop-blur-md border-l-4 border-l-primary fade-in">
+        <!-- Close cross in the top-right -->
+        <button onclick="closeActiveReservationsCard()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
+            <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+        <!-- Title and Icon -->
+        <div class="flex items-start gap-3 mt-1 pr-6">
+            <div class="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-primary shrink-0">
+                <span class="material-symbols-outlined text-xl">event_available</span>
+            </div>
+            <div class="flex-1">
+                <h4 class="text-sm font-bold text-slate-800">Tus Reservas</h4>
+                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                    ¡Hola, {{ request.user.username }}! Tienes <strong>{{ mis_reservas.count }}</strong> reserva(s) activa(s) programada(s) en el sistema.
+                </p>
+            </div>
+        </div>
+        <!-- Buttons -->
+        <div class="flex justify-end gap-2 mt-1">
+            <a href="{% url 'mis_reservas' %}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all">
+                Ver Reservas
+            </a>
+            <button onclick="closeActiveReservationsCard()" class="px-5 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-bold transition-all shadow-md">
+                Entendido
+            </button>
+        </div>
+    </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const dismissed = localStorage.getItem('dismissed_reservations_count');
+            const currentCount = "{{ mis_reservas.count }}";
+            if (dismissed !== currentCount) {
+                const card = document.getElementById('floating-active-reservations-card');
+                if (card) {
+                    card.classList.remove('hidden');
+                }
+            }
+        });
+
+        function closeActiveReservationsCard() {
+            const card = document.getElementById('floating-active-reservations-card');
+            if (card) {
+                card.classList.add('opacity-0', 'translate-y-4');
+                card.style.transition = 'all 0.3s ease';
+                localStorage.setItem('dismissed_reservations_count', "{{ mis_reservas.count }}");
+                setTimeout(() => {
+                    card.remove();
+                }, 300);
+            }
+        }
+    </script>
+    {% endif %}
     {% if user.is_authenticated or user_simulated %}
     <div class="flex">
-        <aside class="hidden md:flex flex-col p-4 gap-2 h-screen border-r border-slate-200 bg-slate-50 fixed left-0 w-64 z-50">
+        <aside class="hidden md:flex flex-col p-4 gap-2 h-screen border-r border-blue-900/30 fixed left-0 w-64 z-50">
             <div class="mb-6 px-4 flex flex-col items-center gap-3">
-                <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-16 w-auto object-contain mt-2 drop-shadow-sm">
+                <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Escudo UEF La Dolorosa" class="h-20 w-auto object-contain mt-2 drop-shadow-lg">
                 <div class="text-center">
-                    <h2 class="text-xl font-black text-primary uppercase tracking-tighter">RESERVAEDU</h2>
-                    <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">La Dolorosa</p>
+                    <h2 class="text-base font-black uppercase tracking-tighter" style="color:#fff">RESERVAEDU</h2>
+                    <p class="text-[9px] font-bold uppercase tracking-widest mt-0.5" style="color:rgba(255,255,255,0.65)">U.E.F. La Dolorosa</p>
                 </div>
             </div>
             <nav class="flex-1 flex flex-col gap-2">
@@ -121,12 +183,16 @@
                 </a>
                 <a id="nav-horarios" onclick="switchView('horarios')" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl cursor-pointer transition-all" href="#">
                     <span class="material-symbols-outlined">description</span>
-                    <span class="font-bold">Horarios</span>
+                    <span class="font-bold">Disponibilidad de reservas</span>
                 </a>
                 {% if user.is_authenticated or user_simulated %}
                 <a id="nav-reservations" href="{% url 'mis_reservas' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl cursor-pointer transition-all">
                     <span class="material-symbols-outlined">event_available</span>
                     <span class="font-bold">Mis Reservas</span>
+                </a>
+                <a id="nav-proximas" href="{% url 'proximas_reservas' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl cursor-pointer transition-all">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <span class="font-bold">Próximos días</span>
                 </a>
                 {% endif %}
                 {% if es_secretaria %}
@@ -137,9 +203,9 @@
                 {% endif %}
             </nav>
             <div class="mt-auto pt-4 flex flex-col gap-1 border-t border-slate-200">
-                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all" href="#">
-                    <span class="material-symbols-outlined">settings</span>
-                    <span class="font-medium">Ajustes</span>
+                <a id="nav-ayuda" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold" href="{% url 'ayuda' %}">
+                    <span class="material-symbols-outlined">help</span>
+                    <span>Ayuda</span>
                 </a>
                 {% if user.is_authenticated %}
                 <form action="{% url 'logout' %}" method="post" class="w-full m-0">
@@ -159,10 +225,13 @@
         </aside>
 
         <main class="flex-1 md:ml-64 min-h-screen">
-            <header class="flex justify-between items-center px-8 h-16 w-full bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-200">
+            <header class="flex justify-between items-center px-8 h-16 w-full bg-white/90 backdrop-blur-xl sticky top-0 z-40 border-b border-blue-100 shadow-sm">
                 <div class="flex items-center gap-3">
-                    <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-8 w-auto object-contain">
-                    <span class="text-lg font-black text-primary">RESERVAEDU</span>
+                    <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Escudo UEF La Dolorosa" class="h-10 w-auto object-contain">
+                    <div>
+                        <span class="text-base font-black text-primary block leading-none">RESERVAEDU</span>
+                        <span class="text-[9px] text-blue-400 font-bold uppercase tracking-widest">U.E.F. La Dolorosa</span>
+                    </div>
                 </div>
                 <div class="flex items-center gap-6">
                     {% if user.is_authenticated or user_simulated %}
@@ -179,27 +248,84 @@
                     </div>
                     {% endif %}
                     <div class="flex items-center gap-4">
-                        <span class="text-sm font-bold text-primary">¡Hola, {% if user_simulated %}{{ sim_username }}{% else %}{{ user.username }}{% endif %}!</span>
-                        <img class="w-8 h-8 rounded-full border border-outline-variant/30" src="https://api.dicebear.com/7.x/initials/svg?seed={% if user_simulated %}{{ sim_username }}{% else %}{{ user.username }}{% endif %}" />
+                        <span class="text-sm font-bold text-primary">¡Hola, {% if user_simulated %}{{ sim_username }}{% else %}{{ user.first_name|default:user.username }}{% endif %}!</span>
+                        <!-- Avatar con dropdown -->
+                        <div class="relative" id="avatar-menu-wrapper">
+                            <button id="avatar-btn" onclick="toggleAvatarMenu()" class="focus:outline-none">
+                                {% if google_picture %}
+                                <img id="avatar-img" class="w-9 h-9 rounded-full border-2 border-primary/30 shadow-sm hover:border-primary transition-all cursor-pointer object-cover"
+                                     src="{{ google_picture }}"
+                                     onerror="this.onerror=null; this.style.display='none'; document.getElementById('avatar-initials').style.display='flex';"
+                                     alt="Foto de perfil" />
+                                {% endif %}
+                                <div id="avatar-initials" class="w-9 h-9 rounded-full bg-primary text-white text-sm font-black flex items-center justify-center cursor-pointer hover:bg-primary/80 transition-all border-2 border-primary/30 shadow-sm {% if google_picture %}hidden{% endif %}">
+                                    {{ user.first_name|first|upper|default:user.username|first|upper }}
+                                </div>
+                            </button>
+                            <!-- Dropdown -->
+                            <div id="avatar-dropdown" class="hidden absolute right-0 top-12 w-60 bg-white rounded-2xl shadow-2xl border border-slate-100 z-[200] overflow-hidden"
+                                 style="box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 4px 16px rgba(30,64,175,0.1);">
+                                <!-- Info usuario -->
+                                <div class="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+                                    <div class="flex items-center gap-3">
+                                        {% if google_picture %}
+                                        <img src="{{ google_picture }}" class="w-9 h-9 rounded-full object-cover border-2 border-white shadow" alt="Avatar" onerror="this.style.display='none'">
+                                        {% else %}
+                                        <div class="w-9 h-9 rounded-full bg-primary text-white text-sm font-black flex items-center justify-center border-2 border-white shadow">
+                                            {{ user.first_name|first|upper|default:user.username|first|upper }}
+                                        </div>
+                                        {% endif %}
+                                        <div class="min-w-0">
+                                            <p class="text-xs font-bold text-slate-800 truncate">{{ user.get_full_name|default:user.username }}</p>
+                                            <p class="text-[10px] text-slate-400 truncate">{{ user.email }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Acciones -->
+                                <div class="py-1">
+                                    <a href="/accounts/google/login/?next=/" class="flex items-center gap-3 px-4 py-3 text-sm text-slate-600 hover:bg-blue-50 hover:text-primary transition-all group">
+                                        <div class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center transition-colors">
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24">
+                                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                                            </svg>
+                                        </div>
+                                        <span class="font-semibold">Cambiar cuenta</span>
+                                    </a>
+                                    <div class="mx-4 h-px bg-slate-100"></div>
+                                    <form action="{% url 'logout' %}" method="post" class="m-0">
+                                        {% csrf_token %}
+                                        <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-all group">
+                                            <div class="w-8 h-8 rounded-xl bg-red-50 group-hover:bg-red-100 flex items-center justify-center transition-colors">
+                                                <span class="material-symbols-outlined text-base text-red-500">logout</span>
+                                            </div>
+                                            <span class="font-semibold">Cerrar sesión</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </header>
 
-            <div class="p-8 max-w-7xl mx-auto">
-                <!-- VIEW: SPACES catalog -->
-                <div id="view-spaces" class="fade-in">
-                    <div class="mb-12 flex flex-wrap items-center justify-between w-full">
-                        <div class="flex flex-wrap items-center gap-3">
-                            <button onclick="filterSpaces('Espacios')" class="px-6 py-2.5 rounded-full bg-primary text-white font-semibold text-sm filter-btn" data-category="Espacios">Espacios</button>
-                            <button onclick="filterSpaces('Horarios')" class="px-6 py-2.5 rounded-full bg-slate-100 text-slate-600 font-medium text-sm filter-btn" data-category="Horarios">Horarios</button>
-                            <button onclick="toggleAIChat()" class="px-6 py-2.5 rounded-full bg-primary text-white font-bold text-sm shadow-lg flex items-center gap-2 hover:bg-primary/90 transition-all">
-                                <span class="material-symbols-outlined text-sm">auto_awesome</span> LA DOLO
-                            </button>
-                        </div>
-                        <button id="btn-delete-all" onclick="deleteAllSchedules()" class="hidden px-6 py-2.5 rounded-full bg-red-50 text-red-600 font-bold text-sm border border-red-100 hover:bg-red-100 transition-all flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sm">delete_sweep</span> Eliminar todos los horarios
+            <div class="p-8 max-w-7xl mx-auto space-y-8">
+                <!-- Top Navigation Tab Buttons -->
+                <div class="flex flex-wrap items-center justify-between w-full pb-4 border-b border-slate-100">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button onclick="switchView('spaces')" class="px-6 py-2.5 rounded-full bg-primary text-white font-semibold text-sm filter-btn shadow-sm" id="top-btn-spaces">Espacios</button>
+                        <button onclick="switchView('horarios')" class="px-6 py-2.5 rounded-full bg-slate-100 text-slate-600 font-medium text-sm filter-btn" id="top-btn-horarios">Disponibilidad de reservas</button>
+                        <button onclick="toggleAIChat()" class="px-6 py-2.5 rounded-full bg-primary text-white font-bold text-sm shadow-lg flex items-center gap-2 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all">
+                            <span class="material-symbols-outlined text-sm">auto_awesome</span> LA DOLO
                         </button>
                     </div>
+                </div>
+
+                <!-- VIEW: SPACES catalog -->
+                <div id="view-spaces" class="fade-in">
 
                     <!-- Sub-category filters row -->
                     <div id="sub-category-filters" class="mb-8 flex flex-wrap items-center gap-2.5 transition-all duration-300">
@@ -231,6 +357,218 @@
                         </article>
                         {% endwith %}
                         {% endfor %}
+
+                        <!-- Horario General de Disponibilidad de Espacios (Categoría Horarios) -->
+                        <article data-category="Horarios" class="space-card group bg-white rounded-[2rem] overflow-hidden shadow-sm flex flex-col border border-slate-200 col-span-1 md:col-span-2 lg:col-span-3">
+                            <div class="px-8 pt-6 pb-4 bg-primary text-white flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-xl font-black uppercase tracking-tighter">Horario General de Disponibilidad</h3>
+                                    <p class="text-[9px] font-bold opacity-75 mt-0.5">FRANJAS HORARIAS DE SERVICIOS INSTITUCIONALES</p>
+                                </div>
+                                <span class="material-symbols-outlined text-white text-2xl">schedule</span>
+                            </div>
+                            <div class="p-6 flex-1 bg-slate-50">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr class="border-b border-slate-200 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                                <th class="pb-3">Espacio</th>
+                                                <th class="pb-3">Categoría</th>
+                                                <th class="pb-3">Horario de Atención</th>
+                                                <th class="pb-3">Días Hábiles</th>
+                                                <th class="pb-3 text-right">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-xs font-medium text-slate-700 divide-y divide-slate-100">
+                                            <tr class="hover:bg-slate-100/40">
+                                                <td class="py-4 font-bold text-slate-800 flex items-center gap-2">
+                                                    <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Mini Teatro
+                                                </td>
+                                                <td class="py-4 text-slate-500">Teatro</td>
+                                                <td class="py-4 font-mono font-bold text-purple-700">08:00 - 14:00</td>
+                                                <td class="py-4 text-slate-500">Lunes a Domingo</td>
+                                                <td class="py-4 text-right"><span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-[10px] font-bold">Activo</span></td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-100/40">
+                                                <td class="py-4 font-bold text-slate-800 flex items-center gap-2">
+                                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Biblioteca
+                                                </td>
+                                                <td class="py-4 text-slate-500">Biblioteca</td>
+                                                <td class="py-4 font-mono font-bold text-blue-700">08:00 - 14:00</td>
+                                                <td class="py-4 text-slate-500">Lunes a Viernes</td>
+                                                <td class="py-4 text-right"><span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-[10px] font-bold">Activo</span></td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-100/40">
+                                                <td class="py-4 font-bold text-slate-800 flex items-center gap-2">
+                                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Laboratorio de Informática
+                                                </td>
+                                                <td class="py-4 text-slate-500">Laboratorio</td>
+                                                <td class="py-4 font-mono font-bold text-emerald-700">08:00 - 14:00</td>
+                                                <td class="py-4 text-slate-500">Lunes a Viernes</td>
+                                                <td class="py-4 text-right"><span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-[10px] font-bold">Activo</span></td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-100/40">
+                                                <td class="py-4 font-bold text-slate-800 flex items-center gap-2">
+                                                    <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> Sala de Reuniones
+                                                </td>
+                                                <td class="py-4 text-slate-500">Sala de reuniones</td>
+                                                <td class="py-4 font-mono font-bold text-orange-700">08:00 - 14:00</td>
+                                                <td class="py-4 text-slate-500">Lunes a Viernes</td>
+                                                <td class="py-4 text-right"><span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-[10px] font-bold">Activo</span></td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-100/40">
+                                                <td class="py-4 font-bold text-slate-800 flex items-center gap-2">
+                                                    <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Coliseo Deportivo
+                                                </td>
+                                                <td class="py-4 text-slate-500">Deportivo</td>
+                                                <td class="py-4 font-mono font-bold text-red-700">08:00 - 14:00</td>
+                                                <td class="py-4 text-slate-500">Lunes a Domingo</td>
+                                                <td class="py-4 text-right"><span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-[10px] font-bold">Activo</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <!-- VIEW: HORARIOS (Calendario Dinámico de Reservas) -->
+                <div id="view-horarios" class="hidden fade-in space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-4xl font-black text-primary tracking-tighter uppercase">CALENDARIO DE HORARIOS</h2>
+                            <p class="text-slate-500 text-sm font-semibold mt-1">Sincronización en tiempo real con todas las reservas de la institución.</p>
+                        </div>
+                        
+                        <!-- Controles de vista y filtros -->
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button onclick="changeScheduleViewMode('grid')" id="btn-schedule-grid" class="bg-primary text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">grid_on</span> Vista Semanal
+                            </button>
+                            <button onclick="changeScheduleViewMode('agenda')" id="btn-schedule-agenda" class="bg-slate-100 text-slate-600 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">format_list_bulleted</span> Vista Agenda
+                            </button>
+                            <button onclick="imprimirHorarioDinamic()" class="bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:bg-emerald-700 transition-all flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">download</span> Descargar PDF / Imprimir
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Filtros Secundario -->
+                    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex flex-wrap items-center gap-4 flex-1">
+                            <div class="flex flex-col gap-1 min-w-[200px]">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Filtrar por Espacio</label>
+                                <select id="schedule-space-select" onchange="renderScheduleBoard()" class="bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold text-slate-700 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all">
+                                    <option value="All">Todos los espacios</option>
+                                    {% for esp in espacios %}
+                                    <option value="{{ esp.nombre }}">{{ esp.nombre }} ({{ esp.categoria }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="flex flex-col gap-1 min-w-[180px]">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Filtrar por Categoría</label>
+                                <select id="schedule-category-select" onchange="renderScheduleBoard()" class="bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold text-slate-700 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all">
+                                    <option value="All">Todas las categorías</option>
+                                    <option value="Teatro">Teatro</option>
+                                    <option value="Biblioteca">Biblioteca</option>
+                                    <option value="Laboratorio">Laboratorio</option>
+                                    <option value="Sala de reuniones">Sala de reuniones</option>
+                                    <option value="Deportivo">Deportivo</option>
+                                </select>
+                            </div>
+                            <!-- Selector y Navegador de Fecha Semanal -->
+                            <div class="flex flex-col gap-1 min-w-[240px]">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Navegación de Fecha</label>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="navigateWeeks(-1)" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-all border border-slate-200/40" title="Semana anterior">
+                                        <span class="material-symbols-outlined text-sm font-bold">chevron_left</span>
+                                    </button>
+                                    <input type="text" id="schedule-date-picker" class="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all w-36" placeholder="Seleccione fecha...">
+                                    <button onclick="navigateWeeks(1)" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-all border border-slate-200/40" title="Semana siguiente">
+                                        <span class="material-symbols-outlined text-sm font-bold">chevron_right</span>
+                                    </button>
+                                    <button onclick="resetScheduleDate()" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-black uppercase tracking-wider transition-all border border-slate-200/40" title="Ir a hoy">
+                                        Hoy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-400 font-bold uppercase tracking-widest text-[9px]">
+                            <div class="flex items-center gap-1.5 text-xs font-bold">
+                                <span class="w-3.5 h-3.5 bg-emerald-500 rounded-full"></span> Aprobadas
+                            </div>
+                            <div class="flex items-center gap-1.5 text-xs font-bold">
+                                <span class="w-3.5 h-3.5 bg-amber-500 rounded-full"></span> Pendientes
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor Principal del Calendario -->
+                    <div id="schedule-board-container" class="transition-all duration-300">
+                        <!-- Se generará dinámicamente con JS -->
+                    </div>
+
+                    <!-- Horarios Generales de Uso por Categoría -->
+                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 mt-8">
+                        <h3 class="text-xl font-bold text-primary mb-4 uppercase tracking-tight flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">schedule</span>
+                            Horarios Generales de Reserva por Categoría
+                        </h3>
+                        <p class="text-slate-500 text-xs mb-6 font-medium">Conoce las franjas horarias permitidas para reservar según la categoría de cada espacio académico:</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                            <!-- Card Teatro -->
+                            <div class="p-5 rounded-2xl border border-purple-100 bg-purple-50/30 flex flex-col justify-between">
+                                <div>
+                                    <span class="material-symbols-outlined text-purple-700 text-2xl mb-2">theater_comedy</span>
+                                    <h4 class="font-bold text-sm text-slate-800">Teatro</h4>
+                                    <p class="text-xs text-purple-700 font-mono mt-1 font-bold">08:00 - 14:00</p>
+                                    <p class="text-[10px] text-slate-400 mt-2">Permitido para ceremonias, conferencias y actos artísticos.</p>
+                                </div>
+                                <a href="{% for esp in espacios %}{% if esp.categoria == 'Teatro' %}{% url 'reservar_espacio' esp.id %}{% endif %}{% endfor %}" class="mt-4 text-center block text-[10px] uppercase tracking-wider font-extrabold bg-purple-700 hover:bg-purple-800 text-white py-2 rounded-xl transition-colors cursor-pointer">Reservar</a>
+                            </div>
+                            <!-- Card Biblioteca -->
+                            <div class="p-5 rounded-2xl border border-blue-100 bg-blue-50/30 flex flex-col justify-between">
+                                <div>
+                                    <span class="material-symbols-outlined text-blue-700 text-2xl mb-2">menu_book</span>
+                                    <h4 class="font-bold text-sm text-slate-800">Biblioteca</h4>
+                                    <p class="text-xs text-blue-700 font-mono mt-1 font-bold">08:00 - 14:00</p>
+                                    <p class="text-[10px] text-slate-400 mt-2">Espacio de estudio silencioso, lectura e investigación.</p>
+                                </div>
+                                <a href="{% for esp in espacios %}{% if esp.categoria == 'Biblioteca' %}{% url 'reservar_espacio' esp.id %}{% endif %}{% endfor %}" class="mt-4 text-center block text-[10px] uppercase tracking-wider font-extrabold bg-blue-700 hover:bg-blue-800 text-white py-2 rounded-xl transition-colors cursor-pointer">Reservar</a>
+                            </div>
+                            <!-- Card Laboratorio -->
+                            <div class="p-5 rounded-2xl border border-emerald-100 bg-emerald-50/30 flex flex-col justify-between">
+                                <div>
+                                    <span class="material-symbols-outlined text-emerald-700 text-2xl mb-2">science</span>
+                                    <h4 class="font-bold text-sm text-slate-800">Laboratorio</h4>
+                                    <p class="text-xs text-emerald-700 font-mono mt-1 font-bold">08:00 - 14:00</p>
+                                    <p class="text-[10px] text-slate-400 mt-2">Para clases prácticas, experimentos y proyectos técnicos.</p>
+                                </div>
+                                <a href="{% for esp in espacios %}{% if esp.categoria == 'Laboratorio' %}{% url 'reservar_espacio' esp.id %}{% endif %}{% endfor %}" class="mt-4 text-center block text-[10px] uppercase tracking-wider font-extrabold bg-emerald-700 hover:bg-emerald-800 text-white py-2 rounded-xl transition-colors cursor-pointer">Reservar</a>
+                            </div>
+                            <!-- Card Sala de reuniones -->
+                            <div class="p-5 rounded-2xl border border-orange-100 bg-orange-50/30 flex flex-col justify-between">
+                                <div>
+                                    <span class="material-symbols-outlined text-orange-700 text-2xl mb-2">groups</span>
+                                    <h4 class="font-bold text-sm text-slate-800">Sala de reuniones</h4>
+                                    <p class="text-xs text-orange-700 font-mono mt-1 font-bold">08:00 - 14:00</p>
+                                    <p class="text-[10px] text-slate-400 mt-2">Ideal para juntas directivas y videoconferencias.</p>
+                                </div>
+                                <a href="{% for esp in espacios %}{% if esp.categoria == 'Sala de reuniones' %}{% url 'reservar_espacio' esp.id %}{% endif %}{% endfor %}" class="mt-4 text-center block text-[10px] uppercase tracking-wider font-extrabold bg-orange-700 hover:bg-orange-800 text-white py-2 rounded-xl transition-colors cursor-pointer">Reservar</a>
+                            </div>
+                            <!-- Card Deportivo -->
+                            <div class="p-5 rounded-2xl border border-red-100 bg-red-50/30 flex flex-col justify-between">
+                                <div>
+                                    <span class="material-symbols-outlined text-red-700 text-2xl mb-2">sports_soccer</span>
+                                    <h4 class="font-bold text-sm text-slate-800">Deportivo</h4>
+                                    <p class="text-xs text-red-700 font-mono mt-1 font-bold">08:00 - 14:00</p>
+                                    <p class="text-[10px] text-slate-400 mt-2">Canchas y coliseos para deportes e integración.</p>
+                                </div>
+                                <a href="{% for esp in espacios %}{% if esp.categoria == 'Deportivo' %}{% url 'reservar_espacio' esp.id %}{% endif %}{% endfor %}" class="mt-4 text-center block text-[10px] uppercase tracking-wider font-extrabold bg-red-700 hover:bg-red-800 text-white py-2 rounded-xl transition-colors cursor-pointer">Reservar</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -268,7 +606,7 @@
                     <div class="space-y-4">
                         <div class="flex flex-col gap-1.5">
                             <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2"><span class="material-symbols-outlined text-xs">calendar_today</span> Seleccionar Día</label>
-                            <input id="res-date" type="date" class="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none transition-all">
+                            <input id="res-date" type="text" placeholder="Seleccione día..." class="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none transition-all">
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2"><span class="material-symbols-outlined text-xs">schedule</span> Seleccionar Hora</label>
@@ -359,33 +697,79 @@
             }
         })();
 
+        // ─── Avatar Dropdown ──────────────────────────────────────────────────
+        function toggleAvatarMenu() {
+            const dropdown = document.getElementById('avatar-dropdown');
+            if (!dropdown) return;
+            dropdown.classList.toggle('hidden');
+            // Animación suave
+            if (!dropdown.classList.contains('hidden')) {
+                dropdown.style.opacity = '0';
+                dropdown.style.transform = 'translateY(-8px) scale(0.97)';
+                dropdown.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+                requestAnimationFrame(() => {
+                    dropdown.style.opacity = '1';
+                    dropdown.style.transform = 'translateY(0) scale(1)';
+                });
+            }
+        }
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('avatar-menu-wrapper');
+            const dropdown = document.getElementById('avatar-dropdown');
+            if (wrapper && dropdown && !wrapper.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
         // ─── Navegación entre vistas ─────────────────────────────────────────
         function switchView(v) {
             const s = document.getElementById('view-spaces');
             const r = document.getElementById('view-reservations');
+            const h = document.getElementById('view-horarios');
             const ns = document.getElementById('nav-spaces');
             const nr = document.getElementById('nav-reservations');
             const nh = document.getElementById('nav-horarios');
+            const np = document.getElementById('nav-proximas');
+            const tbs = document.getElementById('top-btn-spaces');
+            const tbh = document.getElementById('top-btn-horarios');
 
             s.classList.add('hidden');
             r.classList.add('hidden');
+            if (h) h.classList.add('hidden');
 
-            [ns, nr, nh].forEach(el => {
+            [ns, nr, nh, np].forEach(el => {
                 if (!el) return;
                 el.classList.remove('bg-primary', 'text-white', 'shadow-lg');
                 el.classList.add('text-slate-500');
+            });
+
+            // Resaltar los filter-btn a nivel superior también si aplican
+            [tbs, tbh].forEach(btn => {
+                if (!btn) return;
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-slate-100', 'text-slate-600');
             });
 
             if (v === 'spaces') {
                 s.classList.remove('hidden');
                 ns.classList.remove('text-slate-500');
                 ns.classList.add('bg-primary', 'text-white', 'shadow-lg');
+                if (tbs) {
+                    tbs.classList.remove('bg-slate-100', 'text-slate-600');
+                    tbs.classList.add('bg-primary', 'text-white');
+                }
                 filterSpaces('Espacios');
             } else if (v === 'horarios') {
-                s.classList.remove('hidden');
+                if (h) h.classList.remove('hidden');
                 nh.classList.remove('text-slate-500');
                 nh.classList.add('bg-primary', 'text-white', 'shadow-lg');
-                filterSpaces('Horarios');
+                if (tbh) {
+                    tbh.classList.remove('bg-slate-100', 'text-slate-600');
+                    tbh.classList.add('bg-primary', 'text-white');
+                }
+                cargarYRenderizarHorarios();
             } else {
                 r.classList.remove('hidden');
                 nr.classList.remove('text-slate-500');
@@ -727,19 +1111,499 @@
         }
 
         function loadSavedSchedules() {
-            try {
-                const schedules = JSON.parse(localStorage.getItem('saved_schedules') || '[]');
-                schedules.forEach(s => saveSchedule(s.name, s.html, false));
-            } catch(e) {
-                localStorage.removeItem('saved_schedules');
-                console.warn('localStorage corrupto, limpiado.');
-            }
+            // Limpiamos horarios estáticos anteriores de local storage para evitar que el usuario los siga viendo
+            localStorage.removeItem('saved_schedules');
             updateCategoryCounts();
             filterSpaces('Espacios');
         }
 
-        window.addEventListener('DOMContentLoaded', loadSavedSchedules);
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedSchedules();
+            
+            // Opciones de Flatpickr
+            const fpOptions1 = {
+                dateFormat: "Y-m-d",
+                disable: [
+                    function(date) {
+                        return (date.getDay() === 0 || date.getDay() === 6);
+                    }
+                ],
+                onChange: function(selectedDates, dateStr, instance) {
+                    jumpToDate(dateStr);
+                }
+            };
+            const fpOptions2 = {
+                dateFormat: "Y-m-d",
+                disable: [
+                    function(date) {
+                        return (date.getDay() === 0 || date.getDay() === 6);
+                    }
+                ]
+            };
+
+            if (typeof flatpickr !== 'undefined' && flatpickr.l10ns && flatpickr.l10ns.es) {
+                fpOptions1.locale = "es";
+                fpOptions2.locale = "es";
+            }
+
+            flatpickr("#schedule-date-picker", fpOptions1);
+            flatpickr("#res-date", fpOptions2);
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewParam = urlParams.get('view');
+            if (viewParam === 'horarios') {
+                switchView('horarios');
+            } else {
+                cargarHorarioDeReservas();
+            }
+
+            // Polling en tiempo real para la vista de horarios cada 5 segundos
+            setInterval(() => {
+                const viewHorarios = document.getElementById('view-horarios');
+                if (viewHorarios && !viewHorarios.classList.contains('hidden')) {
+                    cargarYRenderizarHorarios(true);
+                } else {
+                    cargarHorarioDeReservas();
+                }
+            }, 5000);
+        });
         window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        const SPACE_IDS = {
+            {% for esp in espacios %}
+            "{{ esp.nombre|escapejs }}": {{ esp.id }},
+            {% endfor %}
+        };
+
+        function getMonday(d) {
+            const date = new Date(d);
+            const day = date.getDay();
+            const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+            const monday = new Date(date.setDate(diff));
+            monday.setHours(0, 0, 0, 0);
+            return monday;
+        }
+
+        const currentUsername = "{{ request.user.username|escapejs }}";
+        let allReservas = [];
+        let scheduleViewMode = 'grid'; // 'grid' o 'agenda'
+        let scheduleStartDate = getMonday(new Date());
+
+        function navigateWeeks(dir) {
+            scheduleStartDate.setDate(scheduleStartDate.getDate() + (dir * 7));
+            renderScheduleBoard();
+        }
+
+        function jumpToDate(dateStr) {
+            if (!dateStr) return;
+            const targetDate = new Date(dateStr + 'T00:00:00');
+            scheduleStartDate = getMonday(targetDate);
+            renderScheduleBoard();
+        }
+
+        function resetScheduleDate() {
+            scheduleStartDate = getMonday(new Date());
+            renderScheduleBoard();
+        }
+
+        async function cargarYRenderizarHorarios(silencioso = false) {
+            try {
+                if (!silencioso) {
+                    const board = document.getElementById('schedule-board-container');
+                    if (board) {
+                        board.innerHTML = `
+                            <div class="flex items-center justify-center p-20">
+                                <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                <span class="ml-3 font-semibold text-slate-500 text-sm">Cargando reservas en tiempo real...</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                const resp = await fetch('/api/reservas-horario/?t=' + new Date().getTime());
+                const data = await resp.json();
+                allReservas = data.reservas || [];
+                renderScheduleBoard();
+            } catch(e) {
+                console.error('Error al cargar reservas:', e);
+                if (!silencioso) {
+                    const board = document.getElementById('schedule-board-container');
+                    if (board) {
+                        board.innerHTML = `
+                            <div class="bg-red-50 text-red-800 p-6 rounded-2xl text-center font-bold text-sm">
+                                No se pudo sincronizar el horario con el servidor. Revisa tu conexión.
+                            </div>
+                        `;
+                    }
+                }
+            }
+        }
+
+        async function cargarHorarioDeReservas() {
+            try {
+                const resp = await fetch('/api/reservas-horario/?t=' + new Date().getTime());
+                const data = await resp.json();
+                allReservas = data.reservas || [];
+            } catch(e) {
+                console.warn('No se pudo cargar el horario:', e);
+            }
+        }
+
+        function changeScheduleViewMode(mode) {
+            scheduleViewMode = mode;
+            const btnGrid = document.getElementById('btn-schedule-grid');
+            const btnAgenda = document.getElementById('btn-schedule-agenda');
+            
+            if (mode === 'grid') {
+                btnGrid.className = 'bg-primary text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-2';
+                btnAgenda.className = 'bg-slate-100 text-slate-600 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2';
+            } else {
+                btnGrid.className = 'bg-slate-100 text-slate-600 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2';
+                btnAgenda.className = 'bg-primary text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-2';
+            }
+            renderScheduleBoard();
+        }
+
+        function renderScheduleBoard() {
+            const board = document.getElementById('schedule-board-container');
+            if (!board) return;
+
+            const spaceFilter = document.getElementById('schedule-space-select').value;
+            const categoryFilter = document.getElementById('schedule-category-select').value;
+
+            // Filtrar reservas
+            let filtered = allReservas;
+            if (spaceFilter !== 'All') {
+                filtered = filtered.filter(r => r.espacio === spaceFilter);
+            }
+            if (categoryFilter !== 'All') {
+                filtered = filtered.filter(r => r.categoria === categoryFilter);
+            }
+
+            if (scheduleViewMode === 'agenda') {
+                renderAgendaView(board, filtered);
+            } else {
+                renderGridView(board, filtered);
+            }
+        }
+
+        function renderGridView(board, filtered) {
+            const picker = document.getElementById('schedule-date-picker');
+            if (picker) {
+                const yr = scheduleStartDate.getFullYear();
+                const mo = String(scheduleStartDate.getMonth() + 1).padStart(2, '0');
+                const dy = String(scheduleStartDate.getDate()).padStart(2, '0');
+                const dateStr = `${yr}-${mo}-${dy}`;
+                picker.value = dateStr;
+                if (picker._flatpickr) {
+                    picker._flatpickr.setDate(dateStr, false);
+                }
+            }
+
+            const days = [];
+            const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+            const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            
+            for (let i = 0; i < 5; i++) {
+                const d = new Date(scheduleStartDate);
+                d.setDate(d.getDate() + i);
+                
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                const dateStr = `${year}-${month}-${day}`;
+
+                days.push({
+                    dateStr: dateStr,
+                    label: `${dayNames[d.getDay()]} ${d.getDate()} ${monthNames[d.getMonth()]}`,
+                    dateObj: d
+                });
+            }
+
+            const hours = [
+                { start: '08:00', end: '09:00' },
+                { start: '09:00', end: '10:00' },
+                { start: '10:00', end: '11:00' },
+                { start: '11:00', end: '12:00' },
+                { start: '12:00', end: '13:00' },
+                { start: '13:00', end: '14:00' }
+            ];
+
+            const BG_CLASSES = {
+                'Teatro':            'bg-purple-50 border-purple-200 text-purple-700',
+                'Biblioteca':        'bg-blue-50 border-blue-200 text-blue-700',
+                'Laboratorio':       'bg-emerald-50 border-emerald-200 text-emerald-700',
+                'Sala de reuniones': 'bg-orange-50 border-orange-200 text-orange-700',
+                'Deportivo':         'bg-red-50 border-red-200 text-red-700',
+            };
+
+            const thDays = days.map(d => `
+                <th class="p-4 border-b border-r border-slate-200 text-slate-700 font-bold text-xs uppercase tracking-wider text-center min-w-[130px] bg-slate-50">
+                    ${d.label}
+                </th>
+            `).join('');
+
+            let rows = '';
+
+            hours.forEach(slot => {
+                let cells = '';
+
+                days.forEach(d => {
+                    const overlaps = filtered.filter(r => {
+                        if (r.fecha !== d.dateStr) return false;
+                        const parseMin = t => {
+                            const [h, m] = t.split(':').map(Number);
+                            return h * 60 + m;
+                        };
+                        const rStart = parseMin(r.hora_inicio);
+                        const rEnd = parseMin(r.hora_fin);
+                        const sStart = parseMin(slot.start);
+                        const sEnd = parseMin(slot.end);
+
+                        return rStart < sEnd && rEnd > sStart;
+                    });
+
+                    if (overlaps.length > 0) {
+                        const content = overlaps.map(r => {
+                            const bgBorderText = BG_CLASSES[r.categoria] || 'bg-slate-50 border-slate-200 text-slate-700';
+                            const statusColor = r.estado === 'aprobada' ? 'bg-emerald-500' : 'bg-amber-500';
+                            
+                            const esMio = (r.usuario_username === currentUsername);
+                            const displayUser = esMio ? 'Reservado por mí' : `Por: ${r.usuario}`;
+                            const customItemStyle = esMio ? 'border-red-400 bg-red-50 text-red-900 shadow-sm hover:shadow-md transition-all ring-1 ring-red-400/30 font-bold' : bgBorderText;
+
+                            return `
+                                <div class="group/item relative flex flex-col gap-1 p-2 rounded-xl border ${customItemStyle} shadow-sm hover:shadow-md transition-all duration-200 text-left">
+                                    <div class="flex justify-between items-center gap-1">
+                                        <span class="font-extrabold text-[9px] uppercase tracking-wider truncate" style="max-w-[75px]">${r.espacio}</span>
+                                        <span class="flex-shrink-0 w-2.5 h-2.5 rounded-full ${statusColor}" title="${r.estado === 'aprobada' ? 'Aprobada' : 'Pendiente'}"></span>
+                                    </div>
+                                    <div class="text-[9px] ${esMio ? 'text-red-800 font-black' : 'text-slate-600 font-medium'} truncate">${displayUser}</div>
+                                    <div class="text-[8px] ${esMio ? 'text-red-500/80' : 'text-slate-400'} font-mono">${r.hora_inicio} - ${r.hora_fin}</div>
+                                </div>
+                            `;
+                        }).join('<div class="h-1.5"></div>');
+
+                        cells += `
+                            <td class="p-2 border-b border-r border-slate-200 bg-white/40 align-top">
+                                <div class="flex flex-col gap-1">
+                                    ${content}
+                                </div>
+                            </td>
+                        `;
+                    } else {
+                        const spaceFilter = document.getElementById('schedule-space-select').value;
+                        let cellActionHtml = '';
+                        
+                        if (spaceFilter !== 'All') {
+                            const spaceId = SPACE_IDS[spaceFilter];
+                            cellActionHtml = `
+                                <a href="/reservar/${spaceId}/?date=${d.dateStr}&start_time=${slot.start}" 
+                                   class="opacity-0 group-hover:opacity-100 flex items-center justify-center gap-1 bg-primary/10 text-primary hover:bg-primary hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all w-fit mx-auto cursor-pointer shadow-sm">
+                                    <span class="material-symbols-outlined text-xs font-bold">add</span> Reservar
+                                </a>
+                            `;
+                        } else {
+                            cellActionHtml = `
+                                <span class="opacity-0 group-hover:opacity-60 text-[9px] text-slate-400 font-bold uppercase tracking-widest">Libre</span>
+                            `;
+                        }
+
+                        cells += `
+                            <td class="p-3 border-b border-r border-slate-200 bg-white align-middle text-center group transition-colors hover:bg-slate-50/50">
+                                ${cellActionHtml}
+                            </td>
+                        `;
+                    }
+                });
+
+                rows += `
+                    <tr class="h-[75px]">
+                        <td class="p-3 border-b border-r border-slate-200 bg-slate-50 text-center align-middle w-24">
+                            <div class="bg-[#dbeafe] text-[#1e40af] py-1 px-2.5 rounded-lg text-[10px] font-bold font-mono inline-block shadow-sm">
+                                <span class="block">${slot.start}</span>
+                                <span class="block border-t border-blue-200/50 mt-0.5 pt-0.5 text-[8px] opacity-75">${slot.end}</span>
+                            </div>
+                        </td>
+                        ${cells}
+                    </tr>
+                `;
+            });
+
+            const html = `
+                <div class="bg-white rounded-[2.5rem] shadow-lg border border-slate-100 overflow-hidden" id="printable-schedule-wrapper">
+                    <!-- Cabecera de impresión (oculta por defecto en pantalla) -->
+                    <div class="hidden print-header p-6 border-b border-slate-200 flex justify-between items-center gap-4 bg-slate-50">
+                        <div class="flex items-center gap-4">
+                            <img src="/static/images/escudo_dolorosa.jpg" class="h-16 w-auto object-contain shrink-0" alt="La Dolorosa">
+                            <div class="text-left">
+                                <h2 class="text-xl font-bold text-[#1e3a8a] tracking-tight leading-tight">Unidad Educativa Fiscomisional La Dolorosa</h2>
+                                <p class="text-xs text-blue-600 italic font-bold">¡Siempre! ... un paso adelante</p>
+                                <p class="text-[9px] text-slate-400 mt-0.5">Calendario de Horarios de Reservas Académicas</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50">
+                                    <th class="p-4 border-b border-r border-slate-200 text-slate-500 font-bold text-xs uppercase tracking-wider text-center w-24">
+                                        Hora
+                                    </th>
+                                    ${thDays}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rows}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            board.innerHTML = html;
+        }
+
+        function renderAgendaView(board, filtered) {
+            if (filtered.length === 0) {
+                board.innerHTML = `
+                    <div class="bg-white rounded-[2.5rem] p-16 text-center border border-slate-100 flex flex-col items-center justify-center gap-6">
+                        <span class="material-symbols-outlined text-slate-300" style="font-size:72px">event_busy</span>
+                        <div class="max-w-md">
+                            <h3 class="text-2xl font-black text-primary tracking-tight mb-2">No hay Reservas en este Período</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed">No se encontraron reservas que coincidan con los filtros seleccionados o el sistema está vacío.</p>
+                        </div>
+                        <button onclick="switchView('spaces')" class="bg-primary text-white px-8 py-3 rounded-full font-bold text-sm shadow-lg hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                            <span class="material-symbols-outlined" style="font-size:18px">add_circle</span> Reservar un Espacio
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Ordenar las reservas por fecha y luego por hora de inicio
+            filtered.sort((a, b) => {
+                if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha);
+                return a.hora_inicio.localeCompare(b.hora_inicio);
+            });
+
+            // Agrupar reservas por fecha
+            const grupos = {};
+            filtered.forEach(r => {
+                if (!grupos[r.fecha]) grupos[r.fecha] = [];
+                grupos[r.fecha].push(r);
+            });
+
+            // Nombre de días y meses
+            const dayNamesLong = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const monthNamesLong = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+            const fmtFechaCompleta = fechaStr => {
+                const d = new Date(fechaStr + 'T00:00:00');
+                return `${dayNamesLong[d.getDay()]}, ${d.getDate()} de ${monthNamesLong[d.getMonth()]} del ${d.getFullYear()}`;
+            };
+
+            const BG_CLASSES = {
+                'Teatro':            'bg-purple-50 text-purple-700 border-purple-200',
+                'Biblioteca':        'bg-blue-50 text-blue-700 border-blue-200',
+                'Laboratorio':       'bg-emerald-50 text-emerald-700 border-emerald-200',
+                'Sala de reuniones': 'bg-orange-50 text-orange-700 border-orange-200',
+                'Deportivo':         'bg-red-50 text-red-700 border-red-200',
+            };
+
+            const ICON_CLASSES = {
+                'Teatro':            'theater_comedy',
+                'Biblioteca':        'menu_book',
+                'Laboratorio':       'science',
+                'Sala de reuniones': 'groups',
+                'Deportivo':         'sports_soccer',
+            };
+
+            let html = '<div class="space-y-8">';
+
+            Object.keys(grupos).forEach(fecha => {
+                const reservasDelDia = grupos[fecha];
+                
+                let items = reservasDelDia.map(r => {
+                    const statusClass = r.estado === 'aprobada' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800';
+                    const statusText = r.estado === 'aprobada' ? '✓ Aprobada' : '⏳ Pendiente';
+                    const categoryBg = BG_CLASSES[r.categoria] || 'bg-slate-50 text-slate-700 border-slate-200';
+                    const iconName = ICON_CLASSES[r.categoria] || 'event_seat';
+                    
+                    const esMio = (r.usuario_username === currentUsername);
+                    const reservadoPorHtml = esMio 
+                        ? `<span class="px-2.5 py-1 bg-red-100 text-red-800 text-[10px] font-black rounded-lg uppercase tracking-wider">Reservado por mí</span>`
+                        : `Reservado por: <span class="font-bold text-slate-700">${r.usuario}</span>`;
+                    const customCardStyle = esMio ? 'border-red-200 bg-red-50/20' : 'border-slate-100 bg-white';
+
+                    return `
+                        <div class="${customCardStyle} p-6 rounded-[2rem] border shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center border ${categoryBg}">
+                                    <span class="material-symbols-outlined text-2xl">${iconName}</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-base text-slate-800">${r.espacio}</h4>
+                                    <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-0.5">${r.categoria}</p>
+                                    <p class="text-[11px] text-slate-500 mt-1">${reservadoPorHtml}</p>
+                                </div>
+                            </div>
+                            <div class="flex sm:flex-col items-start sm:items-end gap-3 justify-between w-full sm:w-auto border-t sm:border-0 pt-3 sm:pt-0 border-slate-100">
+                                <div class="flex items-center gap-1.5 text-xs text-slate-600 font-mono font-bold bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-150">
+                                    <span class="material-symbols-outlined text-sm text-slate-400">schedule</span>
+                                    ${r.hora_inicio} - ${r.hora_fin}
+                                </div>
+                                <span class="px-3.5 py-1 rounded-full text-xs font-bold ${statusClass}">${statusText}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                html += `
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2.5 h-2.5 rounded-full bg-primary/40"></div>
+                            <h3 class="text-sm font-black text-slate-500 uppercase tracking-widest">${fmtFechaCompleta(fecha)}</h3>
+                            <div class="flex-1 h-px bg-slate-200/60"></div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-4">
+                            ${items}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            board.innerHTML = html;
+        }
+
+        function imprimirHorarioDinamic() {
+            try {
+                const board = document.getElementById('printable-schedule-wrapper');
+                if (!board) {
+                    showToast("No hay datos para imprimir", "error");
+                    return;
+                }
+                const header = board.querySelector('.print-header');
+                if (header) header.classList.remove('hidden');
+                
+                let html = board.outerHTML;
+                
+                if (header) header.classList.add('hidden');
+                
+                const win = window.open('', '', 'height=800,width=1300');
+                win.document.write(`<!DOCTYPE html><html><head><title>Horario de Reservas - La Dolorosa</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+                    <script src="https://cdn.tailwindcss.com"><\/script>
+                    <style>@media print{@page{size:landscape;margin:1cm}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}body{font-family:'Inter',sans-serif;padding:20px;background:white}.print-header{display:flex !important;}</style>
+                </head><body>${html}<script>window.onload=function(){setTimeout(function(){window.print();window.close();},600);}<\/script></body></html>`);
+                win.document.close();
+            } catch(e) { 
+                console.error(e);
+                showToast("Error al imprimir", "error"); 
+            }
+        }
 
         // ─── AI Chat ─────────────────────────────────────────────────────────
         function toggleAIChat() {
@@ -871,13 +1735,27 @@
     </script>
     {% else %}
     <!-- Landing Page (Simulated login flow) -->
-    <div class="min-h-screen flex flex-col items-center justify-center bg-primary p-8 relative overflow-hidden">
+    <div class="min-h-screen flex flex-col items-center justify-center p-8 relative overflow-hidden bg-[#0f172a]">
+        <!-- Background: Iglesia La Dolorosa -->
+        <div class="absolute inset-0 z-0" style="
+            background-image: url('{% static 'images/iglesia_dolorosa.jpg' %}');
+            background-size: cover;
+            background-position: center 30%;
+            background-repeat: no-repeat;
+            image-rendering: high-quality;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            will-change: transform;
+        "></div>
+        <div class="absolute inset-0 z-0 bg-gradient-to-br from-blue-950/80 via-blue-900/70 to-indigo-900/80"></div>
+
         <!-- Background decorative details -->
-        <div class="absolute w-[500px] h-[500px] bg-white/5 rounded-full -top-40 -left-40 blur-3xl pointer-events-none"></div>
-        <div class="absolute w-[400px] h-[400px] bg-black/10 rounded-full -bottom-20 -right-20 blur-2xl pointer-events-none"></div>
+        <div class="absolute w-[500px] h-[500px] bg-white/5 rounded-full -top-40 -left-40 blur-3xl pointer-events-none z-10"></div>
+        <div class="absolute w-[400px] h-[400px] bg-black/10 rounded-full -bottom-20 -right-20 blur-2xl pointer-events-none z-10"></div>
         
         <div class="glass max-w-lg w-full p-12 rounded-[3rem] text-center text-white flex flex-col items-center relative z-10">
-            <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-28 w-auto object-contain mb-6 drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)]">
+            <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Escudo UEF La Dolorosa" class="h-28 w-auto object-contain mb-6 drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)]">
             <h1 class="text-4xl font-black mb-2 tracking-tighter text-white uppercase">RESERVAEDU</h1>
             <p class="text-white/80 mb-10 font-bold uppercase tracking-widest text-[10px] bg-black/20 px-4 py-1.5 rounded-full border border-white/10">U.E.F. "La Dolorosa" - Loja</p>
             <button onclick="openGooglePopup()" class="w-full bg-white text-primary py-4 rounded-2xl font-black shadow-xl hover:-translate-y-0.5 hover:shadow-black/20 active:scale-95 transition-all uppercase tracking-widest text-xs">Acceder con Google</button>
@@ -1052,6 +1930,21 @@
                 }
             } else {
                 setTimeout(showMockOneTap, 1500);
+            }
+        });
+
+        // ─── Dropdown de avatar ──────────────────────────────────────────────
+        function toggleAvatarMenu() {
+            const dropdown = document.getElementById('avatar-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('avatar-menu-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                const dropdown = document.getElementById('avatar-dropdown');
+                if (dropdown) dropdown.classList.add('hidden');
             }
         });
     </script>

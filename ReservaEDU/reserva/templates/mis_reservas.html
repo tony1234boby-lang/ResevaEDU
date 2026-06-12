@@ -3,10 +3,11 @@
 <html class="light" lang="es">
 
 <head>
+    {% include 'pwa_meta.html' %}
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Mis Reservas - ReservaEDU | La Dolorosa</title>
-    <link rel="icon" type="image/png" href="{% static 'images/logo_dolorosa.png' %}" />
+    <link rel="icon" type="image/png" href="{% static 'images/escudo_dolorosa.jpg' %}" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -16,8 +17,8 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: "#7e192f", // Vino institucional
-                        "primary-dark": "#5c0f1e",
+                        primary: "#1e40af", // Azul institucional
+                        "primary-dark": "#1e3a8a",
                         secondary: "#5A626A",
                         surface: "#F8FAFC",
                         "on-surface": "#1E293B",
@@ -53,11 +54,100 @@
 </head>
 
 <body class="bg-surface text-on-surface min-h-screen">
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+            <div id="floating-success-card" class="fixed bottom-20 md:bottom-6 left-6 md:left-72 z-50 max-w-sm bg-white/95 border border-primary/20 p-5 rounded-3xl shadow-2xl flex flex-col gap-3 backdrop-blur-md border-l-4 border-l-primary fade-in">
+                <!-- Close cross in the top-right -->
+                <button onclick="closeFloatingNotification()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
+                    <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+                <!-- Title and Icon -->
+                <div class="flex items-start gap-3 mt-1 pr-6">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-primary shrink-0">
+                        <span class="material-symbols-outlined text-xl">verified</span>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-sm font-bold text-slate-800">¡Reserva Exitosa!</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">{{ message }}</p>
+                    </div>
+                </div>
+                <!-- Action button "Okey" -->
+                <div class="flex justify-end mt-1">
+                    <button onclick="closeFloatingNotification()" class="px-5 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-bold transition-all shadow-md">
+                        Entendido
+                    </button>
+                </div>
+            </div>
+            <script>
+                function closeFloatingNotification() {
+                    const card = document.getElementById('floating-success-card');
+                    if (card) {
+                        card.classList.add('opacity-0', 'translate-y-4');
+                        card.style.transition = 'all 0.3s ease';
+                        setTimeout(() => {
+                            card.remove();
+                        }, 300);
+                    }
+                }
+            </script>
+            {% endif %}
+        {% endfor %}
+    {% elif mis_reservas %}
+    <div id="floating-active-reservations-card" class="hidden fixed bottom-20 md:bottom-6 left-6 md:left-72 z-50 max-w-sm bg-white/95 border border-primary/20 p-5 rounded-3xl shadow-2xl flex flex-col gap-3 backdrop-blur-md border-l-4 border-l-primary fade-in">
+        <!-- Close cross in the top-right -->
+        <button onclick="closeActiveReservationsCard()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
+            <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+        <!-- Title and Icon -->
+        <div class="flex items-start gap-3 mt-1 pr-6">
+            <div class="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-primary shrink-0">
+                <span class="material-symbols-outlined text-xl">event_available</span>
+            </div>
+            <div class="flex-1">
+                <h4 class="text-sm font-bold text-slate-800">Tus Reservas</h4>
+                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                    ¡Hola, {{ request.user.username }}! Tienes <strong>{{ mis_reservas.count }}</strong> reserva(s) activa(s) programada(s) en el sistema.
+                </p>
+            </div>
+        </div>
+        <!-- Buttons -->
+        <div class="flex justify-end gap-2 mt-1">
+            <button onclick="closeActiveReservationsCard()" class="px-5 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-bold transition-all shadow-md">
+                Entendido
+            </button>
+        </div>
+    </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const dismissed = localStorage.getItem('dismissed_reservations_count');
+            const currentCount = "{{ mis_reservas.count }}";
+            if (dismissed !== currentCount) {
+                const card = document.getElementById('floating-active-reservations-card');
+                if (card) {
+                    card.classList.remove('hidden');
+                }
+            }
+        });
+
+        function closeActiveReservationsCard() {
+            const card = document.getElementById('floating-active-reservations-card');
+            if (card) {
+                card.classList.add('opacity-0', 'translate-y-4');
+                card.style.transition = 'all 0.3s ease';
+                localStorage.setItem('dismissed_reservations_count', "{{ mis_reservas.count }}");
+                setTimeout(() => {
+                    card.remove();
+                }, 300);
+            }
+        }
+    </script>
+    {% endif %}
     <div class="flex">
         <!-- SideNavBar -->
         <aside class="hidden md:flex flex-col p-4 gap-2 h-screen border-r border-slate-200 bg-slate-50 fixed left-0 w-64 z-50">
             <div class="mb-6 px-4 flex flex-col items-center gap-3">
-                <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-16 w-auto object-contain mt-2 drop-shadow-sm">
+                <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Logo La Dolorosa" class="h-16 w-auto object-contain mt-2 drop-shadow-sm">
                 <div class="text-center">
                     <h2 class="text-xl font-black text-primary uppercase tracking-tighter">RESERVAEDU</h2>
                     <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">La Dolorosa</p>
@@ -68,9 +158,17 @@
                     <span class="material-symbols-outlined">grid_view</span>
                     <span>Espacios</span>
                 </a>
+                <a id="nav-horarios" href="/?view=horarios" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold">
+                    <span class="material-symbols-outlined">description</span>
+                    <span>Disponibilidad de reservas</span>
+                </a>
                 <a id="nav-reservations" href="{% url 'mis_reservas' %}" class="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl shadow-lg transition-all font-bold">
                     <span class="material-symbols-outlined">event_available</span>
                     <span>Mis Reservas</span>
+                </a>
+                <a id="nav-proximas" href="{% url 'proximas_reservas' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <span>Próximos días</span>
                 </a>
                 {% if es_secretaria %}
                 <a id="nav-secretaria" href="{% url 'dashboard_secretaria' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold">
@@ -80,9 +178,9 @@
                 {% endif %}
             </nav>
             <div class="mt-auto pt-4 flex flex-col gap-1 border-t border-slate-200">
-                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-medium" href="#">
-                    <span class="material-symbols-outlined">settings</span>
-                    <span>Ajustes</span>
+                <a id="nav-ayuda" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold" href="{% url 'ayuda' %}">
+                    <span class="material-symbols-outlined">help</span>
+                    <span>Ayuda</span>
                 </a>
                 <form action="{% url 'logout' %}" method="post" class="w-full m-0">
                     {% csrf_token %}
@@ -99,7 +197,7 @@
             <!-- TopNavBar -->
             <header class="flex justify-between items-center px-8 h-16 w-full bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-200">
                 <div class="flex items-center gap-3">
-                    <img src="{% static 'images/logo_dolorosa.png' %}" alt="Logo La Dolorosa" class="h-8 w-auto object-contain">
+                    <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Logo La Dolorosa" class="h-8 w-auto object-contain">
                     <span class="text-lg font-black text-primary">RESERVAEDU</span>
                 </div>
                 <div class="flex items-center gap-6">

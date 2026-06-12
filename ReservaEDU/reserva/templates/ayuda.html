@@ -1,0 +1,509 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    {% include 'pwa_meta.html' %}
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Centro de Ayuda - ReservaEDU | La Dolorosa</title>
+    <link rel="icon" type="image/png" href="{% static 'images/escudo_dolorosa.jpg' %}" />
+    <meta name="description" content="Manual de usuario, video tutorial y normas generales de uso del sistema de reservas ReservaEDU.">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e40af",       // Azul institucional
+                        "primary-dark": "#1e3a8a", // Azul oscuro
+                        "primary-light": "#3b82f6", // Azul claro
+                        secondary: "#475569",
+                        surface: "#F0F4FF",
+                        "on-surface": "#1E293B",
+                        "surface-container-low": "#EFF6FF",
+                        "on-surface-variant": "#334155",
+                        "outline-variant": "#BFDBFE",
+                        tertiary: "#94A3B8",
+                        "on-tertiary": "#1E293B",
+                        accent: "#F59E0B"
+                    },
+                    borderRadius: { lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+                    fontFamily: { headline: ["Manrope"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.5s ease; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        
+        /* Blue Institutional Theme */
+        aside { background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 60%, #1d4ed8 100%) !important; }
+        aside * { color: rgba(255,255,255,0.85); }
+        aside .text-primary { color: #fff !important; }
+        aside .text-secondary { color: rgba(255,255,255,0.6) !important; }
+        aside a.active-nav { background: rgba(255,255,255,0.15) !important; color: #fff !important; }
+        aside a:hover { background: rgba(255,255,255,0.1) !important; }
+        aside .border-t { border-color: rgba(255,255,255,0.15) !important; }
+        aside button.text-red-500 { color: #fca5a5 !important; }
+        aside button.text-red-500:hover { background: rgba(239,68,68,0.15) !important; }
+
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+    <!-- Ventana Flotante de Reservas Activas (Si las hay) -->
+    {% if mis_reservas %}
+    <div id="floating-active-reservations-card" class="hidden fixed bottom-20 md:bottom-6 left-6 md:left-72 z-50 max-w-sm bg-white/95 border border-primary/20 p-5 rounded-3xl shadow-2xl flex flex-col gap-3 backdrop-blur-md border-l-4 border-l-primary fade-in">
+        <button onclick="closeActiveReservationsCard()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
+            <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+        <div class="flex items-start gap-3 mt-1 pr-6">
+            <div class="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-primary shrink-0">
+                <span class="material-symbols-outlined text-xl">event_available</span>
+            </div>
+            <div class="flex-1">
+                <h4 class="text-sm font-bold text-slate-800">Tus Reservas</h4>
+                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                    ¡Hola, {{ request.user.username }}! Tienes <strong>{{ mis_reservas.count }}</strong> reserva(s) activa(s) programada(s) en el sistema.
+                </p>
+            </div>
+        </div>
+        <div class="flex justify-end gap-2 mt-1">
+            <a href="{% url 'mis_reservas' %}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all">
+                Ver Reservas
+            </a>
+            <button onclick="closeActiveReservationsCard()" class="px-5 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-bold transition-all shadow-md">
+                Entendido
+            </button>
+        </div>
+    </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const dismissed = localStorage.getItem('dismissed_reservations_count');
+            const currentCount = "{{ mis_reservas.count }}";
+            if (dismissed !== currentCount) {
+                const card = document.getElementById('floating-active-reservations-card');
+                if (card) {
+                    card.classList.remove('hidden');
+                }
+            }
+        });
+
+        function closeActiveReservationsCard() {
+            const card = document.getElementById('floating-active-reservations-card');
+            if (card) {
+                card.classList.add('opacity-0', 'translate-y-4');
+                card.style.transition = 'all 0.3s ease';
+                localStorage.setItem('dismissed_reservations_count', "{{ mis_reservas.count }}");
+                setTimeout(() => {
+                    card.remove();
+                }, 300);
+            }
+        }
+    </script>
+    {% endif %}
+
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <aside class="hidden md:flex flex-col p-4 gap-2 h-screen border-r border-blue-900/30 fixed left-0 w-64 z-50">
+            <div class="mb-6 px-4 flex flex-col items-center gap-3">
+                <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Escudo UEF La Dolorosa" class="h-20 w-auto object-contain mt-2 drop-shadow-lg">
+                <div class="text-center">
+                    <h2 class="text-base font-black uppercase tracking-tighter" style="color:#fff">RESERVAEDU</h2>
+                    <p class="text-[9px] font-bold uppercase tracking-widest mt-0.5" style="color:rgba(255,255,255,0.65)">U.E.F. La Dolorosa</p>
+                </div>
+            </div>
+            <nav class="flex-1 flex flex-col gap-2">
+                <a id="nav-spaces" href="{% url 'inicio' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl cursor-pointer transition-all">
+                    <span class="material-symbols-outlined">grid_view</span>
+                    <span class="font-bold">Espacios</span>
+                </a>
+                <a id="nav-horarios" href="/?view=horarios" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl cursor-pointer transition-all">
+                    <span class="material-symbols-outlined">description</span>
+                    <span class="font-bold">Disponibilidad de reservas</span>
+                </a>
+                <a id="nav-reservations" href="{% url 'mis_reservas' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl cursor-pointer transition-all">
+                    <span class="material-symbols-outlined">event_available</span>
+                    <span class="font-bold">Mis Reservas</span>
+                </a>
+                <a id="nav-proximas" href="{% url 'proximas_reservas' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl cursor-pointer transition-all">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <span class="font-bold">Próximos días</span>
+                </a>
+                {% if es_secretaria %}
+                <a id="nav-secretaria" href="{% url 'dashboard_secretaria' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="font-bold">Panel Secretaría</span>
+                </a>
+                {% endif %}
+            </nav>
+            <div class="mt-auto pt-4 flex flex-col gap-1 border-t border-slate-200">
+                <a id="nav-ayuda" class="flex items-center gap-3 px-4 py-3 active-nav rounded-xl transition-all" href="{% url 'ayuda' %}">
+                    <span class="material-symbols-outlined">help</span>
+                    <span class="font-bold">Ayuda</span>
+                </a>
+                {% if user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" class="w-full m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all text-left font-bold border-none bg-transparent cursor-pointer">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 md:ml-64 min-h-screen">
+            <header class="flex justify-between items-center px-8 h-16 w-full bg-white/90 backdrop-blur-xl sticky top-0 z-40 border-b border-blue-100 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Escudo UEF La Dolorosa" class="h-10 w-auto object-contain">
+                    <div>
+                        <span class="text-base font-black text-primary block leading-none">RESERVAEDU</span>
+                        <span class="text-[9px] text-blue-400 font-bold uppercase tracking-widest">U.E.F. La Dolorosa</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <!-- Campana de Notificaciones -->
+                    <div class="relative group">
+                        <a href="{% url 'lista_notificaciones' %}" class="text-slate-500 hover:text-primary transition-colors flex items-center relative p-1">
+                            <span class="material-symbols-outlined">notifications</span>
+                            {% if notificaciones_count > 0 %}
+                            <span class="absolute top-0 right-0 bg-red-500 text-white rounded-full text-[9px] font-bold w-4 h-4 flex items-center justify-center">
+                                {{ notificaciones_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm font-bold text-primary">¡Hola, {{ request.user.username }}!</span>
+                        <div class="relative" id="avatar-menu-wrapper">
+                            <button id="avatar-btn" onclick="toggleAvatarMenu()" class="focus:outline-none">
+                                {% if google_picture %}
+                                <img id="avatar-img" class="w-9 h-9 rounded-full border-2 border-primary/30 shadow-sm hover:border-primary transition-all cursor-pointer object-cover"
+                                     src="{{ google_picture }}"
+                                     onerror="this.onerror=null; this.style.display='none'; document.getElementById('avatar-initials').style.display='flex';"
+                                     alt="Foto de perfil" />
+                                {% endif %}
+                                <div id="avatar-initials" class="w-9 h-9 rounded-full bg-primary text-white text-sm font-black flex items-center justify-center cursor-pointer hover:bg-primary/80 transition-all border-2 border-primary/30 shadow-sm {% if google_picture %}hidden{% endif %}">
+                                    {{ user.first_name|first|upper|default:user.username|first|upper }}
+                                </div>
+                            </button>
+                            <!-- Dropdown -->
+                            <div id="avatar-dropdown" class="hidden absolute right-0 top-12 w-60 bg-white rounded-2xl shadow-2xl border border-slate-100 z-[200] overflow-hidden"
+                                 style="box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 4px 16px rgba(30,64,175,0.1);">
+                                <div class="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+                                    <div class="flex items-center gap-3">
+                                        {% if google_picture %}
+                                        <img src="{{ google_picture }}" class="w-9 h-9 rounded-full object-cover border-2 border-white shadow" alt="Avatar" onerror="this.style.display='none'">
+                                        {% else %}
+                                        <div class="w-9 h-9 rounded-full bg-primary text-white text-sm font-black flex items-center justify-center border-2 border-white shadow">
+                                            {{ user.first_name|first|upper|default:user.username|first|upper }}
+                                        </div>
+                                        {% endif %}
+                                        <div class="min-w-0">
+                                            <p class="text-xs font-bold text-slate-800 truncate">{{ user.get_full_name|default:user.username }}</p>
+                                            <p class="text-[10px] text-slate-400 truncate">{{ user.email }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="py-1">
+                                    <a href="/accounts/google/login/?next=/" class="flex items-center gap-3 px-4 py-3 text-sm text-slate-600 hover:bg-blue-50 hover:text-primary transition-all group">
+                                        <div class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center transition-colors">
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24">
+                                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                                            </svg>
+                                        </div>
+                                        <span class="font-semibold">Cambiar cuenta</span>
+                                    </a>
+                                    <div class="mx-4 h-px bg-slate-100"></div>
+                                    <form action="{% url 'logout' %}" method="post" class="m-0">
+                                        {% csrf_token %}
+                                        <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-all group">
+                                            <div class="w-8 h-8 rounded-xl bg-red-50 group-hover:bg-red-100 flex items-center justify-center transition-colors">
+                                                <span class="material-symbols-outlined text-base text-red-500">logout</span>
+                                            </div>
+                                            <span class="font-semibold">Cerrar sesión</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-8 max-w-7xl mx-auto space-y-8">
+                <!-- Page Title -->
+                <div>
+                    <h2 class="text-4xl font-black text-primary tracking-tighter uppercase">CENTRO DE AYUDA Y TUTORIALES</h2>
+                    <p class="text-slate-500 text-sm font-semibold mt-1">Guías paso a paso, indicaciones generales y videotutorial para aprender a usar ReservaEDU.</p>
+                </div>
+
+                <!-- Tab Selectors -->
+                <div class="flex items-center gap-3 border-b border-slate-200 pb-4">
+                    <button id="btn-tab-manual" onclick="showHelpTab('manual')" class="px-6 py-2.5 rounded-full bg-primary text-white font-bold text-sm shadow-md transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">menu_book</span>
+                        <span>Manual de Usuario</span>
+                    </button>
+                    <button id="btn-tab-video" onclick="showHelpTab('video')" class="px-6 py-2.5 rounded-full bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">smart_display</span>
+                        <span>Videotutorial</span>
+                    </button>
+                    <button id="btn-tab-normas" onclick="showHelpTab('normas')" class="px-6 py-2.5 rounded-full bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">info</span>
+                        <span>Normas e Indicaciones</span>
+                    </button>
+                </div>
+
+                <!-- TAB CONTENT: MANUAL -->
+                <div id="tab-content-manual" class="fade-in space-y-8">
+                    <!-- Step 1 -->
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col md:flex-row gap-6 items-start">
+                        <div class="w-12 h-12 bg-blue-100 text-primary font-black text-lg rounded-2xl flex items-center justify-center shrink-0">1</div>
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-bold text-slate-800">Crear una Cuenta o Registrarse</h3>
+                            <p class="text-slate-550 text-sm leading-relaxed">
+                                Para ingresar a ReservaEDU por primera vez, puedes registrarte de dos formas:
+                            </p>
+                            <ul class="list-disc pl-5 text-xs text-slate-500 space-y-1 mt-2">
+                                <li><strong>Registro Manual:</strong> Haz clic en "Regístrate" en la página principal, ingresa un nombre de usuario único y una contraseña segura.</li>
+                                <li><strong>Registro rápido con Google:</strong> Haz clic en el botón de Google en el formulario de inicio de sesión. El sistema creará una cuenta automáticamente sincronizando tu correo electrónico y tu foto de perfil.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col md:flex-row gap-6 items-start">
+                        <div class="w-12 h-12 bg-blue-100 text-primary font-black text-lg rounded-2xl flex items-center justify-center shrink-0">2</div>
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-bold text-slate-800">Explorar y Seleccionar el Espacio</h3>
+                            <p class="text-slate-550 text-sm leading-relaxed">
+                                En la pantalla de inicio, verás el catálogo con todos los espacios disponibles (<strong>Mini Teatro, Biblioteca, Laboratorio de Informática, Sala de Reuniones, Coliseo Deportivo</strong>). Utiliza las categorías en la parte superior para filtrar rápidamente y haz clic en <strong>"Reservar Ahora"</strong> en el espacio de tu interés.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col md:flex-row gap-6 items-start">
+                        <div class="w-12 h-12 bg-blue-100 text-primary font-black text-lg rounded-2xl flex items-center justify-center shrink-0">3</div>
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-bold text-slate-800">Completar el Formulario y Elegir Horarios</h3>
+                            <p class="text-slate-550 text-sm leading-relaxed">
+                                Dentro del formulario de reservas:
+                            </p>
+                            <ul class="list-disc pl-5 text-xs text-slate-500 space-y-1 mt-2">
+                                <li>Selecciona la **fecha** deseada en el calendario flotante.</li>
+                                <li>En el panel lateral derecho verás la **Disponibilidad Actual** para esa fecha con bloques de 1 hora.</li>
+                                <li>Haz clic en un bloque **"Disponible"** y las horas se rellenarán automáticamente en el formulario, o ingresa las horas manualmente si prefieres.</li>
+                                <li>Decide si deseas **Notificar por Correo** a directivos específicos de la institución sobre tu reserva.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col md:flex-row gap-6 items-start">
+                        <div class="w-12 h-12 bg-blue-100 text-primary font-black text-lg rounded-2xl flex items-center justify-center shrink-0">4</div>
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-bold text-slate-800">Esperar Aprobación de la Secretaría</h3>
+                            <p class="text-slate-550 text-sm leading-relaxed">
+                                Una vez confirmes tu reserva, esta se enviará al panel de control de la **Secretaría** de la institución para su revisión. Puedes hacer un seguimiento del estado de tu solicitud (Pendiente, Aprobada o Rechazada) desde la pestaña **"Mis Reservas"**. Se enviará una notificación en tiempo real a tu panel cuando la secretaría tome una decisión.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB CONTENT: VIDEO -->
+                <div id="tab-content-video" class="hidden fade-in space-y-6">
+                    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-6">
+                        <div class="text-center max-w-xl mx-auto">
+                            <h3 class="text-xl font-bold text-slate-850">Videotutorial de Demostración</h3>
+                            <p class="text-xs text-slate-500 mt-2">Observa en este video rápido cómo registrar una nueva cuenta y crear una reserva de espacio en menos de 1 minuto.</p>
+                        </div>
+
+                        <!-- Video Player Simulator -->
+                        <div class="max-w-3xl mx-auto rounded-3xl overflow-hidden border border-slate-200 shadow-2xl relative bg-slate-950 flex flex-col group">
+                            <!-- Premium Header -->
+                            <div class="px-5 py-3 bg-slate-900 border-b border-slate-800/80 flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                                    <span>Demostración de Registro y Reserva</span>
+                                </div>
+                                <span class="text-[10px] text-slate-500 font-mono">WebP Video Player</span>
+                            </div>
+
+                            <!-- Image/Video Container -->
+                            <div class="relative w-full aspect-video flex items-center justify-center overflow-hidden">
+                                <img src="{% static 'images/tutorial_reserva.webp' %}?v=1.3" class="w-full h-full object-cover" alt="Video tutorial animado">
+                                <!-- Float bar to simulate UI -->
+                                <div class="absolute inset-0 bg-black/15 pointer-events-none"></div>
+                            </div>
+
+                            <!-- Player Controls -->
+                            <div class="px-5 py-3.5 bg-slate-900 border-t border-slate-800/60 flex items-center justify-between gap-4">
+                                <div class="flex items-center gap-4 text-slate-400">
+                                    <button class="hover:text-white transition-colors cursor-default"><span class="material-symbols-outlined text-lg">play_arrow</span></button>
+                                    <button class="hover:text-white transition-colors cursor-default"><span class="material-symbols-outlined text-lg">volume_up</span></button>
+                                    <span class="text-[10px] font-mono text-slate-500">0:32 / 1:00</span>
+                                </div>
+                                <div class="flex-1 max-w-lg h-1.5 bg-slate-800 rounded-full relative overflow-hidden">
+                                    <div class="absolute top-0 left-0 bottom-0 bg-primary w-[55%] rounded-full"></div>
+                                </div>
+                                <div class="flex items-center gap-3 text-slate-450">
+                                    <button class="hover:text-white transition-colors cursor-default"><span class="material-symbols-outlined text-base">settings</span></button>
+                                    <button class="hover:text-white transition-colors cursor-default"><span class="material-symbols-outlined text-base">fullscreen</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB CONTENT: NORMAS -->
+                <div id="tab-content-normas" class="hidden fade-in space-y-6">
+                    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-8">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">Reglas Generales de Uso del Sistema</h3>
+                            <p class="text-xs text-slate-400 mt-1">Indicaciones obligatorias para garantizar un uso equitativo de los espacios institucionales.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Rule 1 -->
+                            <div class="p-6 rounded-2xl bg-blue-50/40 border border-blue-100 flex items-start gap-4">
+                                <span class="material-symbols-outlined text-primary text-2xl">schedule</span>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-800">Franja Horaria Autorizada</h4>
+                                    <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                        Las reservas están restringidas estrictamente de **Lunes a Viernes** entre las **08:00 y las 14:00**. Las solicitudes fuera de esta franja horaria serán denegadas de forma automática.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Rule 2 -->
+                            <div class="p-6 rounded-2xl bg-blue-50/40 border border-blue-100 flex items-start gap-4">
+                                <span class="material-symbols-outlined text-primary text-2xl">block</span>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-800">Evitar Solapamientos</h4>
+                                    <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                        El sistema no permite que dos usuarios reserven el mismo espacio en un mismo horario. Asegúrate de verificar los espacios ocupados en la barra lateral antes de enviar tu solicitud.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Rule 3 -->
+                            <div class="p-6 rounded-2xl bg-blue-50/40 border border-blue-100 flex items-start gap-4">
+                                <span class="material-symbols-outlined text-primary text-2xl">lock_open</span>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-800">Responsabilidad del Espacio</h4>
+                                    <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                        Cada espacio cuenta con un **Docente o Funcionario Responsable**. Al momento de que la secretaría apruebe la reserva, se notificará al responsable para la entrega de llaves y equipos necesarios.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Rule 4 -->
+                            <div class="p-6 rounded-2xl bg-blue-50/40 border border-blue-100 flex items-start gap-4">
+                                <span class="material-symbols-outlined text-primary text-2xl">mail</span>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-800">Notificación al Instante</h4>
+                                    <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                        Al reservar, puedes activar avisos por correo para el **Padre Rector**, **Inspección** o **Coordinación**. Úsalo solo para eventos de carácter institucional que requieran su conocimiento.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info box -->
+                        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3">
+                            <span class="material-symbols-outlined text-slate-400">help</span>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Si tienes problemas técnicos con tu cuenta o el calendario, comunícate con la Secretaría o envía un correo electrónico al área de Soporte Técnico IT: <span class="text-primary font-bold">soporte@reservaedu.edu</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation Bar -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md px-6 py-4 flex justify-around items-center z-50 border-t-0 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.1)]">
+        <a class="flex flex-col items-center gap-1 text-slate-400" href="{% url 'inicio' %}">
+            <span class="material-symbols-outlined">grid_view</span>
+            <span class="text-[10px] font-bold uppercase">Inicio</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-slate-400" href="{% url 'inicio' %}">
+            <span class="material-symbols-outlined">calendar_view_day</span>
+            <span class="text-[10px] font-bold uppercase">Espacios</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-slate-400" href="{% url 'mis_reservas' %}">
+            <span class="material-symbols-outlined">event_available</span>
+            <span class="text-[10px] font-bold uppercase">Reservas</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-primary" href="{% url 'ayuda' %}">
+            <span class="material-symbols-outlined">help</span>
+            <span class="text-[10px] font-bold uppercase">Ayuda</span>
+        </a>
+    </nav>
+
+    <!-- Scripting -->
+    <script>
+        function showHelpTab(tabId) {
+            document.getElementById('tab-content-manual').classList.add('hidden');
+            document.getElementById('tab-content-video').classList.add('hidden');
+            document.getElementById('tab-content-normas').classList.add('hidden');
+
+            const buttons = ['btn-tab-manual', 'btn-tab-video', 'btn-tab-normas'];
+            buttons.forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.classList.remove('bg-primary', 'text-white', 'shadow-md');
+                    btn.classList.add('bg-slate-100', 'text-slate-600');
+                }
+            });
+
+            document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`btn-tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
+                activeBtn.classList.add('bg-primary', 'text-white', 'shadow-md');
+            }
+        }
+
+        // Dropdown menu settings
+        function toggleAvatarMenu() {
+            const dropdown = document.getElementById('avatar-dropdown');
+            if (!dropdown) return;
+            dropdown.classList.toggle('hidden');
+            if (!dropdown.classList.contains('hidden')) {
+                dropdown.style.opacity = '0';
+                dropdown.style.transform = 'translateY(-8px) scale(0.97)';
+                dropdown.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+                requestAnimationFrame(() => {
+                    dropdown.style.opacity = '1';
+                    dropdown.style.transform = 'translateY(0) scale(1)';
+                });
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('avatar-menu-wrapper');
+            const dropdown = document.getElementById('avatar-dropdown');
+            if (wrapper && dropdown && !wrapper.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

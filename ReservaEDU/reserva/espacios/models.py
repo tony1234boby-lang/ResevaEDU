@@ -45,6 +45,47 @@ class Reserva(models.Model):
     def clean(self):
         # Evitar solapamiento de horarios (solo para reservas no rechazadas)
         if self.estado != 'rechazada':
+            # Asegurar tipo datetime.date si se pasa como string
+            if isinstance(self.fecha, str):
+                from django.utils.dateparse import parse_date
+                self.fecha = parse_date(self.fecha)
+
+            # Validar que el día sea entre Lunes y Viernes
+            if self.fecha and self.fecha.weekday() >= 5:
+                raise ValidationError("Las reservas solo están permitidas de lunes a viernes.")
+
+
+            # Validar horas generales de cada categoría
+            from datetime import time
+            
+            limites = {
+                'Teatro': (time(8, 0), time(14, 0)),
+                'Biblioteca': (time(8, 0), time(14, 0)),
+                'Laboratorio': (time(8, 0), time(14, 0)),
+                'Sala de reuniones': (time(8, 0), time(14, 0)),
+                'Deportivo': (time(8, 0), time(14, 0)),
+            }
+            
+            cat = self.espacio.categoria
+            if cat in limites:
+                inicio_limite, fin_limite = limites[cat]
+                h_ini = self.hora_inicio
+                h_fin = self.hora_fin
+                
+                # Asegurar tipo datetime.time si se pasa como string
+                if isinstance(h_ini, str):
+                    from django.utils.dateparse import parse_time
+                    h_ini = parse_time(h_ini)
+                if isinstance(h_fin, str):
+                    from django.utils.dateparse import parse_time
+                    h_fin = parse_time(h_fin)
+                
+                if h_ini and h_fin:
+                    if h_ini < inicio_limite or h_fin > fin_limite:
+                        raise ValidationError(
+                            f"Para la categoría {cat}, el horario permitido es de {inicio_limite.strftime('%H:%M')} a {fin_limite.strftime('%H:%M')}."
+                        )
+
             solapamiento = Reserva.objects.filter(
                 espacio=self.espacio,
                 fecha=self.fecha

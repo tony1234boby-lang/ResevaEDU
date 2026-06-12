@@ -1,0 +1,29 @@
+{% load static %}
+<!-- PWA Manifest Link -->
+<link rel="manifest" href="{% static 'manifest.json' %}" />
+
+<!-- Meta tags for Mobile & PWA styling -->
+<meta name="theme-color" content="#1e40af" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="application-name" content="ReservaEDU" />
+
+<!-- Apple Touch / iOS Meta Tags -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="ReservaEDU" />
+<link rel="apple-touch-icon" href="{% static 'images/icons/icon-192x192.png' %}" />
+
+<!-- Service Worker Registration -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/serviceworker.js')
+                .then((registration) => {
+                    console.log('ServiceWorker registrado con éxito: ', registration.scope);
+                })
+                .catch((err) => {
+                    console.log('Fallo en el registro del ServiceWorker: ', err);
+                });
+        });
+    }
+</script>

@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% include 'pwa_meta.html' %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Completar Registro - ReservaEDU | La Dolorosa</title>
+    <link rel="icon" type="image/png" href="{% static 'images/escudo_dolorosa.jpg' %}" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#1e40af', 'primary-dark': '#1e3a8a', accent: '#D97706' },
+                    fontFamily: { display: ['Manrope','sans-serif'], body: ['Inter','sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        html { zoom: 100%; }
+        body { font-family: 'Inter', sans-serif; }
+        h1,h2,h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1.5px solid rgba(212, 175, 55, 0.35);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(30, 64, 175, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .text-gold-gradient {
+            background: linear-gradient(135deg, #ffe082 0%, #d4af37 50%, #aa7c11 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.4));
+        }
+
+        .input-premium {
+            background: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(212, 175, 55, 0.2) !important;
+            color: #ffffff !important;
+        }
+        .input-premium:focus {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: #d4af37 !important;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.25) !important;
+            outline: none;
+        }
+        .input-premium::placeholder { color: rgba(255,255,255,0.25); }
+
+        /* Ocultar campo username de allauth si aparece */
+        #id_username { display: none; }
+        label[for="id_username"] { display: none; }
+        .helptext { font-size: 0.7rem; color: rgba(226, 232, 240, 0.5); margin-top: 0.25rem; }
+        ul.errorlist { color: #fca5a5; font-size: 0.7rem; font-weight: 700; list-style: none; padding: 0; margin: 0.25rem 0; }
+
+        @keyframes fadeUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
+        .fade-up { animation: fadeUp 0.4s ease forwards; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { animation: spin 1s linear infinite; }
+    </style>
+</head>
+<body class="min-h-screen relative flex items-center justify-center p-6 overflow-x-hidden bg-[#0f172a]">
+    <!-- Background -->
+    <div class="absolute inset-0 z-0" style="
+        background-image: url('{% static 'images/iglesia_dolorosa.jpg' %}');
+        background-size: cover;
+        background-position: center 30%;
+        background-repeat: no-repeat;
+        image-rendering: high-quality;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+        will-change: transform;
+    "></div>
+    <div class="absolute inset-0 z-0 bg-black/45 backdrop-blur-[3px]"></div>
+
+    <!-- Card -->
+    <div class="relative z-10 w-full max-w-md glass-card rounded-[2.5rem] p-10 pt-20 shadow-2xl fade-up my-8 border-2 border-[#d4af37]/30 mt-8">
+        <!-- Logo -->
+        <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Escudo UEF La Dolorosa"
+             class="absolute -top-16 left-1/2 -translate-x-1/2 h-32 w-auto object-contain drop-shadow-[0_4px_15px_rgba(212,175,55,0.45)] z-20">
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-black text-gold-gradient" style="font-family:'Manrope',sans-serif;">Casi listo</h1>
+            <p class="text-[#ffe082]/70 text-xs mt-2">Completa tu registro para acceder a ReservaEDU</p>
+        </div>
+
+        <!-- Google user info banner -->
+        <div class="flex items-center gap-3 bg-white/5 border border-[#d4af37]/20 rounded-2xl p-4 mb-6">
+            <svg class="w-8 h-8 shrink-0" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            <div>
+                <p class="text-white text-sm font-semibold">Cuenta de Google vinculada</p>
+                <p class="text-[#ffe082]/60 text-xs">{{ sociallogin.account.extra_data.email|default:sociallogin.account.extra_data.name }}</p>
+            </div>
+        </div>
+
+        <!-- Signup Form -->
+        <form method="post" id="signup-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <!-- Hidden auto-submit: si el form solo tiene username, lo enviamos directo -->
+            <button type="submit" id="submit-btn"
+                class="w-full bg-[#d4af37] hover:bg-[#ffe082] text-[#0f172a] font-black py-4 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#d4af37]/30 text-xs uppercase tracking-widest mt-6 flex items-center justify-center gap-2"
+                style="font-family:'Manrope',sans-serif;">
+                <span id="btn-text">Acceder a ReservaEDU</span>
+                <svg id="btn-spinner" class="hidden w-4 h-4 spinner" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+            </button>
+        </form>
+
+        <div class="mt-6 text-center border-t border-white/10 pt-5">
+            <a href="/login/" class="text-slate-400 hover:text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors">
+                <span class="material-symbols-outlined text-sm">arrow_back</span> Volver al inicio
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="absolute bottom-6 left-0 right-0 z-10 text-center">
+        <p class="text-[10px] font-bold text-[#d4af37]/80 uppercase tracking-widest">© 2028 U.E.F. La Dolorosa - Loja. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Estrella decorativa -->
+    <div class="absolute bottom-28 right-20 z-0 pointer-events-none opacity-60 animate-pulse hidden lg:block">
+        <svg class="w-12 h-12 text-[#ffe082]/70 drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
+        </svg>
+    </div>
+
+    <script>
+        // Auto-rellenar username con el email de Google y enviar el formulario automáticamente
+        window.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('signup-form');
+            const usernameField = form.querySelector('#id_username');
+
+            if (usernameField) {
+                // Generar username del email (parte antes del @)
+                const emailMeta = '{{ sociallogin.account.extra_data.email|default:"" }}';
+                let generatedUsername = '';
+                if (emailMeta && emailMeta.includes('@')) {
+                    generatedUsername = emailMeta.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '_');
+                } else {
+                    generatedUsername = 'user_' + Date.now().toString().slice(-6);
+                }
+
+                // Si el campo username está vacío, rellenarlo automáticamente
+                if (!usernameField.value) {
+                    usernameField.value = generatedUsername;
+                }
+
+                // Verificar si hay campos visibles que el usuario deba completar
+                const visibleInputs = Array.from(
+                    form.querySelectorAll('input:not([type="hidden"]):not([name="csrfmiddlewaretoken"])')
+                ).filter(i => {
+                    const s = window.getComputedStyle(i);
+                    return s.display !== 'none' && s.visibility !== 'hidden' && i.offsetParent !== null && i.id !== 'id_username';
+                });
+
+                // Si no hay campos visibles requeridos, enviar automáticamente
+                if (visibleInputs.length === 0) {
+                    document.getElementById('btn-text').textContent = 'Iniciando sesión...';
+                    document.getElementById('btn-spinner').classList.remove('hidden');
+                    setTimeout(() => form.submit(), 600);
+                }
+            }
+        });
+
+        document.getElementById('submit-btn').addEventListener('click', () => {
+            document.getElementById('btn-text').textContent = 'Accediendo...';
+            document.getElementById('btn-spinner').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>

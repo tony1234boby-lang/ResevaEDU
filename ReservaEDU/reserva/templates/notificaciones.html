@@ -1,0 +1,252 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% include 'pwa_meta.html' %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notificaciones - ReservaEDU | La Dolorosa</title>
+    <link rel="icon" type="image/png" href="{% static 'images/escudo_dolorosa.jpg' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#1e40af', secondary: '#5A626A', accent: '#D97706' },
+                    fontFamily: { headline: ['Manrope'], body: ['Inter'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        html { zoom: 100%; }
+        h1,h2,h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        .fade-in { animation: fadeIn 0.35s ease forwards; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="hidden md:flex flex-col p-4 gap-2 h-screen border-r border-slate-200 bg-slate-50 fixed left-0 w-64 z-50">
+            <div class="mb-6 px-4 flex flex-col items-center gap-3">
+                <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Logo" class="h-16 w-auto object-contain mt-2 drop-shadow-sm">
+                <div class="text-center">
+                    <h2 class="text-xl font-black text-primary uppercase tracking-tighter">RESERVAEDU</h2>
+                    <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">La Dolorosa</p>
+                </div>
+            </div>
+            <nav class="flex-1 flex flex-col gap-2">
+                <a href="{% url 'inicio' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all">
+                    <span class="material-symbols-outlined">grid_view</span>
+                    <span class="font-bold">Espacios</span>
+                </a>
+                <a href="{% url 'mis_reservas' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all">
+                    <span class="material-symbols-outlined">event_available</span>
+                    <span class="font-bold">Mis Reservas</span>
+                </a>
+                <a id="nav-proximas" href="{% url 'proximas_reservas' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all font-bold">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <span class="font-bold">Próximos días</span>
+                </a>
+                <a href="{% url 'lista_notificaciones' %}" class="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl shadow-lg transition-all">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="font-bold">Notificaciones</span>
+                    {% if notificaciones_count > 0 %}
+                    <span class="ml-auto bg-white text-primary text-[9px] font-black px-2 py-0.5 rounded-full">{{ notificaciones_count }}</span>
+                    {% endif %}
+                </a>
+                {% if es_secretaria %}
+                <a href="{% url 'dashboard_secretaria' %}" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl transition-all">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="font-bold">Panel Secretaría</span>
+                </a>
+                {% endif %}
+            </nav>
+            <div class="mt-auto pt-4 flex flex-col gap-1 border-t border-slate-200">
+                {% if user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" class="w-full m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all text-left font-bold">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="flex-1 md:ml-64 min-h-screen">
+            <!-- Header -->
+            <header class="flex justify-between items-center px-8 h-16 w-full bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-200">
+                <div class="flex items-center gap-3">
+                    <img src="{% static 'images/escudo_dolorosa.jpg' %}" alt="Logo" class="h-8 w-auto object-contain">
+                    <span class="text-lg font-black text-primary">RESERVAEDU</span>
+                </div>
+                <div class="flex items-center gap-5">
+                    <!-- Campana -->
+                    <div class="relative">
+                        <a href="{% url 'lista_notificaciones' %}" class="text-primary flex items-center relative p-1">
+                            <span class="material-symbols-outlined">notifications</span>
+                            {% if notificaciones_count > 0 %}
+                            <span class="absolute top-0 right-0 bg-red-500 text-white rounded-full text-[9px] font-bold w-4 h-4 flex items-center justify-center">
+                                {{ notificaciones_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </div>
+                    <!-- Avatar -->
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm font-bold text-primary">{{ user.first_name|default:user.username }}</span>
+                        <div class="relative" id="avatar-menu-wrapper">
+                            <button onclick="toggleAvatarMenu()" class="focus:outline-none">
+                                {% if google_picture %}
+                                <img class="w-9 h-9 rounded-full border-2 border-primary/30 shadow-sm object-cover"
+                                     src="{{ google_picture }}"
+                                     onerror="this.style.display='none'; document.getElementById('avatar-initials-notif').style.display='flex';"
+                                     alt="Foto de perfil" />
+                                {% endif %}
+                                <div id="avatar-initials-notif" class="w-9 h-9 rounded-full bg-primary text-white text-sm font-black flex items-center justify-center border-2 border-primary/30 {% if google_picture %}hidden{% endif %}">
+                                    {{ user.first_name|first|upper|default:user.username|first|upper }}
+                                </div>
+                            </button>
+                            <div id="avatar-dropdown" class="hidden absolute right-0 top-12 w-52 bg-white rounded-2xl shadow-xl border border-slate-100 z-[200] overflow-hidden py-1">
+                                <div class="px-4 py-3 border-b border-slate-100">
+                                    <p class="text-xs font-bold text-slate-800 truncate">{{ user.get_full_name|default:user.username }}</p>
+                                    <p class="text-[11px] text-slate-400 truncate">{{ user.email }}</p>
+                                </div>
+                                <a href="/accounts/google/login/?next=/" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                                    <span>Cambiar de cuenta</span>
+                                </a>
+                                <form action="{% url 'logout' %}" method="post" class="m-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
+                                        <span class="material-symbols-outlined text-base">logout</span>
+                                        <span>Cerrar sesión</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="p-8 max-w-4xl mx-auto">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 class="text-3xl font-black text-primary tracking-tight">Notificaciones</h1>
+                        <p class="text-slate-400 text-sm mt-1">
+                            {% if todas_notificaciones %}
+                                {{ todas_notificaciones.count }} notificación{{ todas_notificaciones.count|pluralize:"es" }} en total
+                            {% else %}
+                                No tienes notificaciones aún
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% if notificaciones_count > 0 %}
+                    <a href="?marcar_todas=1" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary/10 text-primary text-xs font-bold hover:bg-primary/20 transition-colors uppercase tracking-wider">
+                        <span class="material-symbols-outlined text-sm">done_all</span>
+                        Marcar todas como leídas
+                    </a>
+                    {% endif %}
+                </div>
+
+                {% if todas_notificaciones %}
+                <div class="flex flex-col gap-3">
+                    {% for notif in todas_notificaciones %}
+                    <div class="fade-in bg-white rounded-2xl shadow-sm border {% if not notif.leida %}border-primary/20 bg-primary/5{% else %}border-slate-100{% endif %} p-5 flex items-start gap-4 hover:shadow-md transition-all">
+                        <!-- Icono -->
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {% if not notif.leida %}bg-primary text-white{% else %}bg-slate-100 text-slate-400{% endif %}">
+                            <span class="material-symbols-outlined text-xl">
+                                {% if 'aprobada' in notif.mensaje|lower %}task_alt
+                                {% elif 'rechazada' in notif.mensaje|lower %}cancel
+                                {% elif 'cancelada' in notif.mensaje|lower %}event_busy
+                                {% elif 'nueva' in notif.mensaje|lower %}add_circle
+                                {% else %}notifications{% endif %}
+                            </span>
+                        </div>
+                        <!-- Contenido -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-2">
+                                <p class="text-sm {% if not notif.leida %}font-semibold text-slate-800{% else %}font-medium text-slate-600{% endif %} leading-relaxed">
+                                    {{ notif.mensaje }}
+                                </p>
+                                {% if not notif.leida %}
+                                <span class="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5"></span>
+                                {% endif %}
+                            </div>
+                            <div class="flex items-center gap-3 mt-2">
+                                <span class="text-xs text-slate-400">{{ notif.fecha|date:"d \d\e F, H:i" }}</span>
+                                {% if notif.reserva %}
+                                <span class="text-slate-300">·</span>
+                                <a href="{% url 'mis_reservas' %}" class="text-xs text-primary font-semibold hover:underline">Ver reserva</a>
+                                {% endif %}
+                                {% if not notif.leida %}
+                                <span class="text-slate-300">·</span>
+                                <button onclick="marcarLeida({{ notif.id }}, this)" class="text-xs text-slate-400 hover:text-primary font-semibold transition-colors">Marcar como leída</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <!-- Estado vacío -->
+                <div class="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-20 text-center fade-in">
+                    <span class="material-symbols-outlined text-slate-200 block mb-4" style="font-size: 72px;">notifications_off</span>
+                    <h3 class="text-xl font-black text-slate-400">Sin notificaciones</h3>
+                    <p class="text-slate-300 text-sm mt-2">Las notificaciones sobre tus reservas aparecerán aquí.</p>
+                    <a href="{% url 'inicio' %}" class="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors">
+                        <span class="material-symbols-outlined text-sm">grid_view</span>
+                        Explorar espacios
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleAvatarMenu() {
+            document.getElementById('avatar-dropdown').classList.toggle('hidden');
+        }
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('avatar-menu-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                document.getElementById('avatar-dropdown')?.classList.add('hidden');
+            }
+        });
+
+        function marcarLeida(id, btn) {
+            fetch(`/notificaciones/leer/${id}/`, {
+                method: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const card = btn.closest('.fade-in');
+                    if (card) {
+                        card.classList.remove('border-primary/20', 'bg-primary/5');
+                        card.classList.add('border-slate-100');
+                        const dot = card.querySelector('.w-2.h-2.rounded-full.bg-primary');
+                        if (dot) dot.remove();
+                        const icon = card.querySelector('.w-10.h-10.rounded-xl');
+                        if (icon) { icon.classList.remove('bg-primary','text-white'); icon.classList.add('bg-slate-100','text-slate-400'); }
+                        const msg = card.querySelector('p');
+                        if (msg) { msg.classList.remove('font-semibold','text-slate-800'); msg.classList.add('font-medium','text-slate-600'); }
+                        btn.closest('div').remove();
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -24,6 +24,7 @@ environ.Env.read_env(BASE_DIR / '.env')
 # API Keys (cargadas de forma segura desde el archivo .env)
 GEMINI_API_KEY = env('GEMINI_API_KEY', default='')
 GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID', default='')
+GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET', default='')
 
 
 
@@ -31,15 +32,15 @@ GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID', default='')
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^4ru-$+&vqii2_-1vu3*l+5y)ck3fp@(h(tc()ybs3v4mc3tyk'
+SECRET_KEY = env('SECRET_KEY', default='django-insecure-^4ru-$+&vqii2_-1vu3*l+5y)ck3fp@(h(tc()ybs3v4mc3tyk')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = env.bool('DEBUG', default=True)
 
 # Host configuration
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 
-CSRF_TRUSTED_ORIGINS = ['https://reservaedu.onrender.com']
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['https://resevaedu.onrender.com', 'https://reservaedu.onrender.com', 'http://localhost:8000', 'http://127.0.0.1:8000'])
 
 
 # Application definition
@@ -156,22 +157,41 @@ LOGOUT_REDIRECT_URL = '/login/'              # Redirigir al login tras logout
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Google allauth configuration
+# Las credenciales de la app Google están en la DB (SocialApp).
+# NO incluir el bloque 'APP' aquí para evitar MultipleObjectsReturned.
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
-        'APP': {
-            'client_id': env('GOOGLE_CLIENT_ID', default=''),
-            'secret': env('GOOGLE_CLIENT_SECRET', default=''),
-            'key': ''
-        }
     }
 }
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
 ACCOUNT_LOGOUT_REDIRECT_URL = '/login/'
 
-SITE_ID = 1
+# allauth v65 - adaptadores personalizados para auto-signup con Google
+ACCOUNT_ADAPTER = 'espacios.adapters.CustomAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'espacios.adapters.CustomSocialAccountAdapter'
+
+# Configuración de campos de registro
+ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+ACCOUNT_SIGNUP_FIELDS = ['username*', 'email', 'password1*', 'password2*']
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+
+SITE_ID = 1
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# WhiteNoise production static files storage (compresses and hashes files for caching)
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
