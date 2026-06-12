@@ -286,6 +286,56 @@ def cancelar_reserva(request, reserva_id):
     return redirect('mis_reservas')
 
 @login_required
+def editar_reserva(request, reserva_id):
+    reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
+    
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            fecha = data.get('date')
+            hora_inicio = data.get('start_time')
+            hora_fin = data.get('end_time')
+        except Exception:
+            fecha = request.POST.get('date')
+            hora_inicio = request.POST.get('start_time')
+            hora_fin = request.POST.get('end_time')
+            
+        reserva.fecha = fecha
+        reserva.hora_inicio = hora_inicio
+        reserva.hora_fin = hora_fin
+        
+        try:
+            reserva.full_clean()
+            reserva.save()
+            
+            # Registrar historial
+            HistorialReserva.objects.create(
+                reserva=reserva,
+                usuario=request.user,
+                accion='modificacion',
+                comentario=f"Reserva modificada por el usuario. Nueva fecha: {fecha}, Horario: {hora_inicio} - {hora_fin}"
+            )
+            
+            # Notificaciones
+            notificar_reserva(reserva, 'modificacion', comentario=f"Nueva fecha: {fecha}, Horario: {hora_inicio} - {hora_fin}")
+            
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+                return JsonResponse({'status': 'success'})
+                
+            from django.contrib import messages
+            messages.success(request, "¡Reserva modificada con éxito!")
+            return redirect('mis_reservas')
+        except ValidationError as e:
+            error_msg = e.messages[0] if hasattr(e, 'messages') else str(e)
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+                return JsonResponse({'status': 'error', 'message': error_msg}, status=400)
+            
+            from django.contrib import messages
+            messages.error(request, f"Error al modificar: {error_msg}")
+            
+    return redirect('mis_reservas')
+
+@login_required
 @secretaria_required
 def dashboard_secretaria(request):
     reservas_pendientes = Reserva.objects.filter(estado='pendiente').order_by('fecha', 'hora_inicio')
