@@ -16,7 +16,13 @@ Uso:
 
 import os
 import sys
+from pathlib import Path
 import django
+
+# Add the parent directory of scratch (which is 'reserva') to sys.path to resolve 'reserva.settings'
+reserva_dir = str(Path(__file__).resolve().parent.parent)
+if reserva_dir not in sys.path:
+    sys.path.insert(0, reserva_dir)
 
 # ── Configurar Django ──────────────────────────────────────────────────────────
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'reserva.settings')
@@ -30,23 +36,21 @@ from allauth.socialaccount.models import SocialApp
 CLIENT_ID     = getattr(settings, 'GOOGLE_CLIENT_ID', '')
 CLIENT_SECRET = getattr(settings, 'GOOGLE_CLIENT_SECRET', '')
 
-if not CLIENT_ID or CLIENT_ID == 'TU_ID_DE_CLIENTE_AQUI':
-    print("❌ ERROR: GOOGLE_CLIENT_ID no está configurado en el archivo .env")
-    print("   Edita el archivo .env y pon el Client ID real de Google Cloud Console")
-    sys.exit(1)
+if not CLIENT_ID or CLIENT_ID in ('', 'TU_ID_DE_CLIENTE_AQUI'):
+    print("WARNING: GOOGLE_CLIENT_ID no está configurado. Saltando configuración de SocialApp de Google.")
+    sys.exit(0)
 
-if not CLIENT_SECRET or CLIENT_SECRET == 'TU_SECRETO_AQUI':
-    print("❌ ERROR: GOOGLE_CLIENT_SECRET no está configurado en el archivo .env")
-    print("   Edita el archivo .env y pon el Client Secret real de Google Cloud Console")
-    sys.exit(1)
+if not CLIENT_SECRET or CLIENT_SECRET in ('', 'TU_SECRETO_AQUI'):
+    print("WARNING: GOOGLE_CLIENT_SECRET no está configurado. Saltando configuración de SocialApp de Google.")
+    sys.exit(0)
 
 # ── 1. Configurar el Site ──────────────────────────────────────────────────────
-DOMAIN = 'reservaedu.onrender.com'
+DOMAIN = 'resevaedu.onrender.com'
 site, created = Site.objects.update_or_create(
     id=settings.SITE_ID,
     defaults={'domain': DOMAIN, 'name': 'ReservaEDU'}
 )
-print(f"✅ Site configurado: {site.domain} (id={site.id}) {'[CREADO]' if created else '[ACTUALIZADO]'}")
+print(f"[OK] Site configurado: {site.domain} (id={site.id}) {'[CREADO]' if created else '[ACTUALIZADO]'}")
 
 # ── 2. Crear/Actualizar la SocialApp de Google ─────────────────────────────────
 app, created = SocialApp.objects.update_or_create(
@@ -58,14 +62,14 @@ app, created = SocialApp.objects.update_or_create(
         'key':          '',
     }
 )
-print(f"✅ SocialApp Google {'CREADA' if created else 'ACTUALIZADA'}")
+print(f"[OK] SocialApp Google {'CREADA' if created else 'ACTUALIZADA'}")
 print(f"   Client ID: {CLIENT_ID[:20]}...")
 
 # ── 3. Vincular SocialApp al Site ──────────────────────────────────────────────
 app.sites.add(site)
-print(f"✅ SocialApp vinculada al site '{site.domain}'")
+print(f"[OK] SocialApp vinculada al site '{site.domain}'")
 
 print()
-print("🎉 ¡Configuración completa! El login con Google ya debería funcionar.")
+print("SUCCESS: Configuración completa! El login con Google ya debería funcionar.")
 print(f"   URL de callback registrada en Google Cloud Console:")
 print(f"   https://{DOMAIN}/accounts/google/login/callback/")

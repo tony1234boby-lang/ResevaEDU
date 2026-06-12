@@ -1,5 +1,12 @@
 import os
+import sys
+from pathlib import Path
 import django
+
+# Add the parent directory of scratch (which is 'reserva') to sys.path to resolve 'reserva.settings'
+reserva_dir = str(Path(__file__).resolve().parent.parent)
+if reserva_dir not in sys.path:
+    sys.path.insert(0, reserva_dir)
 
 # Setup django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'reserva.settings')
