@@ -154,7 +154,7 @@ def _generar_sugerencias(query):
     if "teatro" in q or "auditorio" in q:
         return ["Ver disponibilidad del Teatro", "¿Cómo reservar el teatro?", "Requisitos de uso"]
     if "laboratorio" in q or "lab" in q:
-        return ["Laboratorio de Informática", "Laboratorio de Ciencias", "Horarios de laboratorio"]
+        return ["Laboratorio de Informática 1", "Laboratorio de Informática 2", "Laboratorio de Informática 3"]
     if "biblioteca" in q:
         return ["Horarios de biblioteca", "Cubículos disponibles", "¿Cómo reservar?"]
     if "horario" in q:

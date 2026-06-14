@@ -7,20 +7,23 @@ django.setup()
 
 from espacios.models import Espacio
 
+# Eliminar espacios antiguos o eliminados si existen
+Espacio.objects.filter(nombre__in=["sala de reuniiones", "labotario de Informatica", "mini teatro", "Coliseo Deportivo", "Laboratorio de Informática", "coliseo deportivo"]).delete()
+
 espacios_data = [
     {
-        "nombre": "mini teatro",
+        "nombre": "Mini Teatro",
         "categoria": "Teatro",
         "descripcion": "Espacio majestuoso de acústica impecable, ideal para eventos culturales y académicos de gran escala.",
-        "capacidad": 450,
-        "imagen_url": "https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&q=80&w=800"
+        "capacidad": 200,
+        "imagen_url": "/static/images/mini_teatro.jpg"
     },
     {
-        "nombre": "sala de reuniiones",
+        "nombre": "Sala de Reuniones",
         "categoria": "Sala de reuniones",
         "descripcion": "Sala equipada con tecnología de punta para videoconferencias y juntas directivas.",
-        "capacidad": 12,
-        "imagen_url": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=800"
+        "capacidad": 20,
+        "imagen_url": "/static/images/sala_reuniones.jpg"
     },
     {
         "nombre": "Biblioteca",
@@ -30,11 +33,25 @@ espacios_data = [
         "imagen_url": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&q=80&w=800"
     },
     {
-        "nombre": "labotario de Informatica",
+        "nombre": "Laboratorio de Informática 1",
         "categoria": "Laboratorio",
         "descripcion": "Equipado con kits de Arduino, sensores y estaciones de soldadura para proyectos técnicos.",
-        "capacidad": 25,
-        "imagen_url": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800"
+        "capacidad": 20,
+        "imagen_url": "/static/images/laboratorio_informatica.png"
+    },
+    {
+        "nombre": "Laboratorio de Informática 2",
+        "categoria": "Laboratorio",
+        "descripcion": "Equipado con kits de Arduino, sensores y estaciones de soldadura para proyectos técnicos.",
+        "capacidad": 20,
+        "imagen_url": "/static/images/laboratorio_informatica.png"
+    },
+    {
+        "nombre": "Laboratorio de Informática 3",
+        "categoria": "Laboratorio",
+        "descripcion": "Equipado con kits de Arduino, sensores y estaciones de soldadura para proyectos técnicos.",
+        "capacidad": 20,
+        "imagen_url": "/static/images/laboratorio_informatica.png"
     }
 ]
 

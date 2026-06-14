@@ -15,7 +15,7 @@ class Espacio(models.Model):
     categoria = models.CharField(max_length=50, choices=CATEGORIAS)
     descripcion = models.TextField()
     capacidad = models.PositiveIntegerField()
-    imagen_url = models.URLField(max_length=500, blank=True, null=True)
+    imagen_url = models.CharField(max_length=500, blank=True, null=True)
     responsable = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='espacios_responsable')
 
     def __str__(self):

@@ -155,4 +155,157 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // Poll every 5 seconds
     setInterval(checkNewNotifications, 5000);
+
+    // Detect mobile app environment
+    const isApp = window.Capacitor || navigator.userAgent.includes('ReservaEDUMobile');
+    if (isApp) {
+        document.body.classList.add('is-app');
+        
+        // Hide user greeting (e.g. "¡Hola, TONY!")
+        document.querySelectorAll('span').forEach(el => {
+            if (el.textContent && el.textContent.includes('¡Hola,')) {
+                el.classList.add('app-hide');
+            }
+        });
+        
+        // Hide top navigation tab buttons on content pages if present
+        const spacesBtn = document.getElementById('top-btn-spaces');
+        if (spacesBtn) {
+            const parentContainer = spacesBtn.closest('div.flex-wrap');
+            if (parentContainer) {
+                const outerWrapper = parentContainer.closest('div.w-full.pb-4');
+                if (outerWrapper) {
+                    outerWrapper.classList.add('app-hide');
+                } else {
+                    parentContainer.classList.add('app-hide');
+                }
+            }
+        }
+        
+        // Setup dynamic styles for the app
+        const style = document.createElement('style');
+        style.textContent = `
+            body.is-app {
+                padding-left: 0 !important;
+            }
+            body.is-app .app-hide {
+                display: none !important;
+            }
+            body.is-app aside {
+                display: flex !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                bottom: 0 !important;
+                height: 100vh !important;
+                z-index: 150 !important;
+                transform: translateX(-100%) !important;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            }
+            body.is-app aside.open {
+                transform: translateX(0) !important;
+                box-shadow: 5px 0 25px rgba(0, 0, 0, 0.2) !important;
+            }
+            #sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 23, 42, 0.4);
+                backdrop-filter: blur(4px);
+                z-index: 140;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+            body.is-app.sidebar-open #sidebar-overlay {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            #app-hamburger-btn {
+                background: transparent;
+                border: none;
+                color: #1e40af;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 8px;
+                border-radius: 8px;
+                margin-right: 12px;
+                transition: background 0.2s;
+            }
+            #app-hamburger-btn:hover {
+                background: rgba(30, 64, 175, 0.05);
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Add overlay to body
+        const overlay = document.createElement('div');
+        overlay.id = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+        overlay.onclick = () => {
+            const sidebar = document.querySelector('aside');
+            if (sidebar) {
+                sidebar.classList.remove('open');
+                document.body.classList.remove('sidebar-open');
+            }
+        };
+        
+        // Prepend hamburger button to header
+        const header = document.querySelector('header');
+        if (header) {
+            const burgerBtn = document.createElement('button');
+            burgerBtn.id = 'app-hamburger-btn';
+            burgerBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 26px;">menu</span>';
+            header.prepend(burgerBtn);
+            
+            burgerBtn.onclick = (e) => {
+                e.stopPropagation();
+                const sidebar = document.querySelector('aside');
+                if (sidebar) {
+                    sidebar.classList.toggle('open');
+                    document.body.classList.toggle('sidebar-open');
+                }
+            };
+        }
+        
+        // Convert nav-spaces link to call switchView dynamically on homepage
+        const navSpaces = document.getElementById('nav-spaces');
+        if (navSpaces && typeof switchView === 'function') {
+            navSpaces.removeAttribute('href');
+            navSpaces.setAttribute('onclick', "switchView('spaces')");
+        }
+        
+        // Add LA DOLO to sidebar nav if available
+        const nav = document.querySelector('aside nav');
+        if (nav && typeof toggleAIChat === 'function' && !document.getElementById('nav-ladolo')) {
+            const laDoloLink = document.createElement('a');
+            laDoloLink.id = 'nav-ladolo';
+            laDoloLink.className = 'flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl cursor-pointer transition-all';
+            laDoloLink.onclick = () => {
+                toggleAIChat();
+                const sidebar = document.querySelector('aside');
+                if (sidebar) {
+                    sidebar.classList.remove('open');
+                    document.body.classList.remove('sidebar-open');
+                }
+            };
+            laDoloLink.innerHTML = `
+                <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">auto_awesome</span>
+                <span class="font-bold">LA DOLO</span>
+            `;
+            nav.appendChild(laDoloLink);
+        }
+        
+        // Close sidebar drawer when clicking links inside it
+        document.querySelectorAll('aside nav a, aside .mt-auto a, aside nav button, aside .mt-auto button').forEach(link => {
+            link.addEventListener('click', () => {
+                const sidebar = document.querySelector('aside');
+                if (sidebar) {
+                    sidebar.classList.remove('open');
+                    document.body.classList.remove('sidebar-open');
+                }
+            });
+        });
+    }
 });

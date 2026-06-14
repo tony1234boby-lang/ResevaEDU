@@ -2,6 +2,7 @@
   "appId": "ec.edu.ladolorosa.reservaedu",
   "appName": "ReservaEDU",
   "webDir": "www",
+  "appendUserAgent": "ReservaEDUMobile",
   "server": {
     "url": "https://resevaedu.onrender.com",
     "cleartext": true
